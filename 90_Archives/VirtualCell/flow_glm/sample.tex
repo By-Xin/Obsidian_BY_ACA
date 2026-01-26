@@ -1,0 +1,178 @@
+%----------------------------------------------------------------------------------------
+%    PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+
+\documentclass[aspectratio=169,xcolor=dvipsnames]{beamer}
+\usetheme{SimplePlus}
+
+\usepackage{hyperref}
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+
+%----------------------------------------------------------------------------------------
+%    TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title{Flow GLM}
+\subtitle{}
+
+\author{XIN Baiying}
+
+\institute
+{
+}
+\date{\today} % Date, can be changed to a custom date
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\NN}{\mathcal{N}}
+\newcommand{\1}{\boldsymbol{1}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Pbb}{\mathrm{Pr}}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}{Notations}
+
+    \begin{itemize}
+        \item $Y \in \N_0^{\mathrm{N} \times \mathrm{G}}$: observed counts, $\mathrm{N}$ samples, $\mathrm{G}$ genes. For each cell $i$:
+        \item Perturb label $t_i \in \{\text{non-targeting}\} \bigcup \mathcal{G}_{\text{pert}}$, where $\mathcal{G}_{\text{pert}}$ is the set of targeting perturbations. 
+        \item Batch label $b_i \in \{1, \ldots, B\}$.
+        \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{ZINB/Hurdle Modelling}
+
+We still try to formulate the observation $Y_{ig}$ as some count distribution. Here, we consider Zero-Inflated Negative Binomial (ZINB) distribution and Hurdle distribution.
+
+$\quad$
+
+\textbf{For ZINB:} For each gene $g$, assume $Y_{ig}$ follows a ZINB distribution with mean $\mu_{ig}>0$, dispersion $\theta_g>0$ and zero-inflation probability $\pi_g \in [0,1)$: 
+$$
+\begin{aligned}
+    &\Pbb(Y_{ig}=0) = \pi_g + (1-\pi_g) \cdot \Pbb_{\text{NB}}(0; \mu_{ig}, \theta_g) \\
+    &\Pbb(Y_{ig}=y>0) = (1-\pi_g) \cdot \Pbb_{\text{NB}}(y; \mu_{ig}, \theta_g).
+\end{aligned}
+$$
+
+\begin{itemize}
+    \item Negative Binomial (NB) can be constructed as a Gamma-Poisson mixture: $\lambda_{ig} \sim \text{Gamma}(\theta_g, \frac{\theta_g}{\mu_{ig}})$, $Y_{ig}|\lambda_{ig} \sim \text{Poisson}(\lambda_{ig})$. Thus, for inference, we first let $Y_{ig} = 0$ with probability $\pi_g$, otherwise first sample $\lambda_{ig} \sim \text{Gamma}(\theta_g, \frac{\theta_g}{\mu_{ig}})$ then $Y_{ig}|\lambda_{ig} \sim \text{Poisson}(\lambda_{ig})$.
+\end{itemize}
+
+\textbf{For Hurdle:} Quite similar to ZINB, except that we separately model the zero and non-zero counts:
+$$\begin{aligned}
+    &\Pbb(Y_{ig}=0) = 1 - \rho_{ig}, \\
+    &\Pbb(Y_{ig}=y>0) = \rho_{ig}\cdot \frac{\Pbb_{\text{NB}}(y; \mu_{ig}, \theta_g)}{1 - \Pbb_{\text{NB}}(0; \mu_{ig}, \theta_g)}.
+\end{aligned}$$
+\begin{itemize}
+\item Here $\rho_{ig} = \text{sigmoid}\rho_{0g}+\alpha u_{ig}$, where $\rho_{0g} \in \R$ is a learnable intercept, $u_{ig}$ is the linear predictor (to be defined later), and $\alpha>0$ is also a learnable parameter to control the effect of $u_{ig}$ on $\rho_{ig}$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Flow-GLM: Architecture}
+Something different is that here we let $\mu_{ig}$ to be obtained from a \textbf{Flow-GLM} model:
+\begin{center}
+    $\mu_{ig} = s_g f(u_{ig}) s_i,$
+\end{center}
+\begin{itemize}
+    \item $f: \R \to (0, \infty)$ is a strictly monotone (thus invertible) link function, which is called \textbf{flow function}. The details will be discussed later.
+    \item $u_{ig}$ is the linear predictor for cell $i$ and gene $g$:
+\begin{center}
+    $u_{ig} = \log \mu_g^{\text{ctrl}} + \beta_g + (G K P(t_i))_g + h_{b_i, g}, ~ \forall i, g$
+    \end{center}
+    \begin{itemize}
+        \item $\mu_g^{\text{ctrl}}$ is the baseline mean expression for gene $g$ in control cells. 
+        \item $\beta_g\in \R$ is a learnable intercept shift for gene $g$.
+          \item $(G K P(t_i) )_g$ is basically the same as our previous NB model. 
+    \begin{itemize} 
+        \item $G \in \R^{\mathrm{G} \times d}$, gene embedding, is obtained by: first construct the pseudo-bulk $\text{PB} \in \R^{|\mathcal{G}_{\text{pert}}| \times \mathrm{G}}$ by aggregating the counts of all cells with the same perturbation; then do PCA on $\text{PB}^\top$ and take the first $d$ principal components, finally normalize. 
+        \item $P(t_i) \in \R^{d}$, perturbation embedding of $t_i$, is obtained by $P(t_i) = W_\text{pert} G_{t_i}$, where $W_\text{pert} \in \R^{d \times d}$ is a learnable weight matrix and $G_{t_i} \in \R^d$ is the gene embedding of the perturbed gene $t_i$ from the matrix $G$.
+        \item $K \in \R^{d \times d}$ is a learnable linear transformation matrix.
+        \end{itemize}
+        \item $h_{b_i, g}$ is the learnable batch effect for batch $b_i$ and gene $g$. Basically, we assign each batch $b_i$ an embedding vector $e_{b_i} \in \R^r$ and then use a learnable weight matrix $W_\text{batch} \in \R^{r \times \mathrm{G}}$ to get $h_{b,g} = (e_{b_i}^\top W_\text{batch})_g$.
+    \end{itemize}
+\item $s_i > 0$ is the size factor for cell $i$, calculated as $s_i=\dfrac{\sum_g Y_{ig}}{\mathrm{medianUMI}_{\mathrm{ctrl}}}$
+\item $s_g > 0$ is a learnable gene-specific scaling factor. In practice, we set $s_g  = \text{softplus}(\gamma_g)+\epsilon$, where $\gamma_g \in \R$ is a learnable parameter and $0<\epsilon\ll 1$ is a small constant to avoid numerical issues. Moreover, we may set a $\ell_2$ regularization on $\log s_g$ (or equivalently on $\gamma_g$) to restrict the scale of $s_g$.
+\end{itemize}
+
+\begin{center}
+    Recall $\boxed{\mu_{ig} = s_g f(u_{ig}) s_i}$
+\end{center}
+
+\end{frame}
+
+\begin{frame}{Flow Function}
+$f$ is required to be strictly monotone and map $\R$ to $(0,\infty)$. Here, preliminarily we consider: 
+$$f(u)=\operatorname{softplus}\Big(a_0+a_1u+\sum_{k=1}^{K}w_k\,\operatorname{softplus}\big(b_k(u-c_k)\big)\Big),\quad
+a_1,w_k,b_k\ge 0$$
+\begin{itemize}
+    \item $K$ is a hyperparameter to control the flexibility of $f$.
+    \item $a_0,a_1,w_k,b_k,c_k$ are learnable parameters.
+\end{itemize}
+
+As a matter of fact, $f$ can be further extended to more complex forms, e.g. RQ-Spline, or even neural networks with monotonicity constraints. We will explore these options in the future.
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Flow-GLM: Loss Function}
+
+Generally, the loss function is composed of the following parts:
+$$\mathcal L=\mathcal L_{\text{NLL}}+\lambda_{\text{bulk}}\,\mathcal L_{\text{bulk}}+\mathcal L_{\theta}+\mathcal L_{\pi}$$
+
+\textbf{Negative log-likelihood loss:} For a batch of cells $\mathcal{B}$, recall that for ZINB,
+$$
+    \begin{array}{c} \log p_{\mathrm{ZINB}}(y;\mu,\theta,\pi)
+= \begin{cases}
+\log\!\Big(\pi+(1-\pi)\,p_{\mathrm{NB}}(0;\mu,\theta)\Big), & y=0,\\[4pt]
+\log(1-\pi)+\log p_{\mathrm{NB}}(y;\mu,\theta), & y>0,
+\end{cases} \end{array}
+$$
+where $\log p_{\mathrm{NB}}(y;\mu,\theta)
+=\log\Gamma(y+\theta)-\log\Gamma(\theta)-\log\Gamma(y+1)
++\theta\log\frac{\theta}{\theta+\mu}+y\log\frac{\mu}{\theta+\mu}.$
+\framebreak
+Collectively, the negative log-likelihood loss is
+$$\mathcal L_{\text{NLL}}
+=\frac{1}{|\mathcal B|}\sum_{i\in\mathcal B}\sum_{g=1}^G
+\Big(-\log p_{\mathrm{ZINB}}(Y_{ig}\mid \mu_{ig},\theta_g,\pi_g)\Big)$$
+\begin{itemize}
+    \item Here $\mu_{ig}=s_g f(u_{ig}) s_i$ is obtained from the Flow-GLM model mentioned before.
+    \item $\theta_g>0$ and $\pi_g\in[0,1)$ can be directly estimated from the data using methods like method of moments, and can optionally choose to be further optimized during training by setting $\ell_2$ regularization losses $\mathcal L_{\theta}$ and $\mathcal L_{\pi}$.
+\end{itemize}
+
+The loss function for Hurdle model is quite similar, just replace $p_{\mathrm{ZINB}}$ with $p_{\mathrm{Hurdle}}$.
+
+\framebreak
+
+\textbf{Pseudo-bulk loss:} This is a subsidiary loss to adjust the model to better fit the pseudo-bulk data in order to improve Perturbation Discrimination Score. 
+\begin{itemize}
+\item In real training data, for each perturbation $p \in \mathcal{G}_{\text{pert}}$, calculate the pseudo-bulk average: $\bar{\mathbf{y}}_p = \left[\frac{1}{|\mathcal{C}_p|} \sum_{i \in \mathcal{C}_p} Y_{ig}\right]^\top \in \R^{\mathrm{G}}$, where $\mathcal{C}_p = \{i: t_i = p\}$ is the set of cells with perturbation $p$.
+\item In ZINB model's prediction, the expected value of $Y_{ig}$ is $\E[Y_{ig}] = (1-\pi_g) \mu_{ig}$. Thus, we can also generate a pseudo-bulk average prediction for each perturbation $p$ as $\hat{\boldsymbol{\mu}}_p = \left[(1-\pi_g) \frac{1}{|\mathcal{C}_p|} \sum_{i \in \mathcal{C}_p} \mu_{ig}\right]^\top \in \R^{\mathrm{G}}$.
+\end{itemize}
+
+Then, we here use Huber loss to measure the difference between $\bar{\mathbf{y}}_p$ and $\hat{\boldsymbol{\mu}}_p$, and try to minimize it:
+$$\mathcal L_{\text{bulk}} = \frac{1}{|\mathcal{\tilde G}_{\text{pert}}|} \sum_{p \in \mathcal{\tilde G}_{\text{pert}}} \text{Huber}_{\delta} \left(\log(1+\hat{{\mu}}_{pg}) - \log(1+\bar{{y}}_{pg})\right)$$
+\begin{itemize}
+    \item  $\text{Huber}_{\delta}(r) = \begin{cases} \frac{1}{2} r^2, & |r| \leq \delta, \\ \delta (|r| - \frac{1}{2} \delta), & |r| > \delta. \end{cases}$ can be regarded as a combination of $\ell_2$ loss and $\ell_1$ loss, which is less sensitive to outliers than $\ell_2$ loss. 
+    \item $\delta>0$ is a hyperparameter to control the threshold between $\ell_2$ and $\ell_1$ loss, which can be tuned based on validation performance.
+    \item Here $\tilde{\mathcal{G}}_{\text{pert}} \subseteq \mathcal{G}_{\text{pert}}$ is a subset of perturbations ($|\tilde{\mathcal{G}}_{\text{pert}}| \approx 2000$) that we randomly sampled as an estimation of the full set $\mathcal{G}_{\text{pert}}$ to reduce computation cost.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Experimental Results}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.4\textwidth]{flow_loss.png}
+    \end{figure}
+
+    \begin{itemize}
+        \item Differential Expression Score:	0.1746, Perturbation Discrimination Score:	0.5076, Mean Absolute Error:	0.2012,  Overall Score:	2.6. 
+        \item Currently still unsatisfying, but it's still promising with a lot of rooms for improvement.
+\end{itemize}
+\end{frame}
+
+\end{document}

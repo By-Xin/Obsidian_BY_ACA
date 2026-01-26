@@ -1,0 +1,181 @@
+# Convex Optimization
+
+## 1. Introduction to Convex Optimization
+
+考虑优化问题 P:
+\[\begin{align*}
+\min & \quad f(x) \\
+\text{s.t.} & \quad g_i(x) \leq 0, \quad i = 1, \ldots, m \\
+& \quad h_j(x) = 0, \quad j = 1, \ldots, p
+\end{align*}
+\]
+其中 \(x \in \mathbb{R}^n\) 是决策变量, 可行域为 \(S = \{x \mid g_i(x) \leq 0, h_j(x) = 0\}\).
+- 若目标函数 \(f\) 和约束函数 \(g_i\) 均为凸函数, 且等式约束为线形的, 则称问题 P 为凸优化问题 (Convex Optimization Problem).
+
+凸优化问题有以下特点:
+1. 凸优化问题的**局部最优解即为全局最优解.**
+2. $x^*\in S$ 是凸优化问题的最优解的充分必要条件是 $\nabla f(x^*)^\top (y - x^*) \geq 0, \forall y \in S$.
+
+## 2. Optimal Conditions
+
+如下是几个特殊的凸优化问题的最优性条件:
+
+**无约束凸优化** 
+\[\min f(x), x \in \mathbb{R}^n\]
+- $x^*$ 是最优解的充分必要条件是 $\nabla f(x^*) = 0$.
+
+**有等式约束的凸优化**
+\[\begin{align*}
+\min & \quad f(x) \\
+\text{s.t.} & \quad Ax = b
+\end{align*}
+\]
+- $x^*$ 是最优解的充分必要条件是存在向量 $\lambda$ 使得 
+    \[\nabla f(x^*) + A^\top \lambda = 0, \quad Ax^* = b.
+    \]
+
+> 这一结论可以理解如下. 
+> - 回顾, 对于 $x\in \mathbb{R}^n$ , $a^\top x = b$ 描述了一个超平面, 其法向量为 $a\in \mathbb{R}^n$. 
+> - 在等式约束 $Ax = b$ 下, 可行域为多个超平面的交集, 每个超平面的法向量为 $A$ 的一行. 
+> - 故在最优点处, 目标函数的梯度 $\nabla f(x^*)$ 必须和所有的约束超平面相交的空间正交, 即 $\nabla f(x^*)$ 必须是这些法向量的线性组合, 即存在 $\lambda$ 使得 $\nabla f(x^*) + A^\top \lambda = 0$. (因为只有正交, 才说明在当前最优点处, 沿着可行域的方向, 目标函数不会再减小.)
+> - 结合等式约束本身, 即可得到最优性条件.
+
+
+**非负约束的凸优化**
+\[\begin{align*}
+\min & \quad f(x) \\
+\text{s.t.} & \quad x \geq 0
+\end{align*}
+\]
+
+- $x^*$ 是最优解的充分必要条件是一阶最优性条件:
+    \[\nabla f(x^*)^\top (x - x^*) \geq 0, \quad \forall x \geq 0.
+    \]
+
+## 3. Several Classical Convex Optimization Problems
+
+### Linear Programming
+
+线性规划 (Linear Programming, LP) 问题是指目标函数和约束均为线性的凸优化问题:
+\[\begin{align*}
+\min & \quad c^\top x \\
+\text{s.t.} & \quad Ax \leq b \\
+& \quad x \geq 0
+\end{align*}
+\]
+
+- 若 LP 问题有最优解, 则定可在极点处取得最优值.
+
+以下几类问题均可转化为线性规划问题:
+
+**分式线形规划 (Fractional Linear Programming)**:
+\[\begin{align*}
+\min & \quad \frac{c^\top x + d}{e^\top x + f} \\
+\text{s.t.} & \quad Ax = b \\
+& \quad Dx\leq h \\
+\end{align*}
+\]
+其中 $e^\top x + f > 0$ 对所有可行解均成立.
+
+令 $t = \frac{1}{e^\top x + f}$, 则上式等价于:
+\[\begin{align*}
+\min & \quad c^\top xt + dt \\
+\text{s.t.} & \quad Axt = bt \\
+& \quad Dxt \leq ht \\
+& \quad t > 0
+\end{align*}
+\]
+
+若再令 $y = xt$, 则得到一个线性规划问题:
+\[\begin{align*}
+\min & \quad c^\top y + dt \\
+\text{s.t.} & \quad Ay = bt \\
+& \quad Dy \leq ht \\
+& \quad t > 0
+\end{align*}
+\]
+
+当求解到 $(y^*, t^*)$ 后, 原问题的最优解为 $x^* = \frac{y^*}{t^*}$.
+
+**最小化绝对值函数**:
+\[\begin{align*}
+\min & \quad |a^\top x + c| \\
+\text{s.t.} & \quad Ax = b
+\end{align*}
+\]
+
+引入辅助变量 $t \geq 0$, 则上式等价于:
+\[\begin{align*}
+\min & \quad t \\
+\text{s.t.} ~&  a^\top x + c \leq t \\
+&  -(a^\top x + c) \leq t \\
+& \quad Ax = b
+\end{align*}
+\]
+
+- 其中绝对值 $|a^\top x + c|$ 等价于 $\max(a^\top x + c, -(a^\top x + c))$. 
+- 故令 $|a^\top x + c| \leq t$ 等价于 $a^\top x + c \leq t$ 且 $-(a^\top x + c) \leq t$.
+
+**最小化多面体函数**:
+\[\begin{align*}
+\min & \quad f(x) = \max_{i=1,\ldots,m} (a_i^\top x + c_i) \\
+\text{s.t.} & \quad Ax = b
+\end{align*}
+\]
+
+引入辅助变量 $t$, 则上式等价于:
+\[\begin{align*}
+\min & \quad t \\
+\text{s.t.} & \quad a_i^\top x + c_i \leq t, \quad i = 1, \ldots, m \\
+& \quad Ax = b
+\end{align*}
+\]
+
+### Convex Quadratic Programming
+
+凸二次规划 (Convex Quadratic Programming, QP) 问题是指目标函数为凸二次函数, 约束为线性的凸优化问题:
+\[\begin{align*}
+\min & \quad \frac{1}{2} x^\top Q x + c^\top x \\
+\text{s.t.} & \quad Ax = b \\
+& \quad x \geq 0
+\end{align*}
+\]
+其中 \(Q \succeq 0\).
+
+**含二次约束的凸二次规划**:
+\[\begin{align*}
+\min & \quad \frac{1}{2} x^\top Q x + c^\top x \\
+\text{s.t.} & \quad x^\top Q_i x + a_i^\top x + b_i \leq 0, \quad i = 1, \ldots, m \\
+& \quad Ax \leq d
+\end{align*}    
+\]
+其中 \(Q, Q_i \succeq 0\).
+
+## 4. Unconstrained Optimization Methods
+
+### 无约束优化问题的最优性条件
+
+考虑无约束优化问题:
+\[\min f(x), \quad x \in \mathbb{R}^n
+\]
+
+- 若 $f$ 是凸函数, 则 $x^*$ 是最优解的充分必要条件是 $\nabla f(x^*) = 0$.
+- 若 $f$ 是一般函数, 则 $x^*$ 是局部最优解的**必要条件**是:
+    1. $\nabla f(x^*) = 0$.
+    2. $\nabla^2 f(x^*)$ 半正定.
+- 若 $\nabla f(x^*) = 0$ 且 $\nabla^2 f(x^*)$ 正定, 则 $x^*$ 是局部最优解的**充分条件**.
+
+### 算法概要
+
+无约束优化的算法通常通过迭代方式更新当前解 \(x^{(k)}\). 给定初始点 \(x^{(0)}\), 产生一列点 \(\{x^{(k)}\}\), 使得 $f(x^{(k+1)}) < f(x^{(k)})$, 直到满足某个收敛准则为止. 常见的迭代策略包括:
+- 线搜索法: 在当前点确定下降方向, 然后沿该方向确定步长进行更新. $x^{(k+1)} = x^{(k)} + \alpha_k d^{(k)}$, 其中 \(d^{(k)}\) 是下降方向, \(\alpha_k\) 是步长.
+  1. 给定初始点 $x^{(0)}$.
+  2. 对 $k = 0, 1, 2, \ldots$ 重复以下步骤直到收敛:
+      - 判断终止条件, 若满足则停止迭代.
+        - 如 $\|\nabla f(x^{(k)})\| \leq \epsilon$, $\|x^{(k+1)} - x^{(k)}\| \leq \epsilon$, $|f(x^{(k+1)}) - f(x^{(k)})| \leq \epsilon$ 等.
+      - 计算下降方向 $d^{(k)}$.
+        - 通常选择 $d^{(k)} = -\nabla f(x^{(k)})$ (梯度下降法) 或 $d^{(k)} = -[\nabla^2 f(x^{(k)})]^{-1} \nabla f(x^{(k)})$ (牛顿法).
+      - 确定步长 $\alpha_k$ (如精确线搜索或非精确线搜索), 使得 $f(x^{(k)} + \alpha_k d^{(k)}) < f(x^{(k)})$.
+        - 步长的确认可以看作是一个一维优化问题 $\min_{\alpha > 0} \phi(\alpha) = f(x^{(k)} + \alpha d^{(k)})$.
+      - 更新 $x^{(k+1)} = x^{(k)} + \alpha_k d^{(k)}$.
+- 信赖域法 (Trust Region Method): 在 $x^{(k)}$ 附近构造一个局部模型, 在该模型上求解一个子问题以确定更新方向和步长. ($\min f(x^{(k)}  + d)$, s.t. $\|d\| \leq \Delta_k$)

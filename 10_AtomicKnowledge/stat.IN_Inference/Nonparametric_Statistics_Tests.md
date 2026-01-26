@@ -1,0 +1,19 @@
+
+- Non-parametric Statistics Tests and its applications
+  - [[Sign Test]]
+    - Single population quantile (median) test
+    - Single population proportion test
+    - Two **Paired** population median test
+  - [[Wilcoxon Signed Rank Test]]
+    - Single population quantile (median) test
+    - Two **Paired** population median test
+  - [[Wilcoxon Rank Sum Test]]
+    - Two **Independent** population median test
+  - [[Mann-Whitney U Test]] (equivalent to Wilcoxon Rank Sum Test)
+    - Two **Independent** population median test
+  - [[Kruskal-Wallis Test]]
+    - Multiple **Independent** population median test (non-parametric ANOVA)
+  - Friedman Test
+    - Multiple **Related** population median test (non-parametric repeated measures ANOVA)
+  - Runs Test
+    - Randomness test for a sequence of data

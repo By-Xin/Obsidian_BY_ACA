@@ -1,0 +1,11 @@
+# Workbench - 工作中的项目，不上传
+30_Workbench/
+
+# macOS
+.DS_Store
+
+# Obsidian
+.obsidian/
+
+
+
