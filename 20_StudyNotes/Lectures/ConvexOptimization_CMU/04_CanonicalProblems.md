@@ -175,3 +175,31 @@ $$\begin{aligned}
 & \text{  s.t.} && \mathcal{A}(X) = \mathbf{y}
 \end{aligned}$$
   - 其中 $\|X\|_* = \sum_i \sigma_i(X)$, $\sigma_i(X)$ 是 $X$ 的奇异值. 该问题可通过对偶形式转化为 SDP.
+
+## Conic Programs
+
+> Ref: Convex Optimization by Boyd & Vandenberghe, Section 4.6.1
+
+锥规划 (Conic Program) 是一种更一般的凸优化问题形式, 其目标函数为线性函数, 约束条件为变量属于某个凸锥.
+
+***Definition:* (Conic Program)** 锥规划的一般形式为:
+$$\begin{aligned}
+& \min_{\mathbf{x}} && \mathbf{c}^\top \mathbf{x} \\
+& \text{  s.t.} && A\mathbf{x} = \mathbf{b} \\
+& && \mathcal{D}(\mathbf{x}) + d \in K
+\end{aligned}$$
+- 其中 $\mathbf{x}, \mathbf{c} \in \mathbb{R}^n$, $A \in \mathbb{R}^{m \times n}$, $\mathbf{b} \in \mathbb{R}^m$. 
+- $\mathcal{D}: \mathbb{R}^n \to \mathcal{Y}$ 是线性映射, 其中 $\mathcal{Y}$ 是某个有限维 Euclidean 空间, 例如 $\mathbb{R}^k$ 中 $\mathcal{D}(\mathbf{x}) = F\mathbf{x}$ ($F \in \mathbb{R}^{k \times n}$) 或 $\mathbb{S}^k$ 中 $\mathcal{D}(\mathbf{x}) = \sum_{i=1}^n x_i F_i$ ($F_i \in \mathbb{S}^k$).
+- $K$ 是 $\mathcal{Y}$ 中的一个闭凸锥 (closed convex cone), 其满足:
+  - Cone: $\forall x \in K,  \alpha \geq 0, \alpha x \in K$.
+  - Convex: $\forall x_1, x_2 \in K, \theta \in [0,1], \theta x_1 + (1-\theta)x_2 \in K$.
+  - Closed: $K$ 包含其边界点.
+
+在 Boyd 的书中, 考虑 $\mathcal{Y} = \mathbb{R}^p$, 此时的 conic program 为:
+$$\begin{aligned}
+& \min_{\mathbf{x}} && \mathbf{c}^\top \mathbf{x} \\
+& \text{  s.t.} && A\mathbf{x} = \mathbf{b} \\
+& && F\mathbf{x} + \mathbf{g} \preceq_K 0
+\end{aligned}$$
+- 其中 $F \in \mathbb{R}^{p \times n}$, $\mathbf{g} \in \mathbb{R}^p$
+- $K \subseteq \mathbb{R}^p$ 是一个闭凸锥, 且不等式 $\preceq_K$ 定义为: $\mathbf{y} \preceq_K \mathbf{z}$ 当且仅当 $\mathbf{z} - \mathbf{y} \in K$.
