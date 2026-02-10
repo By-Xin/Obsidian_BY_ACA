@@ -120,7 +120,7 @@ $$
   $$
 - 该不等式说明, 当点 $x$ 处的梯度 $\nabla f(x)$ 越小, 则该点与最优解 $x^\star$ 之间的距离越近.
 
-### Smoothness  
+### Smoothness
 
 同时, 由于 $\nabla^2 f(x)$ 在 $S$ 上连续, 且 $S$ 是紧集 (compact set), 故还能确认存在常数 $M > 0$, 使得对任意 $x \in S$, 有:
 
@@ -215,8 +215,6 @@ $$
   - 根据凸性的 supporting hyperplane 定理, 对于任意 $x, x^+$, 有 $f(x^+) - f(x) \leq \nabla f(x)^\top (x^+ - x) = t \nabla f(x)^\top \Delta x$. 由于 Descent Method 要求 $f(x^+) < f(x)$ 对任意 $t > 0$ 成立, 故 $\nabla f(x)^\top \Delta x < 0$.
     $\square$ 
 
----
-
 ### Line Search
 
 首先对步长的选择进行讨论. Line Search 是一种常用的步长选择方法. 其包括两种常见的策略:
@@ -264,7 +262,10 @@ $$
 x^{(k+1)} = x^{(k)} - t^{(k)} \nabla f(x^{(k)}).
 $$
 
-### Convergence Analysis
+
+
+
+### Convergence Analysis for Gradient Descent
 
 假设 $f$ 在集合 $S$ 上满足 $m I \preceq \nabla^2 f(x) \preceq M I$, 且只考虑满足 $x-t \nabla f(x) \in S$ 的步长 $t$. 为方便书写, 还引入或重申如下符号:
 - $x^+ := x - t \nabla f(x)$, 表示 GD 更新后的点.
@@ -382,8 +383,7 @@ $$
 
 综上, 与 Exact Line Search 的收敛率分析类似, Backtracking Line Search 的收敛率也为线性收敛, 其收敛率由 $c = 1 - 2m \alpha \min\{1, \frac{\beta}{M}\}$ 决定. 由于 $\alpha \in (0,0.5), \beta \in (0,1)$, 故 $c$ 的值将会大于 $1 - \frac{m}{M}$, 即 Backtracking Line Search 的收敛率将会慢于 Exact Line Search.
 
-
-#### Convergence without Strong Convexity
+#### Convergence with Convexity
 
 下面讨论只保留 $M$-Smooth 条件和一般的凸性条件下, GD 的收敛率. 此时我们能够沿用的是由 $M$-Smooth 提供的 $\dagger$ 不等式:
 
