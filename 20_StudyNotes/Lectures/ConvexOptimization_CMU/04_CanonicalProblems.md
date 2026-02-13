@@ -34,6 +34,14 @@ $$\begin{aligned}
 - 对于无约束变量 $x_i$, 可以将其表示为两个非负变量之差: $x_i = x_i^+ - x_i^-$, 其中 $x_i^+, x_i^- \geq 0$.
 - 目标函数中的常数项 $d$ 可以忽略, 因为它不会影响最优解.
 
+因此通过上述变换, 一般形式转化为标准形式的结果为:
+$$\begin{aligned}
+& \text{minimize} && \mathbf{c}^\top \mathbf{x}^+  - \mathbf{c}^\top \mathbf{x}^- \\
+& \text{subject to} && G(\mathbf{x}^+ - \mathbf{x}^-) + \mathbf{s} = \mathbf{h} \\
+& && A(\mathbf{x}^+ - \mathbf{x}^-) = \mathbf{b} \\
+& && \mathbf{x}^+, \mathbf{x}^-, \mathbf{s} \succeq \mathbf{0}
+\end{aligned}$$
+
 
 ***Example:* (Basis Pursuit)**. 给定高维稀疏的线性系统 $X\boldsymbol{\beta} = \mathbf{y}$, 其中 $X \in \mathbb{R}^{n \times p}$, 且 $n < p$, 希望找到最稀疏的解 $\boldsymbol{\beta}$. 则原始问题为:
 $$\begin{aligned}
