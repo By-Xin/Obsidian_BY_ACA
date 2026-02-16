@@ -4,7 +4,7 @@
 
 ## Optimization Problems
 
-> Ref: Boyd & Vandenberghe, Convex Optimization, Section 4.2
+- *Book Reference: Boyd & Vandenberghe, Convex Optimization, Section 4.2*
 
 ### Problem Formulation
 
@@ -14,14 +14,11 @@ $$\begin{aligned}
 \text{s.t.} \quad & g_i(x) \leq 0, \quad i=1, \ldots, m \\
 & Ax = b
 \end{aligned}$$
-其中 $f, g_i$ 是凸函数, optimization domain $D = \bigcap_{i=1}^m \text{dom}(g_i) \bigcap \text{dom}(f)$ 是凸集.
-- $f$ 称作 criterion 或 objective function.
-- $g_i$ 称作 inequality constraint functions.
-- 对于满足所有约束条件的 $x$ 称作 feasible point, 否则称作 infeasible point.
-- 若存在 $x^*$ 是所有 feasible point 中使 $f(x)$ 取得最小值的点, 则称 $x^*$ 为 optimal point 或该问题的 solution, 最小值 $f(x^*)$ 称作 optimal value.
-- 若 $x$ 是 feasible point, 且有 $f(x) \leq f^*(x)+\epsilon$, 则称 $x$ 为 $\epsilon$-suboptimal point.
-- 若 $x$ 是 feasible point 且 $g_i(x) = 0$ 对某些 $i$ 成立, 则称该约束条件 $g_i$ 在 $x$ 处为 active constraint, 否则称为 inactive constraint.
-- 一个凸的最小化问题可以等价于最大化 $-f(x)$ 的问题, 因此有时也称 $f$ 为 cost function.
+
+- 其中 $f, g_i$ 是凸函数, optimization domain $D = \bigcap_{i=1}^m \text{dom}(g_i) \bigcap \text{dom}(f)$ 是凸集. $f$ 称作 criterion 或 objective function. $g_i$ 称作 inequality constraint functions.
+- 对于满足所有约束条件的 $x$ 称作 feasible point, 否则称作 infeasible point. 若 $x$ 是 feasible point 且 $g_i(x) = 0$ 对某些 $i$ 成立, 则称该约束条件 $g_i$ 在 $x$ 处为 active constraint, 否则称为 inactive constraint.
+- 若存在 $x^*$ 是所有 feasible point 中使 $f(x)$ 取得最小值的点, 则称 $x^*$ 为 optimal point 或该问题的 solution, 最小值 $f(x^*)$ 称作 optimal value. 若 $x$ 是 feasible point, 且有 $f(x) \leq f^*(x)+\epsilon$, 则称 $x$ 为 $\epsilon$-suboptimal point.
+
 
 同时方便起见, 定义优化问题的最优值 $p^\star$:
 $$\begin{aligned}
@@ -109,7 +106,7 @@ $$\begin{aligned}
 
 ### First-Order Optimality Conditions
 
-> Ref: Boyd & Vandenberghe, Convex Optimization, Section 4.2
+- *Book Reference: Boyd & Vandenberghe, Convex Optimization, Section 4.2*
 
 给定可微的凸函数 $f$, 考虑如下优化问题:
 $$\begin{aligned}
@@ -121,7 +118,7 @@ $$\begin{aligned}
 \nabla f(x^*)^\top (x - x^*) \geq 0, \quad \forall x\in C \quad (\star)
 \end{aligned}$$
 
-![](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/202602021150491.png)
+![](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260216164456.png)
 
 - *Proof.*
   - $(\star) \Rightarrow x^*$ 是最优解:
@@ -188,7 +185,7 @@ $$\begin{aligned}
 
 ## Equivalence between Different Forms of Optimization Problems
 
-> Ref: Boyd & Vandenberghe, Convex Optimization, Section 4.1.3
+- *Book Reference: Boyd & Vandenberghe, Convex Optimization, Section 4.1.3*
 
 有一些变换可以将不同形式的优化问题相互转化. 
 
@@ -232,7 +229,7 @@ $$\begin{aligned}
 
 ### Partial Optimum
 
-> Ref: Boyd & Vandenberghe, Convex Optimization, Section 3.2.5, Section 4.1.3
+- *Book Reference: Boyd & Vandenberghe, Convex Optimization, Section 3.2.5, Section 4.1.3*
 
 如如果 $f$ 关于 $(x,y)$ 是凸函数 , 且 $C$ 是非空凸集, 则函数
 $$\begin{aligned}

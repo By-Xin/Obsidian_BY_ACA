@@ -4,7 +4,7 @@
 
 ## Unconstrained Minimization Problems
 
-> Ref: Convex Optimization by Boyd & Vandenberghe, Section 9.1
+- *Book Reference: Convex Optimization by Boyd & Vandenberghe, Section 9.1*
 
 给定无约束优化问题:
 
@@ -171,7 +171,7 @@ $$
 
 ## Descent Methods
 
-> Ref: Convex Optimization by Boyd & Vandenberghe, Section 9.2
+- *Book Reference: Convex Optimization by Boyd & Vandenberghe, Section 9.2*
 
 ### General Descent Methods
 

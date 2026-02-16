@@ -99,6 +99,13 @@ $$
 
 ## Key properties of Convex Sets
 
+> **$\mathbb{R}^n$ 中的简单拓扑**: 
+> - **Open Ball**: 对于点 $x \in \mathbb{R}^n$ 及实数 $r>0$, 定义开球为 $B(x,r) = \{y \in \mathbb{R}^n: \|y-x\| < r\}$.
+> - **Interior Point**: 对于集合 $C \subseteq \mathbb{R}^n$, 若存在 $r>0$ 使得开球 $B(x,r) \subset C$, 则称点 $x$ 为 $C$ 的内点. 数学上表示为: $\text{int}(C) = \{x \in C: \exists r>0, B(x,r) \subset C\}$.
+> - **Exterior Point**: 对于集合 $C \subseteq \mathbb{R}^n$, 若存在 $r>0$ 使得开球 $B(x,r) \cap C = \emptyset$, 则称点 $x$ 为 $C$ 的外点.
+> - **Boundary**: 对于集合 $C \subseteq \mathbb{R}^n$, 其边界定义为: $\text{bd}(C) = \text{cl}(C) \setminus \text{int}(C) = \mathbb{R}^n \setminus (\text{int}(C) \cup \text{ext}(C))$. 即边界上的点既不是内点, 也不是外点.
+>    - **Closure**: 对于集合 $C \subseteq \mathbb{R}^n$,  其闭包定义为: $\text{cl}(C) = \{x \in \mathbb{R}^n: \forall r>0, B(x,r) \cap C \neq \emptyset\}$. 即对于 closure 中的任意点, 其任意小的邻域内均包含 $C$ 中的点.故 $\text{cl}(C) = \text{int}(C) \cup \text{bd}(C)$.
+> - 给定 $C \subseteq \mathbb{R}^n$, 则空间中的任意点 $x$ 要么是 $C$ 的内点, 要么是外点, 要么是边界点.
 
 ***Theorem*(Separating Hyperplane Theorem)**: 对于两个不相交的凸集 $C,D \subset \mathbb{R}^n$, 存在一个超平面将其分开, 即存在非零向量 $\boldsymbol{a} \in \mathbb{R}^n$ 及标量 $b \in \mathbb{R}$, 使得:
 
@@ -134,6 +141,7 @@ h'(0) = 2(\boldsymbol{c}_0 - \boldsymbol{d}_0)^\top (\boldsymbol{d}_0 - \boldsym
       $$
 
       这说明在 $t=0$ 附近, $h(t)$ 是递减的. 因此, 存在一个足够小的正数 $\Delta t > 0$, 使得 $h(\Delta t) < h(0)$, 即 $\|\boldsymbol{c}_0 - \boldsymbol{d}_{\Delta t}\| < \|\boldsymbol{c}_0 - \boldsymbol{d}_0\|$. 这与 $\boldsymbol{c}_0$ 和 $\boldsymbol{d}_0$ 是最短距离点对矛盾.
+
 - 类似地, 可证明对于任意 $\boldsymbol{c} \in C$, $f(\boldsymbol{c}) = (\boldsymbol{d}_0 - \boldsymbol{c}_0)^\top (\boldsymbol{c} - \boldsymbol{m}) \leq 0$.
 - 因此, 取 $\boldsymbol{a} = \boldsymbol{d}_0 - \boldsymbol{c}_0$ 及 $b = \boldsymbol{a}^\top \boldsymbol{m}$, 则有:
 
@@ -153,14 +161,6 @@ $\square$
 $$
 C \subseteq \{\boldsymbol{x} : \boldsymbol{a}^\top \boldsymbol{x} \leq \boldsymbol{a}^\top \boldsymbol{x}_0\},
 $$
-
-> ***补充* ($\mathbb{R}^n$ 中的简单拓扑)**: 
-> - **Open Ball**: 对于点 $x \in \mathbb{R}^n$ 及实数 $r>0$, 定义开球为 $B(x,r) = \{y \in \mathbb{R}^n: \|y-x\| < r\}$.
-> - **Interior Point**: 对于集合 $C \subseteq \mathbb{R}^n$, 若存在 $r>0$ 使得开球 $B(x,r) \subset C$, 则称点 $x$ 为 $C$ 的内点. 数学上表示为: $\text{int}(C) = \{x \in C: \exists r>0, B(x,r) \subset C\}$.
-> - **Exterior Point**: 对于集合 $C \subseteq \mathbb{R}^n$, 若存在 $r>0$ 使得开球 $B(x,r) \cap C = \emptyset$, 则称点 $x$ 为 $C$ 的外点.
-> - **Boundary**: 对于集合 $C \subseteq \mathbb{R}^n$, 其边界定义为: $\text{bd}(C) = \text{cl}(C) \setminus \text{int}(C) = \mathbb{R}^n \setminus (\text{int}(C) \cup \text{ext}(C))$. 即边界上的点既不是内点, 也不是外点.
->    - **Closure**: 对于集合 $C \subseteq \mathbb{R}^n$,  其闭包定义为: $\text{cl}(C) = \{x \in \mathbb{R}^n: \forall r>0, B(x,r) \cap C \neq \emptyset\}$. 即对于 closure 中的任意点, 其任意小的邻域内均包含 $C$ 中的点.故 $\text{cl}(C) = \text{int}(C) \cup \text{bd}(C)$.
-> - 给定 $C \subseteq \mathbb{R}^n$, 则空间中的任意点 $x$ 要么是 $C$ 的内点, 要么是外点, 要么是边界点.
 
 *Proof.*
 
@@ -219,11 +219,12 @@ $$
 
 - **Strictly Convex Function**: 若对任意 $x \neq y \in \text{dom}(f)$ 及 $t \in (0,1)$, 有:
 
-$$
-f(tx + (1-t)y) < t f(x) + (1-t) f(y)
-$$
+  $$
+  f(tx + (1-t)y) < t f(x) + (1-t) f(y)
+  $$
 
   - 可以认为, strictly convex function 要 “更凸于“ 线性函数.
+
 - **Strongly Convex Function**: 若存在常数 $m > 0$, 使得对于给定函数 $f$ 有: $f(x)-\frac{m}{2}\|x\|^2$ 是凸函数, 则称 $f$ 是 $m$-强凸函数. 
   - 可以认为, strongly convex function 要 “更凸于“ 二次函数.
 
