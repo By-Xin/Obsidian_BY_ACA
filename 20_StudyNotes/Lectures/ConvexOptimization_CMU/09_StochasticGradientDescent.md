@@ -179,6 +179,128 @@ Adam 的更新规则为:
 
 首先讨论在一般凸函数上的收敛性. 有如下假设:
 - 每个 $f_i$ 都是闭凸函数, 存在 subgradient. 
-- 随机次梯度的二阶矩有界, 即存在常数 $G > 0$ 使得 $\mathbb{E}[\|g_{i_k}(x_k)\|^2] \leq G^2<\infty$ 对于所有 $k$ 都成立, 其中 $g_{i_k}(x_k)\in\partial f_{i_k}(x_k)$ 是随机样本 $i_k$ 处的一个次梯度.
+- 随机次梯度的二阶矩有界, 即存在常数 $M > 0$ 使得 $\mathbb{E}[\|g_{i_k}(x_k)\|^2] \leq M^2<\infty$ 对于所有 $k$ 都成立, 其中 $g_{i_k}(x_k)\in\partial f_{i_k}(x_k)$ 是随机样本 $i_k$ 处的一个次梯度.
+  - $M^2$ 可以看作是随机次梯度的方差上界, 该假设保证了 SGD 的更新方向不会过于不稳定, 从而为算法的收敛性提供了必要的条件.
+- 随机点列 $\{x_k\}$ 处处有界. 即存在常数 $R > 0$ 使得 $\|x_k\| \leq R$ 对于所有 $k$ 都成立. 
+
+注: 在进行 SGD 的收敛分析时, 由于每次迭代的更新方向是随机的, 因此我们通常关注的是算法的**期望行为**或者**高概率行为**. 此外, 对于某一个具体的迭代点 $x_k$, 由于 $i_k$ 的随机性, 其更新方向 $g_{i_k}(x_k)$ 也是随机的, 因此我们通常也会考虑这些迭代点的平均重心 $\bar{x}_k$ 来分析算法的收敛性.
+
+***Lemma* (SGD 的累计误差)**: 在上述假设下,令 $\{\alpha_k\}$ 是任意正步长序列, $\{x_k\}$ 是 SGD 迭代生成的点列, 则对于任意 $K \geq 1$ 和任意 $x \in \mathbb{R}^n$, 都有如下不等式成立:
+$$
+\sum_{k=1}^K \alpha_k \mathbb{E}[f(x_k) - f(x^*)] \leq \frac{1}{2} \mathbb{E}[\|x_1 - x\|^2] + \frac{1}{2} \sum_{k=1}^K \alpha_k^2 M^2,
+$$
+
+- *Proof*.
+  - 记 $g_k := g_{i_k}(x_k) \in \partial f_{i_k}(x_k)$ 是指在第 $k$ 次迭代中, 随机选择的样本 $i_k$ 在 $x_k$ 处的一个次梯度. 记 $\bar{g}_k := \mathbb{E}[g_{i_k}(x_k) \mid x_k]$ 是 $x_k$ 处的随机次梯度的条件期望, 则由 SGD 估计的无偏性可知 $\bar{g}_k \in \partial f(x_k)$. 记 $\xi_k = g_k - \bar{g}_k$ 为随机次梯度的噪声, 则 $\mathbb{E}[\xi_k \mid x_k] = 0$.
+  - 由次梯度的性质 $\langle \bar{g}_k, x^* - x_k \rangle \leq f(x^*) - f(x_k)$, 可以推得:
+    $$
+    \begin{aligned}
+    \frac12\|x_{k+1} - x^*\|^2 &= \frac12\|x_k - \alpha_k g_k - x^*\|^2 \\
+    &= \frac12\|x_k - x^*\|^2 - \alpha_k \langle g_k, x_k - x^* \rangle +\frac12 \alpha_k^2 \|g_k\|^2 \\
+    &= \frac12\|x_k - x^*\|^2 - \alpha_k \langle \bar{g}_k, x_k - x^* \rangle - \alpha_k \langle \xi_k, x_k - x^* \rangle +\frac12 \alpha_k^2 \|g_k\|^2 \\
+    &\leq \frac12\|x_k - x^*\|^2 - \alpha_k (f(x_k) - f(x^*)) - \alpha_k \langle \xi_k, x_k - x^* \rangle +\frac12 \alpha_k^2 M^2.
+    \end{aligned}
+    $$
+  
+  - 又根据条件期望 $\mathbb{E}[\langle \xi_k, x_k - x^* \rangle \mid x_k] = 0$, 利用重期望可以得到:$\mathbb{E}[\langle \xi_k, x_k - x^* \rangle] = \mathbb{E}[\mathbb{E}[\langle \xi_k, x_k - x^* \rangle \mid x_k]] = 0$. 因此, 对上述不等式两边取期望, 可以得到:
+    $$
+    \alpha_k \mathbb{E}[f(x_k) - f(x^*)] \leq \frac12\mathbb{E}[\|x_k - x^*\|^2] - \frac12\mathbb{E}[\|x_{k+1} - x^*\|^2] + \frac12 \alpha_k^2 M^2.
+    $$
+
+  - 将上述不等式对 $k=1, 2, \ldots, K$ 进行求和, 可以得到:
+    $$
+    \sum_{k=1}^K \alpha_k \mathbb{E}[f(x_k) - f(x^*)] \leq \frac{1}{2} \mathbb{E}[\|x_1 - x^*\|^2] + \frac{1}{2} \sum_{k=1}^K \alpha_k^2 M^2.
+    $$
+
+  $\square$
+
+- 上述引理在说明: 
+  - SGD 的累计误差 (即 $\sum_{k=1}^K \alpha_k \mathbb{E}[f(x_k) - f(x^*)]$) 可以被初始点与最优点之间的距离 $\|x_1 - x^*\|^2$ 和噪声项 $\sum_{k=1}^K \alpha_k^2 M^2$ 控制. 
+  - 这为我们分析 SGD 的收敛性提供了一个重要的工具, 因为它将算法的性能与初始条件和随机梯度的方差联系起来.
+
+***Theorem* (SGD 的收敛性 1: 在步长加权平均意义下的收敛)**: 在上述假设下, 定义步长加权平均点 $\bar{x}_K := \dfrac{\sum_{k=1}^K \alpha_k x_k}{\sum_{k=1}^K \alpha_k}$, 则对于任意 $K \geq 1$ 和任意 $x \in \mathbb{R}^n$, 都有如下期望意义下的收敛性保证:
+$$
+\mathbb{E}[f(\bar{x}_K) - f(x^*)] \leq \frac{R^2 + \sum_{k=1}^K \alpha_k^2 M^2}{2\sum_{k=1}^K \alpha_k}.
+$$
+
+- *Proof*.
+  - 记 $A_K := \sum_{k=1}^K \alpha_k$, 则 $\bar{x}_K = \frac{1}{A_K} \sum_{k=1}^K \alpha_k x_k$. 由于 $f$ 是凸函数, 由 Jensen Inequality 可以得到:
+    $$
+    f(\bar{x}_K) = f\left(\frac{1}{A_K} \sum_{k=1}^K \alpha_k x_k\right) \leq \frac{1}{A_K} \sum_{k=1}^K \alpha_k f(x_k).
+    $$
+  
+  - 两侧同时减去 $f(x^*)$ 并取期望, 可以得到:
+    $$
+    \mathbb{E}[f(\bar{x}_K) - f(x^*)] \leq \frac{1}{A_K} \sum_{k=1}^K \alpha_k \mathbb{E}[f(x_k) - f(x^*)].
+    $$
+
+  - 结合之前的引理, 可以得到:
+    $$
+    \begin{aligned}
+    \mathbb{E}[f(\bar{x}_K) - f(x^*)] &\leq \frac{1}{A_K} \left( \frac{1}{2} \mathbb{E}[\|x_1 - x^*\|^2] + \frac{1}{2} \sum_{k=1}^K \alpha_k^2 M^2 \right) \\
+    &\leq \frac{R^2 + \sum_{k=1}^K \alpha_k^2 M^2}{2 A_K}.
+    \end{aligned} 
+    $$
+
+  $\square$
+
+- 由上述定理可以看出, SGD 的收敛速度取决于步长序列 $\{\alpha_k\}$ 的选择. 
+  - 例如, 当 $\sum_{k=1}^\infty \alpha_k = \infty$ 且 $\sum_{k=1}^\infty \alpha_k^2 < \infty$ 时, 随机梯度下降算法在期望意义下收敛到最优值, 即 $\lim_{K \to \infty} \mathbb{E}[f(\bar{x}_K) - f(x^*)] = 0$. 
+  - 若选择 $\alpha_k$ 为一个固定步长 $\alpha > 0$, 则其在期望意义下是不收敛的, 即 $\mathbb{E}[f(\bar{x}_K) - f(x^*)] \leq \frac{R^2 + K \alpha^2 M^2}{2 K \alpha} \stackrel{K \to \infty}{\longrightarrow} \frac{\alpha M^2}{2} > 0$. 此时只能确定一个次优解的误差上界, 但无法保证其收敛到最优值.
+
+
+***Theorem* (SGD 的收敛性 2: 不增步长序列下的等权平均收敛)**: 在上述假设下, 定义等权平均点 $\hat{x}_K := \frac{1}{K} \sum_{k=1}^K x_k$, 且要求步长序列 $\{\alpha_k\}$ 是一个不增的正数列, 则对于任意 $K \geq 1$ 和任意 $x \in \mathbb{R}^n$, 都有如下期望意义下的收敛性保证:
+$$
+\mathbb{E}[f(\hat{x}_K) - f(x^*)] \leq \frac{R^2}{K \alpha_K} + \frac{1}{2K} \sum_{k=1}^K \alpha_k M^2.
+$$
+
+- 该定理与前一定理的主要区别在于, 前者是针对步长加权平均点 $\bar{x}_K$ 的收敛性保证, 而后者则是针对等权平均点 $\hat{x}_K$ 的收敛性保证, 其额外只需要要求步长序列 $\{\alpha_k\}$ 是一个不增的正数列即可. 
+- 通过选择合适的步长序列, 例如 $\alpha_k = \mathcal{O}(1/\sqrt{k})$, 可以得到 $\mathbb{E}[f(\hat{x}_K) - f(x^*)] = \mathcal{O}(1/\sqrt{K})$ 的收敛速度, 这也是 SGD 在一般凸函数上的最优收敛速度.
+  - 特别地, 取 $\alpha_k = \dfrac{R}{M \sqrt{k}}$, 则可以得到 $\mathbb{E}[f(\hat{x}_K) - f(x^*)] \leq \dfrac{3R M}{2\sqrt{K}}$ 的收敛速度.
+
+> [!info] 讨论:
+> 通过上述的分析, 发现 SGD 和 GD 在一般凸函数上的收敛速度都是 $\mathcal{O}(1/\sqrt{K})$, 这表明在一般凸函数上, SGD 的收敛速度和 GD 是一样的. 然而其每一步的计算成本却大大降低了, 因此在大规模优化问题中, SGD 往往比 GD 更为高效.
+
+***Theorem* (SGD 的收敛性 3: 固定步长下的依概率收敛)**: 在上述假设下, 定义等权平均点 $\hat{x}_K := \frac{1}{K} \sum_{k=1}^K x_k$, 且选择步长 $\alpha_k = \mathcal{O}(1/\sqrt{K})$ (如 $\alpha_k = \dfrac{R}{M \sqrt{k}}$), 则对于任意 $\delta \in (0, 1)$ 和任意 $x \in \mathbb{R}^n$, 都有如下依概率收敛性保证:
+$$
+f(\hat{x}_K) - f(x^*) \stackrel{P}{\longrightarrow} 0 \quad \text{as } K \to \infty.
+$$
+或等价地
+$$
+\lim_{K \to \infty} P(f(\hat{x}_K) - f(x^*) \leq \epsilon) = 1 \quad \text{for any } \epsilon > 0.
+$$
+- *Proof*.
+  - 由于 $\alpha_k = \mathcal{O}(1/\sqrt{K})$, 则由 Theorem 2 可以得到 $\mathbb{E}[f(\hat{x}_K)- f(x^*)] \to 0$ 当 $K \to \infty$.
+  - 根据 Markov 不等式, 对任意 $\epsilon > 0$, 可以得到:
+    $$
+    \mathbb{P}(f(\hat{x}_K) - f(x^*) > \epsilon) \leq \frac{\mathbb{E}[f(\hat{x}_K) - f(x^*)]}{\epsilon} \to 0 \quad \text{as } K \to \infty.
+    $$
+
+***Theorem* (SGD 的收敛性 3': 固定步长下的依概率收敛速度)**: 在上述假设下, 进一步假设对于所有次梯度 $g_{i_k}(x_k)$ 都满足 $\|g_{i_k}(x_k)\| \leq M$ 几乎处处成立, 则对于任意 $\epsilon > 0$, 可保证如下收敛以至少 $1 - \exp(-\epsilon^2/2)$ 的概率成立:
+$$
+f(\hat{x}_K) - f(x^*) \leq \underbrace{\frac{R^2}{2K \alpha_K} + \frac{1}{2K} \sum_{k=1}^K \alpha_k M^2}_{\scriptsize{\text{Expectation Bound in Thm. 2}}} + \underbrace{\frac{RM}{\sqrt{K}}\epsilon}_{\scriptsize{\text{Prob. Bound}}}.
+$$
+
+- 特别地, 若取 $\alpha_k = \dfrac{R}{M \sqrt{k}}$, $\delta = \exp(-\epsilon^2/2)$, 则可以得到如下概率收敛速度:
+  $$
+  \mathbb{P}\left\{f(\hat{x}_K) - f(x^*) \leq \frac{3R M}{2\sqrt{K}} + \frac{RM}{\sqrt{K}}\sqrt{2\log(1/\delta)}\right\} \geq 1 - \delta.
+  $$
 
 ### Convergence under Strong Convexity
+
+如下表格总结了普通方法和随机算法在目标函数 $f$ 一般凸(次梯度), 可微强凸, 及可微强凸且 $L$-smooth 的情况下的复杂度 (达到 $\epsilon$-近似最优解的迭代次数), 其中 $N$ 是数据集的大小, $\epsilon$ 是优化误差的上界:
+
+| 算法随机性 \ $f$ 类型 | 凸 | 可微强凸 | 可微强凸且 $L$-smooth |
+| --- | --- | --- | --- |
+| 随机 | $\mathcal{O}(1/\epsilon^2)$ | $\mathcal{O}(1/\epsilon)$ | $\mathcal{O}(1/\epsilon)$ |
+| 非随机 | $\mathcal{O}(N/\epsilon)$ | $\mathcal{O}(\log(N/\epsilon))$ | $\mathcal{O}(N\log(1/\epsilon))$ |
+
+- 从上表可以看出, 在一般凸和可微强凸的情况下, 随机算法和非随机算法在同一复杂度级别上, 但随机算法的复杂度不依赖于数据集大小 $N$, 因此在大规模优化问题中更为高效.
+- 然而在可微强凸且 $L$-smooth 的情况下, 由于梯度估计的方差, 随机算法的复杂度劣于非随机算法, 因此在这种情况下, 我们通常会考虑使用一些方差缩减技术 (如 SAG, SVRG, SAGA 等) 来提高随机算法的收敛速度.
+
+## Variance Reduction Techniques for SGD
+
+### Consequences of Variance in SGD
+
+
+### Variance Reduction Techniques
