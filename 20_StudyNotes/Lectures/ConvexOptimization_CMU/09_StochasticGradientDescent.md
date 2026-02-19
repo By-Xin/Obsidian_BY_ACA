@@ -302,5 +302,53 @@ $$
 
 ### Consequences of Variance in SGD
 
+假设目标函数 $f$ 是 $\mu$-强凸的，并且 $L$-光滑的，那么对于任意的 $x,y$，都有:
+- 强凸: $\langle \nabla f(x) - \nabla f(y), x-y \rangle \geq \mu \|x-y\|^2$
+- 光滑: $\|\nabla f(x) - \nabla f(y)\| \leq L \|x-y\|$
+
+记 $\Delta_k = \|x_k - x^*\|^2$. 则可以对下一次更新点 $x_{k+1}$ 对最优点的平方距离进行分析:
+$$
+\begin{aligned}
+\mathbb{E}[\Delta_{k+1}^2] &=\mathbb{E}[\|x_{k+1} - x^*\|^2 ]\\
+&\leq \underbrace{(1-2\alpha\mu+\alpha^2L^2)\mathbb{E}[\Delta_k^2]}_{\text{A: Deterministic Q-linear}}+\underbrace{\alpha^2\mathbb{E}[\|\nabla f(x_k) - \nabla f_{i_k}(x_k)\|^2]}_{\text{B: MSE of stochastic gradient}}
+\end{aligned}
+$$
+
+- 通过上面的分解可以看到, 总的误差由两部分组成: 
+  - A: 确定性误差, 由算法的迭代性质决定, 取决于步长 $\alpha$, 强凸参数 $\mu$ 和光滑参数 $L$. 当 $\alpha$ 选择得当时, 该项会以线性速率收敛. 这一项并不含随机梯度的随机抽样, 只和算法本身的收敛性质有关.
+  - B: 随机误差, 由随机梯度的方差决定. 这一项反映了由于使用随机梯度而引入的噪声, 取决于步长 $\alpha$ 和随机梯度的均方误差 $\mathbb{E}[\|\nabla f(x_k) - \nabla f_{i_k}(x_k)\|^2]$. (其实就是方差因为 SGD 的估计是无偏的)
+    - 在一些机器学习的应用中, 因为对于精度要求相对不高, 往往 $B\ll A$, 因此在实践中 SGD 的真实收敛速度会比理论的速度快一些. 
+    - 而随着迭代步骤增多, 方差逐渐增大, 最终的收敛速度应在 $\mathcal{O}(k)$ 的水平. 
+    - 为了获得更快的收敛速度, 可以使用一些方差减少的方法, 比如 SVRG, SAGA 等来减少 B 对速度的影响.
 
 ### Variance Reduction Techniques
+
+#### SAG and SAGA
+
+SAG (Stochastic Average Gradient) 和 SAGA 通过维护历史梯度来减少随机梯度的方差. 
+
+SAG 方法会维护一个 $N$ 维梯度空间 $\{g_i^k\}_{i=1}^N$, 其中 $g_i^k$ 是第 $i$ 个样本在第 $k$ 次迭代时的梯度估计. 在每次迭代中, 随机选择一个样本索引 $i_k$, 计算该样本的梯度 $g_{i_k}^k = \nabla f_{i_k}(x_k)$, 并更新这个梯度列表. 最终在每次迭代中, 使用所有样本的平均梯度 $\frac{1}{N} \sum_{i=1}^N g_i^k$ 来作为全梯度的估计, 从而减少了随机梯度的方差. 其具体更新规则为:
+- 初始化: $g_i^0 = [0, \ldots, 0]$ 对于所有 $i=1, 2, \ldots, N$, 以及起点 $x_0$.
+- 在迭代 $k = 0, 1, 2, \ldots$ 中:
+  - 随机选择一个样本索引 $i_k \in \{1, 2, \ldots, N\}$.
+  - 计算该样本的梯度: $g_{i_k}^k = \nabla f_{i_k}(x_k)$.
+  - 更新梯度列表: $g_i^k = g_i^{k-1}$ 对于 $i \neq i_k$, 以及 $g_{i_k}^k$ 如上所定义.
+  - 更新参数: $x_{k+1} = x_k - \alpha \frac{1}{N} \sum_{i=1}^N g_i^k$.
+
+在强凸光滑假设下, 对于固定步长 $\alpha = 1/(16L)$, 及零梯度初始化, SAG 的收敛速度为:
+$$
+\mathbb{E}[f(x_k) - f(x^*)] \leq \left(1 - \min\left\{\frac{\mu}{16L}, \frac{1}{8N}\right\}\right)^k \cdot C_0.
+$$
+
+SAG 的缺点是在于其需要维护一个 $N$ 维的梯度列表, 当数据集较大时, 其内存开销较大. 另一方面, SAG 的随机梯度估计是有偏的, 因此 SAGA 则使用一个无偏的随机梯度估计来改进 SAG:
+$$
+x_{k+1} = x_k - \alpha_k \left( \nabla f_{i_k}(x_k) - g_{i_k}^k + \frac{1}{N} \sum_{i=1}^N g_i^{k-1} \right).
+$$
+
+#### SVRG
+
+SVRG 通过周期性记录全梯度 checkpoint, 并在每次迭代时通过与 checkpoint 的全梯度进行差分来减少随机梯度的方差. 记 $\tilde{x}^{(j)}$ 是第 $j$ 个 checkpoint, 对应的全梯度为 $\nabla f(\tilde{x}^{(j)}) = \frac{1}{N} \sum_{i=1}^N \nabla f_i(\tilde{x}^{(j)})$. 故在每次迭代中, 更新方向为:   
+
+$$
+v_k := \nabla f_{i_k}(x_k) - [\nabla f_{i_k}(\tilde{x}^{(j)}) - \nabla f(\tilde{x}^{(j)})].
+$$
