@@ -1,4 +1,4 @@
-# Convexity (I)
+# Convexity (I): Convexity in Maths
 
 > Ref: https://www.stat.cmu.edu/~ryantibs/convexopt-F18/
 
@@ -125,19 +125,19 @@ $$
     - 此时, 考虑距离函数 $h(t) = \|\boldsymbol{c}_0 - \boldsymbol{d}_t\|^2$. 则有:
 
       $$
-h(t) = \|\boldsymbol{c}_0 - (t \boldsymbol{d}' + (1-t) \boldsymbol{d}_0)\|^2 = \|\boldsymbol{c}_0 - \boldsymbol{d}_0 + t(\boldsymbol{d}_0 - \boldsymbol{d}')\|^2
+      h(t) = \|\boldsymbol{c}_0 - (t \boldsymbol{d}' + (1-t) \boldsymbol{d}_0)\|^2 = \|\boldsymbol{c}_0 - \boldsymbol{d}_0 + t(\boldsymbol{d}_0 - \boldsymbol{d}')\|^2
       $$
 
       对 $t$ 求导, 有:
 
       $$
-h'(t) = 2(\boldsymbol{c}_0 - \boldsymbol{d}_0 + t(\boldsymbol{d}_0 - \boldsymbol{d}'))^\top (\boldsymbol{d}_0 - \boldsymbol{d}')
+      h'(t) = 2(\boldsymbol{c}_0 - \boldsymbol{d}_0 + t(\boldsymbol{d}_0 - \boldsymbol{d}'))^\top (\boldsymbol{d}_0 - \boldsymbol{d}')
       $$
 
       在 $t=0$ 处, 有:
 
       $$
-h'(0) = 2(\boldsymbol{c}_0 - \boldsymbol{d}_0)^\top (\boldsymbol{d}_0 - \boldsymbol{d}') < 0
+      h'(0) = 2(\boldsymbol{c}_0 - \boldsymbol{d}_0)^\top (\boldsymbol{d}_0 - \boldsymbol{d}') < 0
       $$
 
       这说明在 $t=0$ 附近, $h(t)$ 是递减的. 因此, 存在一个足够小的正数 $\Delta t > 0$, 使得 $h(\Delta t) < h(0)$, 即 $\|\boldsymbol{c}_0 - \boldsymbol{d}_{\Delta t}\| < \|\boldsymbol{c}_0 - \boldsymbol{d}_0\|$. 这与 $\boldsymbol{c}_0$ 和 $\boldsymbol{d}_0$ 是最短距离点对矛盾.
@@ -168,7 +168,7 @@ $$
   - 此时, 令 $A:=\{x_0\}, B:=\text{int}(C)$. 则 $A$ 和 $B$ 是不相交的凸集. 根据**Separating Hyperplane Theorem**, 存在非零向量 $\boldsymbol{a} \in \mathbb{R}^n$ 及标量 $b \in \mathbb{R}$, 使得:
 
     $$
-\boldsymbol{a}^\top \boldsymbol{x} \leq b, \quad \forall \boldsymbol{x} \in A, \quad \text{and} \quad \boldsymbol{a}^\top \boldsymbol{y} \geq b, \quad \forall \boldsymbol{y} \in B.
+    \boldsymbol{a}^\top \boldsymbol{x} \leq b, \quad \forall \boldsymbol{x} \in A, \quad \text{and} \quad \boldsymbol{a}^\top \boldsymbol{y} \geq b, \quad \forall \boldsymbol{y} \in B.
     $$
 
     - 由于 $A$ 仅包含点 $x_0$, 则 $\boldsymbol{a}^\top \boldsymbol{x}_0 \leq b$. 故对于任意 $\boldsymbol{y} \in \text{int}(C)$, 有 $\boldsymbol{a}^\top \boldsymbol{y} \geq b \geq \boldsymbol{a}^\top \boldsymbol{x}_0$. 因此, 我们确定了这样一个超平面, 使得 $\text{int}(C)$ 在该超平面的另一侧.
@@ -225,52 +225,52 @@ $$
 
   - 可以认为, strictly convex function 要 “更凸于“ 线性函数.
 
-- **Strongly Convex Function**: 若存在常数 $m > 0$, 使得对于给定函数 $f$ 有: $f(x)-\frac{m}{2}\|x\|^2$ 是凸函数, 则称 $f$ 是 $m$-强凸函数. 
-  - 可以认为, strongly convex function 要 “更凸于“ 二次函数.
-
-显然有: strongly convex function $\implies$ strictly convex function $\implies$ convex function.
-
-如下是一些典型的凸函数的例子:
-
-- **Exponential Function**: $f(x) = e^{ax}$, 其中 $a \in \mathbb{R}$.
-- **Power Function**: $f(x) = x^a$, 其中 $a \geq 1$ 或 $a \leq 0$, 定义域为 $\mathbb{R}_{++}$.
-- **Affine Function**: $f(x) = a^\top x + b$, 其中 $a \in \mathbb{R}^n, b \in \mathbb{R}$. 其既是凸函数, 也是凹函数.
-- **Quadratic Function**: 若给定 $Q\succeq 0$, 则 $f(x) = \frac{1}{2} x^\top Q x + b^\top x + c$ 是凸函数, 其中 $b \in \mathbb{R}^n, c \in \mathbb{R}$.
-- **Least Squares Function**: $f(x) = \|Ax - b\|_2^2$, 其中 $A \in \mathbb{R}^{m\times n}, b \in \mathbb{R}^m$.
-- **Norms**: 任何范数 $\|\cdot\|$ 都是凸函数.
-    - $\ell_p$ norm: 对于 $p \geq 1$, 定义 $f(x) = \|x\|_p = (\sum_{i=1}^n |x_i|^p)^{1/p}$.
-    - $\ell_\infty$ norm: 定义 $f(x) = \|x\|_\infty = \max_{1\leq i \leq n} |x_i|$.
-    - operator norm: 对于给定矩阵 $X$ 及其对应 singular values $\sigma_1(X) \geq \sigma_2(X) \geq \sigma_r(X) \geq 0$, 则定义 $\|X\|_{\text{op}} = \sigma_1(X)$.
-    - nuclear norm / trace norm: 定义 $\|X\|_{\text{nuc}} = \sum_{i=1}^r \sigma_i(X)$.
-    - 注意: $\ell_0$ 'norm': 定义 $f(x) = \|x\|_0 = |\{i: x_i \neq 0\}|$. 虽然其被称为“范数”, 但实际上并不满足范数的定义 (不满足正齐次性及三角不等式). 并且其不是凸函数.
-- **Indicator Function**: 对凸集 $C$, 定义指标函数为:
+- **Strongly Convex Function**: 称 $f$ 是 $m$-强凸函数, 若存在常数 $m > 0$, 使得如下函数 $g$ 是凸函数:
 
     $$
-    I_C(x) = \begin{cases}
-    0, & x \in C \\
-    +\infty, & x \notin C
-    \end{cases}
-    $$
+    g(x) = f(x)-\frac{m}{2}\|x\|^2
+    $$ 
 
-  - 显然, 指标函数是凸函数. 因为其定义域即为凸集 $C$, 且在该定义域内函数值恒为零 (线性函数), 在定义域外函数值恒为无穷大.
-- **Support Function**: 对任意集合 $C$ (不对其凸性作要求), 其 support function 定义为:
-
+  其还有如下等价定义. 若存在常数 $m > 0$, 使得对于任意 $x,y \in \text{dom}(f)$ 及 $\theta \in (0,1)$, 有:
     $$
-    S_C(x) = \sup_{y \in C} x^\top y
+    f(\theta x + (1-\theta)y) \geq f(x) + \theta (f(y) - f(x)) + \frac{m}{2} \theta (1-\theta)\|x-y\|^2
     $$
+  则称 $f$ 是 $m$-强凸函数.
 
-  - 支持函数是凸函数. 因为对于任意 $x_1, x_2 \in \mathbb{R}^n$ 及 $t \in [0,1]$, 有:
+  - 可以认为, strongly convex function 要 “更凸于“ 二次函数. 
+  - Strongly convex 的函数若存在最小值则必定唯一. 
 
-    $$
-    \begin{aligned}
-    S_C(tx_1 + (1-t)x_2)
-    &= \sup_{y \in C} (tx_1 + (1-t)x_2)^\top y \\
-    &\le t \sup_{y \in C} x_1^\top y + (1-t) \sup_{y \in C} x_2^\top y \\
-    &= t S_C(x_1) + (1-t) S_C(x_2).
-    \end{aligned}
-    $$
 
-- **Max Function**: $f(x) = \max\{x_1, x_2, \ldots, x_n\}$ 是凸函数. 
+- 显然有: strongly convex function $\implies$ strictly convex function $\implies$ convex function.
+
+> [!example] 典型的凸函数
+> 
+> - **Exponential Function**: $f(x) = e^{ax}$, 其中 $a \in \mathbb{R}$.
+> - **Power Function**: $f(x) = x^a$, 其中 $a \geq 1$ 或 $a \leq 0$, 定义域为 $\mathbb{R}_{++}$.
+> - **Affine Function**: $f(x) = a^\top x + b$, 其中 $a \in \mathbb{R}^n, b \in \mathbb{R}$. 其既是凸函数, 也是凹函数.
+> - **Quadratic Function**: 若给定 $Q\succeq 0$, 则 $f(x) = \frac{1}{2} x^\top Q x + b^\top x + c$ 是凸函数, 其中 $b \in \mathbb{R}^n, c \in \mathbb{R}$.
+> - **Least Squares Function**: $f(x) = \|Ax - b\|_2^2$, 其中 $A \in \mathbb{R}^{m\times n}, b \in \mathbb{R}^m$.
+> - **Norms**: 任何范数 $\|\cdot\|$ 都是凸函数.
+> - **Indicator Function**: 对凸集 $C$, 定义指标函数为:
+>
+>   $$
+>   I_C(x) = \begin{cases}
+>   0, & x \in C \\
+>   +\infty, & x \notin C
+>   \end{cases}
+>   $$
+>
+>   显然, 指标函数是凸函数. 因为其定义域即为凸集 $C$, 且在该定义域内函数值恒为零 (线性函数), 在定义域外函数值恒为无穷大.
+> - **Support Function**: 对任意集合 $C$ (不对其凸性作要求), 其 support function 定义为:
+>
+>   $$
+>   S_C(x) = \sup_{y \in C} x^\top y
+>   $$
+>
+>   - 支持函数是凸函数. 因为对于任意 $x_1, x_2 \in \mathbb{R}^n$ 及 $t \in [0,1]$, 有:
+>
+> - **Max Function**: $f(x) = \max\{x_1, x_2, \ldots, x_n\}$ 是凸函数. 
+> - **Log-Sum-Exp Function**: $f(x) = \log(\sum_{i=1}^n \exp(x_i))$, 其中 $x \in \mathbb{R}^n$. 
 
 ## Key Properties of Convex Functions
 
@@ -291,13 +291,30 @@ $$
        ![y=log(|x|+1)](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260108115514.png)
 
 
-***Theorem* (First-Order Characterization)**: 函数 $f: \mathbb{R}^n \to \mathbb{R}$ 在凸集 $\text{dom}(f)$ 上可微, 则 $f$ 是凸函数的充分必要条件为:
+> [!danger] **凸函数的一阶充要条件**
+>
+> ***Theorem* (First-Order Characterization)**: 函数 $f: \mathbb{R}^n \to \mathbb{R}$ 在凸集 $\text{dom}(f)$ 上可微, 则 $f$ 是凸函数的充分必要条件为:
+>
+> $$
+> f(y) \geq f(x) + \nabla f(x)^\top (y - x), \quad \forall x,y \in \text{dom}(f)
+> $$
+> - 该不等式表明, 函数在任意点处的切线 (或切平面) 都在函数图像的下方.
+>
+> ***Theorem* (Monotonic of Gradients)**: 函数 $f$ 是可微函数, 其是凸函数当且仅当定义域为凸集且其梯度为单调映射, 即:
+> $$
+> (\nabla f(y) - \nabla f(x))^\top (y - x) \geq 0, \quad \forall x,y \in \text{dom}(f)
+> $$
+>
+> - 对于严格凸函数, 等价于其梯度
+>   $$
+>   (\nabla f(y) - \nabla f(x))^\top (y - x) > 0, \quad \forall x,y \in \text{dom}(f), x \neq y
+>   $$
+> - 对于强凸函数, 等价于其梯度
+>   $$
+>   (\nabla f(y) - \nabla f(x))^\top (y - x) \geq m\|y-x\|^2, \quad \forall x,y \in \text{dom}(f)
+>   $$
 
-$$
-f(y) \geq f(x) + \nabla f(x)^\top (y - x), \quad \forall x,y \in \text{dom}(f)
-$$
 
-- 该不等式表明, 函数在任意点处的切线 (或切平面) 都在函数图像的下方.
 
 ***Theorem* (Second-Order Characterization)**: 函数 $f: \mathbb{R}^n \to \mathbb{R}$ 在凸集 $\text{dom}(f)$ 上二阶可导, 则 $f$ 是凸函数的充分必要条件为:
 
@@ -314,7 +331,6 @@ $$
 f(\mathbb{E}[X]) \leq \mathbb{E}[f(X)]
 $$
 
-***Example* (Convexity of Log-Sum-Exp Function)**: 函数 $g(x) = \log(\sum_{i=1}^n \exp(\boldsymbol{a}_i^\top x + b_i))$, 其中 $\boldsymbol{a}_i \in \mathbb{R}^n, b_i \in \mathbb{R}$, 是凸函数.
 
 
 ## Operations that Preserve Convexity of Functions
