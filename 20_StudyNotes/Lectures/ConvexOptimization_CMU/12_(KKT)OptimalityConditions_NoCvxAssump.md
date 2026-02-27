@@ -1,8 +1,8 @@
-# Optimality Conditions for Constrained Problems (General Case without Convexity Assumption)
+# Optimality Conditions for Constrained Optimization
 
 > [!cite] References
 > - Lecture: https://www.stat.cmu.edu/~ryantibs/convexopt-F18/
-> - Reading: 最优化: 建模、算法与理论, 刘浩洋等, 5.5 小节.
+> - Reading: 最优化: 建模、算法与理论, 刘浩洋等, 5.5、5.6 小节.
 
 ## 0. TL;DR
 
@@ -31,7 +31,9 @@
 - **二阶充分条件**: 若在可行点 $\mathbf{x}^*$ 处, 存在 Lagrange Multiplier $(\lambda_j^*, \mu_i^*)$ 使得 KKT 条件成立, 如果: $\mathbf{d}^\top \nabla^2_{\mathbf{x}\mathbf{x}} L(\mathbf{x}^*, \lambda_j^*, \mu_i^*) \mathbf{d} \gt 0, \quad \forall \mathbf{d} \in \mathcal{C}(\mathbf{x}^*; \lambda_j^*, \mu_i^*), ~\mathbf{d} \neq \mathbf{0}$. 则 $\mathbf{x}^*$ 是严格局部极小点.
 
 
-## 1. First-Order Optimality Conditions
+## 1. Optimal Condition for General Problem (No Convex Assumption)
+
+### 1.1. First-Order Optimality Conditions
 
 回顾, 考虑如下一般的含约束的优化问题 (不要求是凸的):
 $$\begin{aligned}
@@ -50,7 +52,7 @@ $$
 g(\boldsymbol{\lambda}, \boldsymbol{\mu}) = \inf_{\mathbf{x}\in \mathbb{R}^n} L(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\mu})
 $$
 
-### 1.1. Optimality Conditions by Tangent Cone
+#### 1.1.1. Optimality Conditions by Tangent Cone
 
 为定义可行域内的一系列点列的极限状态, 引入切向量和切锥的概念. 
 
@@ -109,7 +111,7 @@ $$
   $\square$
 
 
-### 1.2. Optimality Conditions by Linearized Feasible Direction Cone
+#### 1.1.2. Optimality Conditions by Linearized Feasible Direction Cone
 
 上述在几何上给出了可行域的判定定理, 然而其计算往往是不容易的. 如下我们需要给出更容易计算的可行方向集合之定义. 
 
@@ -186,7 +188,7 @@ $$
 - 线性化可行方向锥易于计算和使用, 但其本身会受到问题的代数表示的影响
 - 切锥相对稳健, 然而其计算往往需要计算极限等复杂操作. 
 
-### 1.3. Constraint Qualification
+#### 1.1.3. Constraint Qualification
 
 根据上述观察, 引入约束的品性 (Constraint Qualification) 这一概念, 满足该品性的约束往往保证了在最优点 $\mathbf{x}^*$ 处可以有诸如 $\mathcal{T}_{\mathcal{X}}(\mathbf{x}^*) = \mathcal{F}(\mathbf{x}^*)$ 的优秀性质. 
 
@@ -256,7 +258,7 @@ $$
 - LCQ 和 LICQ 直接一般没有必然关联.
 
 
-### 1.4. Karush-Kuhn-Tucker (KKT) Conditions
+#### 1.1.4. Karush-Kuhn-Tucker (KKT) Conditions
 
 回顾含约束问题(不要求凸)的几何最优性条件: 对于局部最优解 $\mathbf{x}^*$ 和可行域 $\mathcal{X}$, 则任意可行方向 $\mathbf{d}$ 都满足:
 $$
@@ -373,7 +375,7 @@ $$
 - 需要指出, 该条件成立是建立在 $\mathcal{T}_{\mathcal{X}}(\mathbf{x}^*) = \mathcal{F}(\mathbf{x}^*)$ 成立的前提下的. 这是一个较强假设, 通常由 LICQ、MFCQ、LCQ 等 CQ 保证. 因此 KKT 是一个必要条件, 满足 KKT 条件并不一定是最优点. 
 
 
-## 2. Second-Order Optimality Conditions
+### 1.2. Second-Order Optimality Conditions
 
 对 KKT 点而言, 结合 Stationarity、Dual Feasibility 与 Complementary Slackness 可推出 $\mathbf{d}^\top \nabla f(\mathbf{x}^*) \geq 0, \forall \mathbf{d} \in \mathcal{F}(\mathbf{x}^*)$ (类比 $y=x^3$ 的这种驻点但非局部极值点, 其排除所有能够在一阶情况下让目标函数减小的可行方向). 下面需要通过二阶最优性条件来进一步判断最优点.
 
@@ -521,3 +523,129 @@ $$
 >       - 对于任意的 $\mathbf{d}\neq \mathbf{0} \in \mathcal{C}(\mathbf{y}_2) \Leftrightarrow (d_1, 0)^\top$ , 其中 $d_1 \neq 0$, 有 $\mathbf{d}^\top \nabla^2_{\mathbf{x}\mathbf{x}} L(\mathbf{y}_2) \mathbf{d} = 3d_1^2/2 \gt 0$ 满足二阶必要条件.
 >
 > - 综上, $\mathbf{y}_1$ 不满足局部最优的二阶必要条件, $\mathbf{y}_2$ 满足局部最优的二阶必要条件. 
+
+
+## 2. Optimal Condition for Convex Constrained Problem
+
+考虑如下的凸约束优化问题:
+$$
+\begin{aligned}
+\min_{\mathbf{x}\in \mathcal{D}} & \quad f(\mathbf{x}) \\
+\text{subject to} & \quad c_i(\mathbf{x}) \leq 0, i = 1, \ldots, m \\
+& \quad A\mathbf{x} = \mathbf{b}
+\end{aligned}
+$$
+其中 $f(\mathbf{x})$ 是凸函数, $c_i(\mathbf{x})$ 是凸函数, $A\mathbf{x} = \mathbf{b}$ 是等式约束, $A \in \mathbb{R}^{p\times n}$, $\mathbf{b} \in \mathbb{R}^p$. $\mathcal{D} = \text{dom}(f)$ 为目标函数的定义域. 在定义域中所有满足等式约束和不等式约束的点构成的可行域为 $\mathcal{X} = \left\{ \mathbf{x} \in \mathcal{D} \;\middle|\; c_i(\mathbf{x}) \leq 0, \forall i~; A\mathbf{x} = \mathbf{b} \right\}$.
+
+### 2.1 Slater Condition
+
+凸优化问题具有很好的性质, 其能够给出更强的最优性条件. 其中最著名的就是 Slater Condition. 在给出其严格定义之前, 还要另外定义相对内点集 (Relative Interior). 
+
+***Definition* (Relative Interior)**: 给定集合 $\mathcal{D}$, 记其 affine hull 为 $\text{Aff}(\mathcal{D}) = \left\{\sum_{i=1}^k \alpha_i \mathbf{x}_i \mid \mathbf{x}_1, \ldots, \mathbf{x}_k \in \mathcal{D}; \alpha_1, \ldots, \alpha_k \in \mathbb{R}; k \in \mathbb{N}_+ \right\}$, 即 $\mathcal{D}$ 中所有可能的仿射组合的集合. 则 $\mathcal{D}$ 的相对内点集, 记作 $\text{RelInt}(\mathcal{D})$, 定义为:
+$$
+\text{RelInt}(\mathcal{D}) = \left\{ \mathbf{x} \in \mathcal{D} \;\middle|\; \exists \delta > 0, \text{s.t.} ~ \mathcal{B}(\mathbf{x}, \delta) \cap \text{Aff}(\mathcal{D}) \subseteq \mathcal{D} \right\}
+$$
+
+其中 $\mathcal{B}(\mathbf{x}, \delta)$ 是 $\mathbf{x}$ 的 $\delta$-邻域, 定义为:
+$$
+\mathcal{B}(\mathbf{x}, \delta) = \left\{ \mathbf{y} \in \mathcal{D} \;\middle|\; \|\mathbf{y} - \mathbf{x}\| < \delta \right\}
+$$
+
+- 相对内点是内点的推广. 
+  - 想象在一个 $\mathbb{R}^n$ 空间中, 考虑一个 $\mathcal{D} \subseteq \mathbb{R}^k, k \lt n$ 的低维子空间. 此时, 不可能找到一个 $n$ 维的球, 其完全落在 $\mathcal{D}$ 内部. 
+  - 相对内点则只考虑球与 $\mathcal{D}$ 所处的低维子空间相交的部分. 
+
+***Definition* (Slater Condition)**: 给定凸约束优化问题, 若存在至少一个点 $\mathbf{x} \in \text{RelInt}(\mathcal{D})$, 使得对于所有等式约束和不等式约束都严格成立, 即:
+$$
+\begin{cases}
+c_i(\mathbf{x}) < 0, \forall i = 1, \ldots, m \\
+A\mathbf{x} = \mathbf{b}
+\end{cases}
+$$
+则称该问题满足 Slater Condition.
+
+> [!note] Slater Condition 可以对仿射约束放松要求
+>
+> 事实上, Slater Condition 可以不要求不等式约束中的仿射约束(线性不等式)严格成立:
+> $$
+> \begin{cases}
+> c_i(\mathbf{x}) \lt 0, \quad \forall i \in \mathcal{I}_{\text{non-affine}} \\
+> c_i(\mathbf{x}) \leq 0, \quad \forall i \in \mathcal{I}_{\text{affine}}\\
+> A\mathbf{x} = \mathbf{b}
+> \end{cases}
+> $$
+> 成立. 其中 $\mathcal{I}_{\text{non-affine}}$ 表示非仿射的不等式约束集合, $\mathcal{I}_{\text{affine}}$ 表示仿射的不等式约束集合. 
+
+
+
+***Theorem* (Slater Condition for Convex Problem)**: 如果凸优化问题满足 Slater Condition, 则其强对偶性成立, 即:
+$$
+p^* = d^*
+$$
+其中 $p^*$ 是原问题的最优值, $d^*$ 是对偶问题的最优值. 
+
+
+### 2.2. First-Order Optimality Conditions
+
+**对于凸优化问题, 当 Slater Condition 成立时, KKT 条件是充要条件.**
+
+***Theorem* (First-Order Optimality Conditions for Convex Problem)**: 如果凸优化问题满足 Slater Condition, 则 $\mathbf{x}^*, \lambda_j^*, \mu_i^*$ 是全局最优解当且仅当如下 KKT 条件成立:
+$$
+\begin{aligned}
+&\text{\small{Stationarity:}}  &&  0 \in \partial f(\mathbf{x}^*) + \sum_{j\in\mathcal{E}} \lambda_j^*  \mathbf{a}_j + \sum_{i\in\mathcal{I}} \mu_i^* \partial c_i(\mathbf{x}^*)\\
+&\text{\small{Primal Feasibility 1:}}  && c_i(\mathbf{x}^*) \leq 0, \quad \forall i\in \mathcal{I} \\
+&\text{\small{Primal Feasibility 2:}}  && A\mathbf{x}^* = \mathbf{b} \quad \forall j\in \mathcal{E} \\
+&\text{\small{Dual Feasibility:}} &&  \mu_i^* \geq 0, \quad \forall i\in \mathcal{I} \\
+&\text{\small{Complementary Slackness:}} &&  \mu_i^* c_i(\mathbf{x}^*) = 0, \quad \forall i\in \mathcal{I}
+\end{aligned}
+$$
+其中 $\lambda_j^*, \mu_i^*$ 是对偶问题的 Lagrange Multiplier.  $\mathbf{a}_j$ 是 $A^\top$ 的第 $j$ 列.  
+
+>[!note] 关于凸优化的 KKT 条件的说明
+>
+> 1. 上述 KKT 条件事实上即为一般 KKT 条件在凸优化问题下的特例. 注意到, 此处并未对 $f$ 和 $c_i$ 的可微性进行约束, 故采用的是次梯度 (Subgradient) 的形式. 当 $f$ 和 $c_i$ 都是可微凸函数时, 可以将其替换为梯度 (Gradient) 的形式.
+>
+> 2. 由上述定理的充分性说明, 若 Slater 条件满足, 当我们求出凸优化问题的 KKT 点后, 可以直接对应到原问题的最优解. 
+>
+> 3. 需要注意, 上述定理充分性的证明并未使用 Slater 条件. 
+>     - 需要满足 Slater 条件的意义在于, 当凸优化问题最优解存在时, 其最优值点必定满足 KKT 条件. 
+>     - 换言之若 Slater 条件不满足, 即使原问题存在全局最优解, 其最优值点也可能不满足 KKT 条件. 
+
+
+
+## 3. Examples
+
+下给出一些具体通过 KKT 条件求解优化问题的例子. 
+
+### 3.1. Example 1: Affine Space Projection
+
+考虑如下问题:
+$$
+\begin{aligned}
+\min_{\mathbf{x}\in \mathbb{R}^n} & \quad \frac{1}{2}\|\mathbf{x} - \mathbf{y}\|^2_2 \\
+\text{subject to} & \quad A\mathbf{x} = \mathbf{b}
+\end{aligned}
+$$
+其中 $\mathbf{y} \in \mathbb{R}^n$, $A \in \mathbb{R}^{m\times n}$, $\mathbf{b} \in \mathbb{R}^m$. 且不妨设 $A$ 是行满秩的, 即 $\text{rank}(A) = m$. 
+
+*Solution*:
+  
+- 引入 Lagrange Multiplier $\lambda \in \mathbb{R}^m$, 构造 Lagrange 函数:
+  $$
+  L(\mathbf{x}, \lambda) = \frac{1}{2}\|\mathbf{x} - \mathbf{y}\|^2_2 + \lambda^\top (A\mathbf{x} - \mathbf{b})
+  $$
+- 由于只有等式约束, Slater 条件自动满足. 故 $\mathbf{x}^*$ 是全局最优解当且仅当如下 KKT 条件成立:
+  $$
+  \begin{aligned}
+  \mathbf{x}^* - \mathbf{y} + A^\top \lambda = 0 \quad (1)\\
+  A\mathbf{x}^* = \mathbf{b} \quad (2)
+  \end{aligned}
+  $$
+- 可以解得:
+  $$
+  \lambda = (A A^\top)^{-1} (A \mathbf{y} - \mathbf{b})
+  $$
+- 代入 $(1)$:
+  $$
+  \mathbf{x}^* = \mathbf{y} - A^\top (A A^\top)^{-1} (A \mathbf{y} - \mathbf{b})
+  $$

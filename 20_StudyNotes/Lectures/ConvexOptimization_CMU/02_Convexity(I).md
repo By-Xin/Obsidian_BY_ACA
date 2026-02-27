@@ -151,10 +151,12 @@ $$
 
 $\square$
 
-**Notes**
-- 严格的分割 ($\boldsymbol{a}^\top \boldsymbol{x} < b$ 和 $\boldsymbol{a}^\top \boldsymbol{y} > b$) 并不是对所有不相交的凸集都成立的. 
-  - 例如, 若 $C=\{(x,y): y \geq x\}, D =\{(x,y): y < x\}$, 则其不相交, 但不存在严格分割它们的超平面. 并且这与集合是否是闭集无关, 例如对于 $C=\{(x,y): y\ge 1/x, x\ge 0\}, D=\{(x,y): y \leq 0\}$, 其也是不相交的凸集, 但不存在严格分割它们的超平面.
-  - 总的而言, 我们需要满足两个集合的距离 $d(C,D) > 0$ 时, 才能保证存在严格分割它们的超平面.
+>[!note]
+>
+> - 严格的分割 ($\boldsymbol{a}^\top \boldsymbol{x} < b$ 和 $\boldsymbol{a}^\top \boldsymbol{y} > b$) 并不是对所有不相交的凸集都成立的. 
+>   - 例如, 若 $C=\{(x,y): y \geq x\}, D =\{(x,y): y < x\}$, 则其不相交, 但不存在严格分割它们的超平面. 并且这与集合是否是闭集无关, 例如对于 $C=\{(x,y): y\ge 1/x, x\ge 0\}, D=\{(x,y): y \leq 0\}$, 其也是不相交的凸集, 但不存在严格分割它们的超平面.
+>  - 总的而言, 我们需要满足两个集合的距离 $d(C,D) > 0$ 时, 才能保证存在严格分割它们的超平面.
+
 
 ***Theorem* (Supporting Hyperplane Theorem)**: 对于非空凸集 $C \subset \mathbb{R}^n$ 及其边界上的任意点 $x_0 \in \text{bd}(C)$, 定存在一个超平面支持该点, 即存在非零向量 $\boldsymbol{a} \in \mathbb{R}^n$ 使得:
 
