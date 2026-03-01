@@ -54,7 +54,7 @@ $$
   - 数学上, 若 $x_0, x_1, \ldots, x_k$ 是标准基, 则 $k$-simplex 即为单位 simplex, 或称为概率 simplex:
 
     $$
-\text{conv}\{e_0, e_1, \ldots, e_k\} = \{\boldsymbol{w} \in \mathbb{R}^{k+1}: \boldsymbol{w} \geq 0, \boldsymbol{1}^\top \boldsymbol{w} = 1\}
+    \text{conv}\{e_0, e_1, \ldots, e_k\} = \{\boldsymbol{w} \in \mathbb{R}^{k+1}: \boldsymbol{w} \geq 0, \boldsymbol{1}^\top \boldsymbol{w} = 1\}
     $$
 
 
