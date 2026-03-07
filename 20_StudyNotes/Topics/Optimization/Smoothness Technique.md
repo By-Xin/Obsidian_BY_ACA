@@ -40,3 +40,45 @@ $$
 
 ---
 
+###  Moreau Envelope Smoothing
+
+***Definition* (Moreau Envelope)** 对于给定的 $\rho$-[[Weakly Convex]]函数 $f(\mathbf{x})$, 其 Moreau Envelope 定义为:
+$$
+f^{\beta}(\mathbf{x}) = \inf_{\mathbf{z}} \left\{ f(\mathbf{z}) + \frac{1}{2\beta} \|\mathbf{z} - \mathbf{x}\|_2^2 \right\}
+$$
+- 其中 $\beta \in (0, 1/\rho)$ 是 proximal term 的权重. $\beta$ 越大, 则允许的距离越大.
+
+其对应的 Proximal Operator 定义为:
+$$
+\hat{x}:=\text{prox}_{\beta f}(\mathbf{x}) = \arg\min_{\mathbf{z}} \left\{ f(\mathbf{z}) + \frac{1}{2\beta} \|\mathbf{z} - \mathbf{x}\|_2^2 \right\}
+$$
+
+对于 Moreau Envelope, 有如下性质:
+
+1. $f^{\beta}(\mathbf{x})$ 是 $f(\mathbf{x})$ 的下界: $f^{\beta}(\mathbf{x}) \leq f(\mathbf{x}), ~\forall \mathbf{x}$.
+
+2. 当 $f(\mathbf{x})$ 是 $\rho$-weakly convex, 且 $\beta \in (0, 1/\rho)$, 则 $f^{\beta}(\mathbf{x})$ 是 $1/\beta$-smooth 的.
+   - $f^{\beta}(\mathbf{x})$ 是可微的, 其梯度为:
+     $$
+     \boxed{\nabla f^{\beta}(\mathbf{x}) =  \frac{1}{\beta} (\mathbf{x} - \text{prox}_{\beta f}(\mathbf{x}))} 
+     $$
+     - 直观上, Moreau Envelope 的梯度为从其 proximal 指向当前点的方向, 步长为 $1/\beta$
+   - 由上述梯度, 又可立刻推得:
+      $$
+      \|\mathbf{x} - \hat{\mathbf{x}}\| = \|\mathbf{x} - \text{prox}_{\beta f}(\mathbf{x})\| = \beta \|\nabla f^{\beta}(\mathbf{x})\|
+      $$
+      - 即该 envelope 的梯度小等价于当前点与 proximal 点之间的距离小.
+   - $f^{\beta}(\mathbf{x})$ 是 $1/\beta$-smooth 的, 即:
+     $$
+     \|\nabla f^{\beta}(\mathbf{x}) - \nabla f^{\beta}(\mathbf{y})\| \leq \frac{1}{\beta} \|\mathbf{x} - \mathbf{y}\|, ~\forall \mathbf{x}, \mathbf{y}.
+     $$
+
+3. 近似 Stationary
+   $$
+   \boxed{\text{dist}(0, \partial f(\hat{\mathbf{x}})) \leq \| \nabla f^{\beta}(\mathbf{x})\|}
+   $$
+   - 在 LHS, 我们通过衡量 $0$ 到次梯度集合的距离来衡量 stationary 的情况. 而这个距离又能被 Moreau Envelope 的梯度所控制.
+   - 这说明, 我们在 $f^{\beta}(\mathbf{x})$ 上进行寻找 Stationary 优化的过程, 也能传到到作用在原始问题上的梯度上. 我们可以用连续函数来评估原先的非光滑函数.
+   
+
+其直观理解为: 既然 $f$ 是一个非光滑的函数, 不如在当前点 $\mathbf{x}$ 附近进行一个带有二次函数惩罚的局部最小化, 通过一个光滑的包络来消除非光滑性. 

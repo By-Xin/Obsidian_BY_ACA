@@ -3,6 +3,9 @@ aliases:
   - "Hölder 连续"
   - "Hölder Continuous"
   - "Holder Continuous"
+  - "Hölder Smoothness"
+  - "Hölder Smooth"
+  - "Hölder 光滑"
 tags:
   - concept
   - math/optimization
