@@ -801,4 +801,36 @@ $\diamond$
   $\square$
 
 
-### 4.6 Uniform Smoothing Error for $F_\mu(\mathbf{x})$
+### 4.6 Pointwise Smoothing Error for $F_\mu(\mathbf{x})$
+
+***Proposition* (Pointwise Smoothing Error)** 对于任意 $\mathbf{x} \in \mathbb{R}^n$, 有:
+$$
+0 \leq F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf{A}\mathbf{x}\|_2^{2p-2}
+$$
+
+或等价地, 根据 $F(\mathbf{x}) = \frac{1}{p}\|\mathbf{A}\mathbf{x}\|_p^p$, 上式也可以写作:
+$$
+0 \leq F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{\frac{2(p-1)}{p}}, \quad \text{where } D_{p,m} := \frac{1}{2} m^{\frac{2-p}{p}} p^{\frac{2(p-1)}{p}}
+$$
+
+$\diamond$
+
+- *Proof*
+  - 首先证明左侧不等式. 
+    - 根据定义, 有:
+      $$
+      F_\mu(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right) \leq \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q\right) = F(\mathbf{x})
+      $$
+
+    - 因此 $F(\mathbf{x}) - F_\mu(\mathbf{x}) \geq 0$.
+
+  - 接下来证明右侧不等式. 
+    - 对于任意给定 $\mathbf{x}$, 回顾原问题 $F(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q\right)$, 其唯一最大值解为 $\mathbf{y}^\star(\mathbf{x}) = \text{sign}(\mathbf{A}\mathbf{x}) \odot |\mathbf{A}\mathbf{x}|^{p-1}$. 
+
+    - 因此, 将 $\mathbf{y}^\star(\mathbf{x})$ 代入 $F_\mu = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)$ 的 RHS 中, 即可得到:
+      $$
+      \begin{aligned}
+      F_\mu(\mathbf{x}) &\geq \langle \mathbf{y}^\star(\mathbf{x}), \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}^\star(\mathbf{x})\|_q^q - \frac{\mu}{2}\|\mathbf{y}^\star(\mathbf{x})\|_2^2 \\
+      &= F(\mathbf{x}) - \frac{\mu}{2}\|\mathbf{y}^\star(\mathbf{x})\|_2^2
+      \end{aligned}
+      $$
