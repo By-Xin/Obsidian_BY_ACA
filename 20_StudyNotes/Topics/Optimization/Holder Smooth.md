@@ -571,7 +571,7 @@ $$
 
   并且对于每个固定的 $\mathbf{x}$, 其对应的最大化解 $\mathbf{y}^\star$ 满足如下显式表达式:
   $$
-  \mathbf{y}^\star(\mathbf{x})= \arg\max_{\mathbf{y} \in \mathbb{R}^m} F(\mathbf{x}) = \text{sign}(\mathbf{A}\mathbf{x}) \odot |\mathbf{A}\mathbf{x}|^{p-1}
+  \mathbf{y}_{F}^\star(\mathbf{x})= \arg\max_{\mathbf{y} \in \mathbb{R}^m} F(\mathbf{x}) = \text{sign}(\mathbf{A}\mathbf{x}) \odot |\mathbf{A}\mathbf{x}|^{p-1}
   $$
 
   且 $F$ 的梯度为 
@@ -614,10 +614,10 @@ $$
 
 并且得到对应的唯一最大值解:
 $$
-\mathbf{y}_\mu(\mathbf{x}) = \arg\max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)
+\mathbf{y}^{\star}_\mu(\mathbf{x}) = \arg\max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)
 $$
 
-***Proposition* (Existence and Uniqueness of Dual Maximizer)** 对于每个固定的 $\mathbf{x} \in \mathbb{R}^n$, 上述的最大化问题有唯一的最大化解 $\mathbf{y}_\mu(\mathbf{x})$. 并且进一步有 $\nabla F_\mu(\mathbf{x}) = \mathbf{A}^\top \mathbf{y}_\mu(\mathbf{x})$.
+***Proposition* (Existence and Uniqueness of Dual Maximizer)** 对于每个固定的 $\mathbf{x} \in \mathbb{R}^n$, 上述的最大化问题有唯一的最大化解 $\mathbf{y}^{\star}_\mu(\mathbf{x})$. 并且进一步有 $\nabla F_\mu(\mathbf{x}) = \mathbf{A}^\top \mathbf{y}_\mu(\mathbf{x})$.
 
 - *Proof.*
   - 由于 $\frac{\mu}{2} \|\mathbf{y}\|_2^2$ 是 $\mu$-strongly convex 的, 而 $\frac{1}{q}\|\mathbf{y}\|_q^q$ 是 convex 的, 因此 $-\frac{\mu}{2}\|\mathbf{y}\|_2^2 - \frac{1}{q}\|\mathbf{y}\|_q^q$ 是 $\mu$-strongly concave 的. 又因为 $\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle$ 是线性的, 因此 $\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2$ 是 $\mu$-strongly concave 的. 从而其最大化解是唯一的.
@@ -702,12 +702,12 @@ $$
 
 并且记唯一的最大值解为:
 $$
-\mathbf{y}_\mu(\mathbf{x})\in\arg\max_{\mathbf{y}\in\mathbb{R}^m}\left\{\langle \mathbf{y},\mathbf{A}\mathbf{x}\rangle-\frac{1}{q}\|\mathbf{y}\|_q^q-\frac{\mu}{2}\|\mathbf{y}\|_2^2\right\}.
+\mathbf{y}^{\star}_\mu(\mathbf{x})\in\arg\max_{\mathbf{y}\in\mathbb{R}^m}\left\{\langle \mathbf{y},\mathbf{A}\mathbf{x}\rangle-\frac{1}{q}\|\mathbf{y}\|_q^q-\frac{\mu}{2}\|\mathbf{y}\|_2^2\right\}.
 $$
 
 由于:
 $$
-\nabla F_\mu(\mathbf{x})=\mathbf{A}^\top \mathbf{y}_\mu(\mathbf{x}),
+\nabla F_\mu(\mathbf{x})=\mathbf{A}^\top \mathbf{y}_\mu^{\star}(\mathbf{x}),
 $$
 因此要研究 $F_\mu$ 的 smoothness, 关键在于研究 $\mathbf{y}_\mu(\mathbf{x})$ 的有关性质. 
 
@@ -770,7 +770,7 @@ $\square$
 
 ### 4.5 Smoothness of $F_\mu(\mathbf{x})$
 
-根据 $\nabla \mathbf{F}_\mu(\mathbf{x}) = \mathbf{A}^\top \mathbf{y}_\mu(\mathbf{x})$, 因此上述关于 $\mathbf{y}_\mu(\mathbf{x})$ 的讨论可以转化为 $F_\mu$ 的 smoothness 分析.
+根据 $\nabla \mathbf{F}_\mu(\mathbf{x}) = \mathbf{A}^\top \mathbf{y}^{\star}_\mu(\mathbf{x})$, 因此上述关于 $\mathbf{y}^{\star}_\mu(\mathbf{x})$ 的讨论可以转化为 $F_\mu$ 的 smoothness 分析.
 
 ***Proposition* (Smoothness of $F_\mu$)** 设 $F_\mu(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)$, 则对于任意 $\mathbf{x}_1, \mathbf{x}_2 \in \mathbb{R}^n$, 有:
 
@@ -825,12 +825,68 @@ $\diamond$
     - 因此 $F(\mathbf{x}) - F_\mu(\mathbf{x}) \geq 0$.
 
   - 接下来证明右侧不等式. 
-    - 对于任意给定 $\mathbf{x}$, 回顾原问题 $F(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q\right)$, 其唯一最大值解为 $\mathbf{y}^\star(\mathbf{x}) = \text{sign}(\mathbf{A}\mathbf{x}) \odot |\mathbf{A}\mathbf{x}|^{p-1}$. 
+    - 对于任意给定 $\mathbf{x}$, 回顾原问题 $F(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q\right)$, 其唯一最大值解为 $\mathbf{y}_F^\star(\mathbf{x}) = \text{sign}(\mathbf{A}\mathbf{x}) \odot |\mathbf{A}\mathbf{x}|^{p-1}$. 因此, 上式等价于 $F(\mathbf{x}) = \langle \mathbf{y}_F^\star(\mathbf{x}), \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}_F^\star(\mathbf{x})\|_q^q$.
 
-    - 因此, 将 $\mathbf{y}^\star(\mathbf{x})$ 代入 $F_\mu = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)$ 的 RHS 中, 即可得到:
+    - 因此, 将 $\mathbf{y}_F^\star(\mathbf{x})$ 代入 $F_\mu(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)$ 的 RHS 中, 即可得到:
       $$
       \begin{aligned}
-      F_\mu(\mathbf{x}) &\geq \langle \mathbf{y}^\star(\mathbf{x}), \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}^\star(\mathbf{x})\|_q^q - \frac{\mu}{2}\|\mathbf{y}^\star(\mathbf{x})\|_2^2 \\
-      &= F(\mathbf{x}) - \frac{\mu}{2}\|\mathbf{y}^\star(\mathbf{x})\|_2^2
+      F_\mu(\mathbf{x}) &\geq \underbrace{\langle \mathbf{y}_{F}^\star(\mathbf{x}), \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}_{F}^\star(\mathbf{x})\|_q^q}_{F(\mathbf{x})} - \frac{\mu}{2}\|\mathbf{y}_{F}^\star(\mathbf{x})\|_2^2 \\
+      &= F(\mathbf{x}) - \frac{\mu}{2}\|\mathbf{y}_{F}^\star(\mathbf{x})\|_2^2 \\
       \end{aligned}
       $$
+      故
+      $$
+      F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq \frac{\mu}{2}\|\mathbf{y}_{F}^\star(\mathbf{x})\|_2^2
+      $$
+
+    - 根据 $\ell_r$ 和 $\ell_p$ 的范数关系, 且根据 $\mathbf{y}_F^\star(\mathbf{x})=\operatorname{sign}(\mathbf{A}\mathbf{x})\odot|\mathbf{A}\mathbf{x}|^{p-1}.$, 有:
+      $$
+      \begin{aligned}
+      \|\mathbf{y}_F^\star(\mathbf{x})\|_2^2  =  m^{\frac{2-p}{p}}\|\mathbf{A}\mathbf{x}\|_p^{2p-2},
+      \end{aligned}
+      $$
+      故
+      $$
+      F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf{A}\mathbf{x}\|_p^{2p-2} = D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{\frac{2(p-1)}{p}}
+      $$
+      最后一步是因为 $F(\mathbf{x}) = \frac{1}{p}\|\mathbf{A}\mathbf{x}\|_p^p$, 从而 $\|\mathbf{A}\mathbf{x}\|_p^{2p-2} = p^{\frac{2(p-1)}{p}} \cdot F(\mathbf{x})^{\frac{2(p-1)}{p}}$.
+
+  $\square$
+
+
+### 4.7 Selection of $\mu$ and Overall Complexity
+
+由上一小节的结果:
+$$
+0 \leq F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{\frac{2(p-1)}{p}}, \quad \text{where } D_{p,m} := \frac{1}{2} m^{\frac{2-p}{p}} p^{\frac{2(p-1)}{p}}
+$$
+我们可以进一步讨论对于误差 $\varepsilon>0$, 关于原问题 $F(\mathbf{x}) \leq \varepsilon$ 时, $\mu$ 的选择.
+
+***Proposition* (Accuracy Transfer)** 设 $\varepsilon > 0$. 若 $\mu$ 满足
+$$
+\mu \leq \frac{1}{2D_{p,m}}\cdot \varepsilon^{\frac{2}{p}-1} 
+$$
+则对任意 $\mathbf{x} \in \mathbb{R}^n$, 有
+$$
+F_\mu(\mathbf{x}) \leq \varepsilon/2 \implies F(\mathbf{x}) \leq \varepsilon
+$$
+
+- *Proof*
+  - 记 $s := 2 - \dfrac{2}{p}>0 \in (0,1]$. 根据上面的讨论, $F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{s}$. 
+  - 下证明其逆否命题: 在 $\mu \leq \frac{1}{2D_{p,m}}\cdot \varepsilon^{\frac{2}{p}-1}$ 的前提下, 若 $F(\mathbf{x}) > \varepsilon$, 则 $F_\mu(\mathbf{x}) > \varepsilon/2$.
+    - 设 $F(\mathbf{x}) > \varepsilon$, 则:
+      $$
+      \begin{aligned}
+      F(\mathbf{x})^s &= F(\mathbf{x}) \cdot F^{s-1}(\mathbf{x}) \leq F(\mathbf{x}) \cdot \varepsilon^{s-1} \\
+      \end{aligned}
+      $$
+    - 将 $F^s$ 代入 $F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{s}$ 中, 得到:
+      $$
+      F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{s} \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x}) \cdot \varepsilon^{s-1} = 2 D_{p,m} \cdot \mu \cdot F(\mathbf{x}) \cdot \varepsilon^{\frac{2}{p}-2}
+      $$
+    - 此时 $\mu \leq \frac{1}{2D_{p,m}}\cdot \varepsilon^{\frac{2}{p}-1}$, 则 $F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq F(\mathbf{x})/2$, 从而 $F_\mu(\mathbf{x}) \geq F(\mathbf{x})/2 > \varepsilon/2$. 
+    - 综上, 我们有: 若 $F(\mathbf{x}) > \varepsilon$, 则 $F_\mu(\mathbf{x}) > \varepsilon/2$. 因此, 其逆否命题也成立: 若 $F_\mu(\mathbf{x}) < \varepsilon/2$, 则 $F(\mathbf{x}) < \varepsilon$.
+
+  $\square$
+
+该 Proposition 的意义在于, 只要我们能够选择恰当的 $\mu$ 将其优化至 $\varepsilon/2$ 的精度, 就可以保证原问题 $F(\mathbf{x})$ 的精度达到 $\varepsilon$.
