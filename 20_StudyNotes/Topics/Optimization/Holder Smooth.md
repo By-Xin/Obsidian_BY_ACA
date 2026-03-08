@@ -4,7 +4,7 @@
 
 ### 1.1 [[Hölder Smoothness]] Definition
 
-***Definition* ([[Hölder Smoothness]])** 给定一阶连续可微函数 $f: \Omega \to \mathbb{R}$, 其中 $\Omega \subseteq \mathbb{R}^n$ 是开凸集. 称 $f$ 是 ($L-\rho$) [[Hölder Smoothness]] (或等价地, 其梯度是 ($L-\rho$) [[Holder Continuous]]), 若存在常数 $L > 0$ 和 $\rho \in (0, 1]$, 使得对于任意 $\mathbf{x}, \mathbf{y} \in \Omega$, 有:
+***Definition* ([[Hölder Smoothness]])** 设 $\Omega \subseteq \mathbb{R}^n$ 是非空开凸集, $Q\subseteq \Omega$ 是非空闭凸集. 给定一阶连续可微函数 $f: \Omega \to \mathbb{R}$. 称 $f$ 是 ($L-\rho$) [[Hölder Smoothness]] (或等价地, 其梯度是 ($L-\rho$) [[Holder Continuous]]), 若存在常数 $L > 0$ 和 $\rho \in (0, 1]$, 使得对于任意 $\mathbf{x}, \mathbf{y} \in \Omega$, 有: 
 $$
 \|\nabla f(\mathbf{x}) - \nabla f(\mathbf{y})\|_2 \leq L \|\mathbf{x}-\mathbf{y}\|_2^\rho
 $$
@@ -20,6 +20,13 @@ $$
    $$
    \|\nabla f(\mathbf{x}) - \nabla f(\mathbf{y})\|_2 \leq L \|\mathbf{x}-\mathbf{y}\|_2^\rho
    $$
+
+3. $\rho \downarrow 0$ 时, 其形式上有:
+    $$
+    \nabla f(\mathbf{x}) - \nabla f(\mathbf{y}) \leq L
+    $$
+
+
 
 > [!note] Remark: 
 > 
@@ -109,7 +116,7 @@ $$
 $$
 f(\mathbf{x}^{(k)}) - f^\star \leq \varepsilon
 $$
-则称算法收敛到最优值 $\mathbf{x}^\star$ 满足精度 $\varepsilon$. 
+则称算法在第 $k$ 步达到 $\varepsilon$-optimal, 或称 $\mathbf{x}^{(k)}$ 是 $\varepsilon$-optimal 的.
 
 若 $\mathcal{X}^\star \neq \emptyset$, 记初始点到最优解集的距离为:
 $$
@@ -157,7 +164,7 @@ $$
 为了说明我们后续的思路, 这里先从一个简单的 weakly smooth 模型开始:
 
 $$
-\min_{\mathbf{x} \in \mathbb{R}^n} F(\mathbf{x}), \quad F(\mathbf{x}) = \|\mathbf{A}\mathbf{x}\|_p^p = \sum_{i=1}^m |\mathbf{a}_i^\top \mathbf{x}|^p, \quad p \in (1,2]
+\min_{\mathbf{x} \in \mathbb{R}^n} F(\mathbf{x}), \quad F(\mathbf{x}) =\frac{1}{p} \|\mathbf{A}\mathbf{x}\|_p^p =\frac{1}{p} \sum_{i=1}^m |\mathbf{a}_i^\top \mathbf{x}|^p, \quad p \in (1,2]
 $$
 
 其中 $\mathbf{A} \in \mathbb{R}^{m \times n}$, $\mathbf{a}_i^\top \in \mathbb{R}^{1 \times n}$ 是 $\mathbf{A}$ 的第 $i$ 行.
@@ -165,7 +172,7 @@ $$
 后文中, 一些关于向量的绝对值, 幂次与符号函数等操作, 都是逐元素操作. 例如对于 $\mathbf{z}  \in \mathbb{R}^m$, $|\mathbf{z}|^{p-2} \odot \mathbf{z} = \begin{pmatrix} |z_1|^{p-2} z_1,& \cdots, & |z_m|^{p-2} z_m \end{pmatrix}^\top$.
 
 
-首先说明, 这里考虑的这个问题本身是平凡的, 因为对于 $\min_{\mathbf{x} \in \mathbb{R}^n} \|\mathbf{A}\mathbf{x}\|_p^p$, 其最优解 $F(\mathbf{x}) = 0$ 当且仅当 $\mathbf{A}\mathbf{x} = \mathbf{0}$. 因此我们更关注该问题的优化结构, 而非其求解算法本身. 
+首先说明, 这里考虑的这个问题本身是平凡的, 因为对于 $\min_{\mathbf{x} \in \mathbb{R}^n} \frac{1}{p} \|\mathbf{A}\mathbf{x}\|_p^p$, 其最优值为 $0$, 当且仅当 $\mathbf{A}\mathbf{x} = \mathbf{0}$. 因此我们更关注该问题的优化结构, 而非其求解算法本身. 
 
 ### 2.2 Weakly Smoothness of $\|\mathbf{A}\mathbf{x}\|_p^p$
 
@@ -242,7 +249,8 @@ $$
     \begin{aligned}
     \|\psi(\mathbf{u}) - \psi(\mathbf{v})\|_2^2 &= \sum_{i=1}^m |\psi(u_i) - \psi(v_i)|^2 \\
     &\leq L_p^2 \sum_{i=1}^m |u_i - v_i|^{2(p-1)} \\
-    &\leq L_p^2 m^{\frac{2-p}{2}} \left(\sum_{i=1}^m |u_i - v_i|^2\right)^{p-1} = L_p^2 m^{\frac{2-p}{2}} \|\mathbf{u} - \mathbf{v}\|_2^{2(p-1)}
+    &\leq L_p^2 m^{2-p} \left(\sum_{i=1}^m |u_i - v_i|^2\right)^{p-1} = L_p^2 m^{2-p} \|\mathbf{u} - \mathbf{v}\|_2^{2(p-1)} \\
+    \implies \|\psi(\mathbf{u}) - \psi(\mathbf{v})\|_2 &\leq L_p \cdot m^{\frac{2-p}{2}}\cdot\|\mathbf{u} - \mathbf{v}\|_2^{p-1}
     \end{aligned}
     $$
     - 其中最后一个不等式是由于对于任意 $\mathbf{w}\in \mathbb{R}^m$, 以及 $\gamma \in (0,2]$, $\ell_1$ 和 $\ell_2$ 范数满足如下关系:
@@ -284,9 +292,9 @@ $\diamond$
 
 ### 2.3 Fenchel Conjugate of $\frac{1}{p}\|\mathbf{z}\|_p^p$
 
-对于函数 $h(\mathbf{y}) := \frac{1}{q}\|\mathbf{z}\|_q^q, ~y\in \mathbb{R}^m$, 其 Fenchel 共轭函数$h^*(\mathbf{z})$ 为:
+对于函数 $h(\mathbf{y}) := \frac{1}{q}\|\mathbf{y}\|_q^q, ~\mathbf{y}\in \mathbb{R}^m$, 其 Fenchel 共轭函数$h^*(\mathbf{z})$ 为:
 $$
-h^*(\mathbf{z}) = \frac{1}{p}\|\mathbf{y}\|_p^p, \quad \frac{1}{p} + \frac{1}{q} = 1
+h^*(\mathbf{z}) = \frac{1}{p}\|\mathbf{z}\|_p^p, \quad \frac{1}{p} + \frac{1}{q} = 1
 $$
 
 因此回到我们原来的问题, 
@@ -335,7 +343,7 @@ $\diamond$
     $$
     \begin{aligned}
     \varphi(\mathbf{y}^\star; \mathbf{z}) &= \langle \mathbf{y}^\star, \mathbf{z} \rangle - \frac{1}{q}\|\mathbf{y}^\star\|_q^q \\
-    &= \sum_{i=1}^m y_i^\star z_i - \frac{1}{q} \sum_{i=1}^m |y_i^\star|^q = \sum_{i=1}^m |z_i|^{p-1} z_i - \frac{1}{q} \sum_{i=1}^m |z_i|^p = \frac{1}{p}\|\mathbf{z}\|_p^p
+    &= \sum_{i=1}^m y_i^\star z_i - \frac{1}{q} \sum_{i=1}^m |y_i^\star|^q = \sum_{i=1}^m |z_i|^{p} - \frac{1}{q} \sum_{i=1}^m |z_i|^p = \frac{1}{p}\|\mathbf{z}\|_p^p
     \end{aligned}
     $$
 
@@ -356,7 +364,7 @@ $$
 本节说明, 对于 $F(\mathbf{x}) = \frac{1}{p}\|\mathbf{A}\mathbf{x}\|_p^p$, 其是一个 structured but not smooth 的模型. 并且可以从 primal 和 dual 两个角度来理解该模型的结构.
 
 - 从 Primal 角度, $F$ 是一个 weakly smooth 的函数, 其梯度的 Holder smoothness 参数 $\rho = p-1 \in (0,1]$.
-- 从 Dual 角度, $F$ 可以写成一个 max-conjugate 的形式, 即 $F(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q\right)$, 其中 $\frac{1}{q}\|\mathbf{y}\|_q^q$ 是一个 strongly convex 的函数.
+- 从 Dual 角度, $F$ 可以写成一个 max-conjugate 的形式, 即 $F(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q\right)$, 其中 $\frac{1}{q}\|\mathbf{y}\|_q^q$ 是一个 strictly convex 函数. 更准确地讲, 当 $q\ge 2$ 时, 其具有 $q$ 阶 uniform convexity. 
 
 ## 3. Traditional Approach: Standard Smooth via Quadratic Approximation
 
@@ -369,7 +377,7 @@ $$
 
 对于该目标函数, 我们有如下几点观察:
 - $G$ 是凸函数, 因为其是关于 $\mathbf{x}$ 的线性函数的上确界.
-- 由于 $\mathcal{Y}$ 是紧的, 因此 $G$ 是有界的, 故最大值总能够达到. 
+- 对于每个固定的 $\mathbf{x}$, $\mathcal{Y}$ 由于是紧集, 且 $\mathbf{y} \mapsto \langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle$ 是连续的, 因此最大值解 $\text{arg}\max_{\mathbf{y} \in \mathcal{Y}} \langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle$ 是非空的. 
 - $G$ 一般是不可微的, 因为对于某些 $\mathbf{x}$, 其最大值解可能不是唯一的. 
 
 综上, $G$ 一般是一个 structured but not smooth 的模型. 
@@ -571,7 +579,7 @@ $$
 
   并且对于每个固定的 $\mathbf{x}$, 其对应的最大化解 $\mathbf{y}^\star$ 满足如下显式表达式:
   $$
-  \mathbf{y}_{F}^\star(\mathbf{x})= \arg\max_{\mathbf{y} \in \mathbb{R}^m} F(\mathbf{x}) = \text{sign}(\mathbf{A}\mathbf{x}) \odot |\mathbf{A}\mathbf{x}|^{p-1}
+  \mathbf{y}_{F}^\star(\mathbf{x})= \arg\max_{\mathbf{y} \in \mathbb{R}^m}\left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q\right) = \text{sign}(\mathbf{A}\mathbf{x}) \odot |\mathbf{A}\mathbf{x}|^{p-1}
   $$
 
   且 $F$ 的梯度为 
@@ -634,6 +642,8 @@ $$
 3. 最终算法的复杂度分析.
 
 ### 4.2 Uniform Convexity of the Dual Penalty
+
+首先不加证明地给出两个关于 $\ell_q$-norm 的标准事实.
 
 对于 Dual Penalty:
 $$
@@ -805,12 +815,12 @@ $\diamond$
 
 ***Proposition* (Pointwise Smoothing Error)** 对于任意 $\mathbf{x} \in \mathbb{R}^n$, 有:
 $$
-0 \leq F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf{A}\mathbf{x}\|_2^{2p-2}
+0 \leq F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf{A}\mathbf{x}\|_p^{2p-2}
 $$
 
 或等价地, 根据 $F(\mathbf{x}) = \frac{1}{p}\|\mathbf{A}\mathbf{x}\|_p^p$, 上式也可以写作:
 $$
-0 \leq F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{\frac{2(p-1)}{p}}, \quad \text{where } D_{p,m} := \frac{1}{2} m^{\frac{2-p}{p}} p^{\frac{2(p-1)}{p}}
+0 \leq F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{2- \frac{2}{p}}, \quad \text{where } D_{p,m} := \frac{1}{2} m^{\frac{2-p}{p}} p^{2- \frac{2}{p}}
 $$
 
 $\diamond$
@@ -839,17 +849,18 @@ $\diamond$
       F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq \frac{\mu}{2}\|\mathbf{y}_{F}^\star(\mathbf{x})\|_2^2
       $$
 
-    - 根据 $\ell_r$ 和 $\ell_p$ 的范数关系, 且根据 $\mathbf{y}_F^\star(\mathbf{x})=\operatorname{sign}(\mathbf{A}\mathbf{x})\odot|\mathbf{A}\mathbf{x}|^{p-1}.$, 有:
+    - 又因为:
       $$
-      \begin{aligned}
-      \|\mathbf{y}_F^\star(\mathbf{x})\|_2^2  =  m^{\frac{2-p}{p}}\|\mathbf{A}\mathbf{x}\|_p^{2p-2},
-      \end{aligned}
+      \|\mathbf{y}_{F}^\star(\mathbf{x})\|_2^2  = \sum_{i=1}^m |(\mathbf{A}\mathbf{x})_i|^{2p-2} \leq m^{\frac{2-p}{p}}\cdot \|\mathbf{A}\mathbf{x}\|_p^{2p-2}
       $$
       故
       $$
-      F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf{A}\mathbf{x}\|_p^{2p-2} = D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{\frac{2(p-1)}{p}}
+      F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf{A}\mathbf{x}\|_p^{2p-2} 
       $$
-      最后一步是因为 $F(\mathbf{x}) = \frac{1}{p}\|\mathbf{A}\mathbf{x}\|_p^p$, 从而 $\|\mathbf{A}\mathbf{x}\|_p^{2p-2} = p^{\frac{2(p-1)}{p}} \cdot F(\mathbf{x})^{\frac{2(p-1)}{p}}$.
+      最后根据 $\|\mathbf{A}\mathbf{x}\|_p^p = p \cdot F(\mathbf{x})$, 上式也可以写作:
+      $$
+      F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{2- \frac{2}{p}}, \quad \text{where } D_{p,m} := \frac{1}{2} m^{\frac{2-p}{p}} p^{2- \frac{2}{p}}
+      $$
 
   $\square$
 
@@ -864,12 +875,16 @@ $$
 
 ***Proposition* (Optimal Solution of $F$ and $F_\mu$)** 设 $F(\mathbf{x}) = \frac{1}{p}\|\mathbf{A}\mathbf{x}\|_p^p$, $F_\mu(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)$, 记二者的解集分别为 $\mathcal{X}^\star$ 和 $\mathcal{X}_\mu^\star$, 则 $\mathcal{X}^\star = \mathcal{X}_\mu^\star = \{\mathbf{x} \in \mathbb{R}^n: \mathbf{A}\mathbf{x} = \mathbf{0}\} = \text{ker}(\mathbf{A})$.
 
+$\diamond$
+
 - *Proof.* 
   - 对于原问题, 在 $\mathbb{R}^n$ 上, $F(\mathbf{x}) = \frac{1}{p}\|\mathbf{A}\mathbf{x}\|_p^p \geq 0$, 因此 $F(\mathbf{x}) = 0$ 当且仅当 $\mathbf{A}\mathbf{x} = \mathbf{0}$, 从而 $\mathcal{X}^\star = \{\mathbf{x} \in \mathbb{R}^n: \mathbf{A}\mathbf{x} = \mathbf{0}\}$. 
   - 对于 $F_\mu$:
     - 若 $\mathbf{A}\mathbf{x} = \mathbf{0}$, 则 $F_\mu(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(- \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)$. 因为 $-\frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2$ 是 $\mu$-strongly concave 的, 因此其最大值解为 $\mathbf{y} = \mathbf{0}$, 从而 $F_\mu(\mathbf{x}) = 0$.
     - 若 $\mathbf{A}\mathbf{x} \neq \mathbf{0}$, 则 $F_\mu(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)$.  注意到当 $\mathbf{y} = t \cdot \mathbf{A}\mathbf{x}$, $t >0$ 充分小, 此时$\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2$ 的值为 $t\|\mathbf{A}\mathbf{x}\|_2^2 - t^q \cdot \frac{\|\mathbf{A}\mathbf{x}\|_q^q}{q} - t^2 \cdot \frac{\mu}{2} \|\mathbf{A}\mathbf{x}\|_2^2$. 因此当 $t$ 充分小, 上式的值为正, 从而 $F_\mu(\mathbf{x}) > 0$.
     - 综上, $F_\mu(\mathbf{x}) = 0$ 当且仅当 $\mathbf{A}\mathbf{x} = \mathbf{0}$, 从而 $\mathcal{X}_\mu^\star = \{\mathbf{x} \in \mathbb{R}^n: \mathbf{A}\mathbf{x} = \mathbf{0}\}$.
+
+- 因而, 由于 $F^\star = F_\mu^\star = 0$, 因此在后续的复杂度分析中, 初始距离可以统一定义为 $R_0 := \text{dist}(\mathbf{x}^{(0)}, \mathcal{X}^\star)$.
 
 ***Proposition* (Accuracy Transfer)** 设 $\varepsilon > 0$. 若 $\mu$ 满足
 $$
@@ -889,23 +904,46 @@ $$
       F(\mathbf{x})^s &= F(\mathbf{x}) \cdot F^{s-1}(\mathbf{x}) \leq F(\mathbf{x}) \cdot \varepsilon^{s-1} \\
       \end{aligned}
       $$
-    - 将 $F^s$ 代入 $F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{s}$ 中, 得到:
+    - 由于 $s\leq 1$, 因此:
       $$
-      F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{s} \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x}) \cdot \varepsilon^{s-1} = 2 D_{p,m} \cdot \mu \cdot F(\mathbf{x}) \cdot \varepsilon^{\frac{2}{p}-2}
+      \begin{aligned}
+      F(\mathbf{x})^s &= F(\mathbf{x}) \cdot F(\mathbf{x})^{s-1} \leq F(\mathbf{x}) \cdot \varepsilon^{s-1} \\
+      \implies F(\mathbf{x}) - F_\mu(\mathbf{x}) &\leq D_{p,m} \cdot \mu \cdot F(\mathbf{x})^{s} \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x}) \cdot \varepsilon^{s-1} \\
+      \end{aligned}
       $$
-    - 此时 $\mu \leq \frac{1}{2D_{p,m}}\cdot \varepsilon^{\frac{2}{p}-1}$, 则 $F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq F(\mathbf{x})/2$, 从而 $F_\mu(\mathbf{x}) \geq F(\mathbf{x})/2 > \varepsilon/2$. 
-    - 综上, 我们有: 若 $F(\mathbf{x}) > \varepsilon$, 则 $F_\mu(\mathbf{x}) > \varepsilon/2$. 因此, 其逆否命题也成立: 若 $F_\mu(\mathbf{x}) < \varepsilon/2$, 则 $F(\mathbf{x}) < \varepsilon$.
+
+    - 又由于 $s-1 = 1 - \frac{2}{p}$, 并且 $\mu \leq \frac{1}{2D_{p,m}}\cdot \varepsilon^{\frac{2}{p}-1}$, 因此:
+      $$
+      \begin{aligned}
+      D_{p,m} \cdot \mu \cdot \varepsilon^{s-1} &\leq \frac{1}{2}
+      \end{aligned}
+      $$
+
+    - 因此
+      $$
+      F(\mathbf{x}) - F_\mu(\mathbf{x}) \leq D_{p,m} \cdot \mu \cdot F(\mathbf{x}) \cdot \varepsilon^{s-1} \leq \frac{1}{2} F(\mathbf{x})
+      $$
+      从而 $F_\mu(\mathbf{x}) \geq \frac{1}{2} F(\mathbf{x}) > \varepsilon/2$.  
+
+    - 综上, 对应的逆否命题成立, 即 $F_\mu(\mathbf{x}) \leq \varepsilon/2 \implies F(\mathbf{x}) \leq \varepsilon$.
 
   $\square$
 
 该 Proposition 的意义在于, 只要我们能够选择恰当的 $\mu$ 将其优化至 $\varepsilon/2$ 的精度, 就可以保证原问题 $F(\mathbf{x})$ 的精度达到 $\varepsilon$. 因此在后续的优化中, 我们只需设法控制 $F_\mu(\mathbf{x}^{(k)})$ 即可.
 
-
-***Theorem* (Overall Complexity)** 设 $F(\mathbf{x}) = \frac{1}{p}\|\mathbf{A}\mathbf{x}\|_p^p$, $p\in (1,2]$. 则对于任意 $\varepsilon > 0$, 取 $\mu = \frac{1}{2D_{p,m}}\cdot \varepsilon^{\frac{2}{p}-1}$, 并取光滑化后的函数 $F_\mu(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)$ 作为优化目标, 使用 accelerated gradient method, 知道 $F_\mu(\mathbf{x}^{(k)}) \leq \varepsilon/2$, 则输出点满足 $F(\mathbf{x}^{(k)}) \leq \varepsilon$. 其总的迭代次数为:
+***Theorem* (Overall Complexity)** 设 $F(\mathbf{x}) = \frac{1}{p}\|\mathbf{A}\mathbf{x}\|_p^p, ~p \in (1,2]$. 并记: $\mathcal{X}^\star = \{\mathbf{x}\in \mathbb{R}^n: \mathbf{A}\mathbf{x} = \mathbf{0}\}$, $R_0 := \text{dist}(\mathbf{x}^{(0)}, \mathcal{X}^\star)$. 给定精度 $\varepsilon > 0$, 取 $\mu := \frac{1}{2D_{p,m}}\cdot \varepsilon^{\frac{2}{p}-1}$, 对光滑化目标:
 $$
-k = \mathcal{O}\left(\|\mathbf{A}\|_2 \cdot R_0 \cdot \varepsilon^{-\frac{1}{p}}\right) = \mathcal{O}\left(\varepsilon^{-\frac{1}{1+\rho}}\right).
+F_\mu(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)
 $$
-其中 $R_0 := \text{dist}(\mathbf{x}^{(0)}, \mathcal{X}^\star)$ 是初始点 $\mathbf{x}^{(0)}$ 到最优解集合 $\mathcal{X}^\star$ 的距离, $\rho := 1 - \frac{1}{p}$ 是 $F$ 的 Hölder smoothness 参数.
+使用 accelerated gradient method 求解其最小值, 直到满足 $F_\mu(\mathbf{x}^{(k)}) \leq \varepsilon/2$, 则输出点 $\mathbf{x}^{(k)}$ 满足:
+$$
+F(\mathbf{x}^{(k)}) \leq \varepsilon
+$$
+其总的迭代次数满足:
+$$
+k = \mathcal{O}\left(\|\mathbf{A}\|_2 \cdot R_0 \cdot \varepsilon^{-\frac{1}{p}}\right) = \mathcal{O}\left(\varepsilon^{-\frac{1}{1+\rho}}\right)
+$$
+其中 $\rho := 1 - \frac{1}{p}$ 是 $F$ 的 Hölder smoothness 参数.
 
 $\diamond$
 
@@ -929,6 +967,7 @@ $\diamond$
     $$
     k+1 \geq \sqrt{\frac{4L_\mu R_0^2}{\varepsilon}} = \sqrt{\frac{8D_{p,m} \cdot \|\mathbf{A}\|_2^2 \cdot R_0^2}{\varepsilon^{\frac{2}{p}}}} = \mathcal{O}\left(\|\mathbf{A}\|_2 \cdot R_0 \cdot \varepsilon^{-\frac{1}{p}}\right) = \mathcal{O}\left(\varepsilon^{-\frac{1}{1+\rho}}\right)
     $$
+    - 这里, 记号 $a_\tau \asymp b_\tau$ 表示存在与 $\tau$ 无关的正常数 $C_1, C_2 > 0$, 使得 $C_1 \cdot b_\tau \leq a_\tau \leq C_2 \cdot b_\tau$.
 
   $\square$
 
