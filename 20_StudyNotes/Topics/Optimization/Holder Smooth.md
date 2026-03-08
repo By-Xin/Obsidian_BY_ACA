@@ -862,6 +862,15 @@ $$
 $$
 我们可以进一步讨论对于误差 $\varepsilon>0$, 关于原问题 $F(\mathbf{x}) \leq \varepsilon$ 时, $\mu$ 的选择.
 
+***Proposition* (Optimal Solution of $F$ and $F_\mu$)** 设 $F(\mathbf{x}) = \frac{1}{p}\|\mathbf{A}\mathbf{x}\|_p^p$, $F_\mu(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)$, 记二者的解集分别为 $\mathcal{X}^\star$ 和 $\mathcal{X}_\mu^\star$, 则 $\mathcal{X}^\star = \mathcal{X}_\mu^\star = \{\mathbf{x} \in \mathbb{R}^n: \mathbf{A}\mathbf{x} = \mathbf{0}\} = \text{ker}(\mathbf{A})$.
+
+- *Proof.* 
+  - 对于原问题, 在 $\mathbb{R}^n$ 上, $F(\mathbf{x}) = \frac{1}{p}\|\mathbf{A}\mathbf{x}\|_p^p \geq 0$, 因此 $F(\mathbf{x}) = 0$ 当且仅当 $\mathbf{A}\mathbf{x} = \mathbf{0}$, 从而 $\mathcal{X}^\star = \{\mathbf{x} \in \mathbb{R}^n: \mathbf{A}\mathbf{x} = \mathbf{0}\}$. 
+  - 对于 $F_\mu$:
+    - 若 $\mathbf{A}\mathbf{x} = \mathbf{0}$, 则 $F_\mu(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(- \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)$. 因为 $-\frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2$ 是 $\mu$-strongly concave 的, 因此其最大值解为 $\mathbf{y} = \mathbf{0}$, 从而 $F_\mu(\mathbf{x}) = 0$.
+    - 若 $\mathbf{A}\mathbf{x} \neq \mathbf{0}$, 则 $F_\mu(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)$.  注意到当 $\mathbf{y} = t \cdot \mathbf{A}\mathbf{x}$, $t >0$ 充分小, 此时$\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2$ 的值为 $t\|\mathbf{A}\mathbf{x}\|_2^2 - t^q \cdot \frac{\|\mathbf{A}\mathbf{x}\|_q^q}{q} - t^2 \cdot \frac{\mu}{2} \|\mathbf{A}\mathbf{x}\|_2^2$. 因此当 $t$ 充分小, 上式的值为正, 从而 $F_\mu(\mathbf{x}) > 0$.
+    - 综上, $F_\mu(\mathbf{x}) = 0$ 当且仅当 $\mathbf{A}\mathbf{x} = \mathbf{0}$, 从而 $\mathcal{X}_\mu^\star = \{\mathbf{x} \in \mathbb{R}^n: \mathbf{A}\mathbf{x} = \mathbf{0}\}$.
+
 ***Proposition* (Accuracy Transfer)** 设 $\varepsilon > 0$. 若 $\mu$ 满足
 $$
 \mu \leq \frac{1}{2D_{p,m}}\cdot \varepsilon^{\frac{2}{p}-1} 
@@ -889,4 +898,39 @@ $$
 
   $\square$
 
-该 Proposition 的意义在于, 只要我们能够选择恰当的 $\mu$ 将其优化至 $\varepsilon/2$ 的精度, 就可以保证原问题 $F(\mathbf{x})$ 的精度达到 $\varepsilon$.
+该 Proposition 的意义在于, 只要我们能够选择恰当的 $\mu$ 将其优化至 $\varepsilon/2$ 的精度, 就可以保证原问题 $F(\mathbf{x})$ 的精度达到 $\varepsilon$. 因此在后续的优化中, 我们只需设法控制 $F_\mu(\mathbf{x}^{(k)})$ 即可.
+
+
+***Theorem* (Overall Complexity)** 设 $F(\mathbf{x}) = \frac{1}{p}\|\mathbf{A}\mathbf{x}\|_p^p$, $p\in (1,2]$. 则对于任意 $\varepsilon > 0$, 取 $\mu = \frac{1}{2D_{p,m}}\cdot \varepsilon^{\frac{2}{p}-1}$, 并取光滑化后的函数 $F_\mu(\mathbf{x}) = \max_{\mathbf{y} \in \mathbb{R}^m} \left(\langle \mathbf{y}, \mathbf{A}\mathbf{x} \rangle - \frac{1}{q}\|\mathbf{y}\|_q^q - \frac{\mu}{2}\|\mathbf{y}\|_2^2\right)$ 作为优化目标, 使用 accelerated gradient method, 知道 $F_\mu(\mathbf{x}^{(k)}) \leq \varepsilon/2$, 则输出点满足 $F(\mathbf{x}^{(k)}) \leq \varepsilon$. 其总的迭代次数为:
+$$
+k = \mathcal{O}\left(\|\mathbf{A}\|_2 \cdot R_0 \cdot \varepsilon^{-\frac{1}{p}}\right) = \mathcal{O}\left(\varepsilon^{-\frac{1}{1+\rho}}\right).
+$$
+其中 $R_0 := \text{dist}(\mathbf{x}^{(0)}, \mathcal{X}^\star)$ 是初始点 $\mathbf{x}^{(0)}$ 到最优解集合 $\mathcal{X}^\star$ 的距离, $\rho := 1 - \frac{1}{p}$ 是 $F$ 的 Hölder smoothness 参数.
+
+$\diamond$
+
+- *Proof*
+  - 对光滑化目标使用 accelerated gradient method.
+    - 在前面, 我们已经证明 $F_\mu$ 是 Lipschitz smooth 的, 其 Lipschitz 常数为 $L_\mu = \frac{\|\mathbf{A}\|_2^2}{\mu}$. 因此对 $F_\mu$ 使用 accelerated gradient method, 有标准收敛率:
+      $$
+      F_\mu(\mathbf{x}^{(k)}) - F_\mu^\star \leq \frac{2L_\mu R_0^2}{(k+1)^2} 
+      $$
+      进一步由 $F_\mu^\star = F^\star = 0$, 可得:
+      $$
+      F_\mu(\mathbf{x}^{(k)}) \leq \frac{2L_\mu R_0^2}{(k+1)^2} 
+      $$
+
+    - 因此, 为保证 $F_\mu(\mathbf{x}^{(k)}) \leq \varepsilon/2$, 需要:
+      $$
+      \frac{2L_\mu R_0^2}{(k+1)^2} \leq \frac{\varepsilon}{2} \implies k+1 \geq \sqrt{\frac{4L_\mu R_0^2}{\varepsilon}} 
+      $$
+
+  - 进一步, 为了满足精度转换的条件, 需要选择 $\mu \asymp \varepsilon^{\frac{2}{p}-1}$, 这里令 $\mu = \frac{1}{2D_{p,m}}\cdot \varepsilon^{\frac{2}{p}-1}$. 因此 $L_\mu = \frac{\|\mathbf{A}\|_2^2}{\mu} = 2D_{p,m} \cdot \|\mathbf{A}\|_2^2 \cdot \varepsilon^{1-\frac{2}{p}}$. 将 $L_\mu$ 代入上式, 即可得到总的迭代次数为:
+    $$
+    k+1 \geq \sqrt{\frac{4L_\mu R_0^2}{\varepsilon}} = \sqrt{\frac{8D_{p,m} \cdot \|\mathbf{A}\|_2^2 \cdot R_0^2}{\varepsilon^{\frac{2}{p}}}} = \mathcal{O}\left(\|\mathbf{A}\|_2 \cdot R_0 \cdot \varepsilon^{-\frac{1}{p}}\right) = \mathcal{O}\left(\varepsilon^{-\frac{1}{1+\rho}}\right)
+    $$
+
+  $\square$
+
+
+
