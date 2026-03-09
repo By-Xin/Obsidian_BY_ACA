@@ -943,7 +943,7 @@ $$
 $$
 k = \mathcal{O}\left(\|\mathbf{A}\|_2 \cdot R_0 \cdot \varepsilon^{-\frac{1}{p}}\right) = \mathcal{O}\left(\varepsilon^{-\frac{1}{1+\rho}}\right)
 $$
-其中 $\rho := 1 - \frac{1}{p}$ 是 $F$ 的 Hölder smoothness 参数.
+其中 $\rho := p-1$ 是 $F$ 的 Hölder smoothness 参数.
 
 $\diamond$
 
