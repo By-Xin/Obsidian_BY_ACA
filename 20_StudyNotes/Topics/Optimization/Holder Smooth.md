@@ -29,8 +29,8 @@ $$
 
 
 > [!note] Remark: 
-> 
->  当 $\rho=0$ 时, 形式上我们将得到, 对于任意 $\mathbf{x} \neq \mathbf{y}$, 有
+>
+> 当 $\rho=0$ 时, 形式上我们将得到, 对于任意 $\mathbf{x} \neq \mathbf{y}$, 有
 > $$
 > \|\nabla f(\mathbf{x}) - \nabla f(\mathbf{y})\|_2 \leq L
 > $$
@@ -38,12 +38,13 @@ $$
 > 需要指出, 此时其仍然是可微的, 因此仍然属于光滑函数的范畴. 然而其处在 Holder Smoothness 的边界上. 
 >
 > ***Proposition* (Degenerate Case of $\rho=0$)** 当 $\rho=0$ 时, $f$ 是 ($L-0$) [[Hölder Smoothness]] 的, 其满足如下性质:
+>
 >   1. $\nabla f$ 在 $\Omega$ 上有界;
 >   2. $f$ 在 $\Omega$ 上是 Lipschitz 连续的
 >   3. 对于任意 $\mathbf{x}\neq \mathbf{y}$, 有:
->    $$
+> $$
 >     f(\mathbf{x}) \leq f(\mathbf{y}) + \nabla f(\mathbf{y})^\top (\mathbf{x}-\mathbf{y}) + L \|\mathbf{x}-\mathbf{y}\|
->    $$
+> $$
 
 
 ### 1.2 First-Order Upper Bound for [[Hölder Smoothness]]
@@ -86,7 +87,7 @@ $$
       $$
       f(\mathbf{x}) \leq f(\mathbf{y}) + \nabla f(\mathbf{y})^\top (\mathbf{x}-\mathbf{y}) + \frac{L}{1+\rho} \|\mathbf{x}-\mathbf{y}\|^{1+\rho}
       $$
-    $\square$
+      $\square$
 
 
 - 在凸且可微的情况下, 由一阶凸性不等式: $f(\mathbf{x}) \geq f(\mathbf{y}) + \langle\nabla f(\mathbf{y}), \mathbf{x}-\mathbf{y}\rangle$, 结合上述结论, 可以得到:
@@ -222,7 +223,7 @@ $$
   - 对于 $uv < 0$, 此时 $u$ 和 $v$ 异号. 因此
       $$
       |\psi(u) - \psi(v)| = |u|^\alpha + |v|^\alpha
-       $$
+      $$
        - 由于 $t \mapsto t^\alpha$ 是凹函数, 根据 Jensen 不等式, 有:
          $$
          \left(\frac{a+b}{2}\right)^\alpha \geq \frac{a^\alpha + b^\alpha}{2}, \quad \forall a,b \geq 0
@@ -734,7 +735,7 @@ $\diamond$
   - 由前一个 proposition, 有:
     $$
     c_q \|\Delta \mathbf{y}\|_q^q + \mu\|\Delta \mathbf{y}\|_2^2 \leq \langle \mathbf{A}(\Delta \mathbf{x}), \Delta \mathbf{y} \rangle \implies c_q \|\Delta \mathbf{y}\|_q^q \leq \langle \mathbf{A}(\Delta \mathbf{x}), \Delta \mathbf{y} \rangle
-     $$
+    $$
   - 又根据 Hölder 不等式, 有 $\langle \mathbf{A}(\Delta \mathbf{x}), \Delta \mathbf{y} \rangle \leq \|\mathbf{A} \Delta \mathbf{x}\|_p \cdot \|\Delta \mathbf{y}\|_q$, 从而得到:
     $$
     c_q \|\Delta \mathbf{y}\|_q^q \leq \|\mathbf{A} \Delta \mathbf{x}\|_p \cdot \|\Delta \mathbf{y}\|_q
