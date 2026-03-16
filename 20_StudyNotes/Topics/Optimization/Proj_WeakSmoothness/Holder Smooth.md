@@ -1,4 +1,4 @@
-# Hölder Smoothness
+# Note on Hölder Smoothness Initial Draft
 
 ## 1. Introduction 
 

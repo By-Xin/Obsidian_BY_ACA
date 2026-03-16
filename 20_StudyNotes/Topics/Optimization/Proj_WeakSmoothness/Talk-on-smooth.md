@@ -1,4 +1,4 @@
-# Smoothness
+# Note on Tianyuan Talk
 
 ## Smoothing for weakly convex optimization
 
