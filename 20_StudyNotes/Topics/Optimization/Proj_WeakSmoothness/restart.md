@@ -107,3 +107,17 @@ $$
     \end{aligned}
     $$
 
+因此, 根据 Hoeffman bound 的形式, 我们可以考虑如下两种 residual 的优化目标:
+
+- Non-smooth 型:
+    $$
+    f_{(1)}(\mathbf{z}) := \|\mathbf{A} \mathbf{x} - \mathbf{b}\| + 
+    \|[\mathbf{A}^\top \mathbf{y} - \mathbf{c}]_{+}\| +
+    [\mathbf{c}^\top \mathbf{x} - \mathbf{b}^\top \mathbf{y}]_{+} , \quad \forall z
+    $$
+- Smooth 型:
+    $$
+    f_{(2)}(\mathbf{z}) := \|\mathbf{A} \mathbf{x} - \mathbf{b}\|^2 + 
+    \|[\mathbf{A}^\top \mathbf{y} - \mathbf{c}]_{+}\|^2 +
+    [\mathbf{c}^\top \mathbf{x} - \mathbf{b}^\top \mathbf{y}]_{+}^2  = \Delta(\mathbf{z})^2, \quad \forall z
+    $$
