@@ -87,7 +87,7 @@
 
 ## Hoeffman Bound (Sharpness)
 
-由于 $\mathcal{Z}^\star$ 是一个非空凸多面体, 因此由 Hoeffman bound 可知, 存在一个常数 $\alpha_H > 0$, 使得对于任意 $\mathbf{z} \in \text{dom}(z) = \mathbb{R}^{n}_+\times \mathbb{R}^m$, 都有如下的关系成立 (其中默认 $\|\cdot\|$ 是欧几里得范数):
+由于 $\mathcal{Z}^\star$ 是一个非空凸多面体, 因此由 Hoeffman bound 可知, 存在一个常数 $\alpha_H > 0$, 使得对于任意 $\mathbf{z} \in \text{dom}(z) := \mathcal{Z} = \mathbb{R}^{n}_+\times \mathbb{R}^m$, 都有如下的关系成立 (其中默认 $\|\cdot\|$ 是欧几里得范数):
 $$
 \text{dist}(\mathbf{z}, \mathcal{Z}^\star) \leq \alpha_H \|[\mathbf{H} \mathbf{z} - \mathbf{e}]_{+}\| := \alpha_H \Delta(\mathbf{z})
 $$
@@ -111,13 +111,35 @@ $$
 
 - Non-smooth 型:
     $$
-    f_{(1)}(\mathbf{z}) := \|\mathbf{A} \mathbf{x} - \mathbf{b}\| + 
+    l_{(1)}(\mathbf{z}) := \|\mathbf{A} \mathbf{x} - \mathbf{b}\| + 
     \|[\mathbf{A}^\top \mathbf{y} - \mathbf{c}]_{+}\| +
-    [\mathbf{c}^\top \mathbf{x} - \mathbf{b}^\top \mathbf{y}]_{+} , \quad \forall z
+    [\mathbf{c}^\top \mathbf{x} - \mathbf{b}^\top \mathbf{y}]_{+} , \quad \forall z \in \mathcal{Z}
     $$
+    - 注意到, $\Delta(\mathbf{z}) \leq l_{(1)}(\mathbf{z})$ 恒成立.
 - Smooth 型:
     $$
-    f_{(2)}(\mathbf{z}) := \|\mathbf{A} \mathbf{x} - \mathbf{b}\|^2 + 
+    l_{(2)}(\mathbf{z}) := \|\mathbf{A} \mathbf{x} - \mathbf{b}\|^2 + 
     \|[\mathbf{A}^\top \mathbf{y} - \mathbf{c}]_{+}\|^2 +
-    [\mathbf{c}^\top \mathbf{x} - \mathbf{b}^\top \mathbf{y}]_{+}^2  = \Delta(\mathbf{z})^2, \quad \forall z
+    [\mathbf{c}^\top \mathbf{x} - \mathbf{b}^\top \mathbf{y}]_{+}^2  = \Delta(\mathbf{z})^2, \quad \forall z \in \mathcal{Z}
     $$
+    - 注意到, $l_{(2)}(\mathbf{z}) = \Delta(\mathbf{z})^2$ 恒成立.
+  
+
+此外, 对于上述两种 residual 的优化目标, 不难验证,
+$$
+\min_{\mathbf{z} \in \mathcal{Z}} l_{(1)}(\mathbf{z}) = \min_{\mathbf{z} \in \mathcal{Z}} l_{(2)}(\mathbf{z}) = 0
+$$
+
+即 $l^\star := \min_{\mathbf{z} \in \mathcal{Z}} l_{(1)}(\mathbf{z}) = \min_{\mathbf{z} \in \mathcal{Z}} l_{(2)}(\mathbf{z}) = 0$.
+
+再代入 Hoeffman bound 的关系, 可以得到如下的结论:
+$$
+\text{dist}(\mathbf{z}, \mathcal{Z}^\star) \leq \alpha_H \Delta(\mathbf{z}) \leq \alpha_H l_{(1)}(\mathbf{z}), \quad \forall z \in \mathcal{Z}
+$$
+
+$$
+\begin{aligned}
+\text{dist}(\mathbf{z}, \mathcal{Z}^\star) & \leq \alpha_H \Delta(\mathbf{z}) \leq \alpha_H  l_{(1)}(\mathbf{z}) \\
+\text{dist}(\mathbf{z}, \mathcal{Z}^\star)^2 & \leq \alpha_H^2 \Delta(\mathbf{z})^2 = \alpha_H^2 l_{(2)}(\mathbf{z})
+\end{aligned}
+$$
