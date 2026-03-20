@@ -111,35 +111,104 @@ $$
 
 - Non-smooth 型:
     $$
-    l_{(1)}(\mathbf{z}) := \|\mathbf{A} \mathbf{x} - \mathbf{b}\| + 
+    L_1(\mathbf{z}) := \|\mathbf{A} \mathbf{x} - \mathbf{b}\| + 
     \|[\mathbf{A}^\top \mathbf{y} - \mathbf{c}]_{+}\| +
     [\mathbf{c}^\top \mathbf{x} - \mathbf{b}^\top \mathbf{y}]_{+} , \quad \forall z \in \mathcal{Z}
     $$
-    - 注意到, $\Delta(\mathbf{z}) \leq l_{(1)}(\mathbf{z})$ 恒成立.
+    - 注意到, $\Delta(\mathbf{z}) \leq L_1(\mathbf{z})$ 恒成立.
+    - 对应 Hoffman bound, 有
+        $$
+        \text{dist}(\mathbf{z}, \mathcal{Z}^\star) \leq \alpha_H \Delta(\mathbf{z}) \leq \alpha_H L_1(\mathbf{z}), \quad \forall z \in \mathcal{Z}
+        $$
 - Smooth 型:
     $$
-    l_{(2)}(\mathbf{z}) := \|\mathbf{A} \mathbf{x} - \mathbf{b}\|^2 + 
+    L_2(\mathbf{z}) := \|\mathbf{A} \mathbf{x} - \mathbf{b}\|^2 + 
     \|[\mathbf{A}^\top \mathbf{y} - \mathbf{c}]_{+}\|^2 +
     [\mathbf{c}^\top \mathbf{x} - \mathbf{b}^\top \mathbf{y}]_{+}^2  = \Delta(\mathbf{z})^2, \quad \forall z \in \mathcal{Z}
     $$
-    - 注意到, $l_{(2)}(\mathbf{z}) = \Delta(\mathbf{z})^2$ 恒成立.
+    - 注意到, $L_2(\mathbf{z}) = \Delta(\mathbf{z})^2$ 恒成立.
+    - 对应 Hoffman bound, 有
+        $$
+        \begin{aligned}
+        \text{dist}(\mathbf{z}, \mathcal{Z}^\star) & \leq \alpha_H \Delta(\mathbf{z}) = \alpha_H \sqrt{L_2(\mathbf{z})}
+        \end{aligned}
+        $$
   
 
 此外, 对于上述两种 residual 的优化目标, 不难验证,
 $$
-\min_{\mathbf{z} \in \mathcal{Z}} l_{(1)}(\mathbf{z}) = \min_{\mathbf{z} \in \mathcal{Z}} l_{(2)}(\mathbf{z}) = 0
+\min_{\mathbf{z} \in \mathcal{Z}} L_1(\mathbf{z}) = \min_{\mathbf{z} \in \mathcal{Z}} L_2(\mathbf{z}) = 0
 $$
 
-即 $l^\star := \min_{\mathbf{z} \in \mathcal{Z}} l_{(1)}(\mathbf{z}) = \min_{\mathbf{z} \in \mathcal{Z}} l_{(2)}(\mathbf{z}) = 0$.
+即 $L^\star := \min_{\mathbf{z} \in \mathcal{Z}} L_1(\mathbf{z}) = \min_{\mathbf{z} \in \mathcal{Z}} L_2(\mathbf{z}) = 0$.
 
-再代入 Hoeffman bound 的关系, 可以得到如下的结论:
+## Restart Method
+
+Restart 策略的核心思想是, 在优化过程中, 当某个阶段的优化算法达到一定的迭代次数或者满足某个条件时, 就 "重启" 优化算法, 即重新初始化优化算法的状态 (例如重新设置学习率、重新计算梯度等), 从而使得优化算法能够更快地收敛到最优解.
+
+上述方法使得整体的优化会分为内外两层循环. 内层循环负责优化目标函数 (例如 $L_1$ 或 $L_2$), 外层循环负责监控内层循环的进展并决定何时重启.
+
+在这里, 我们记外层的迭代为 $t = 0, 1, 2, \ldots$ 对应内层的迭代共 $K$ 次为 $k = 0, 1, 2, \ldots, K$. 因此总得而言, restart 的算法如下:
+1. 给定初值 $\mathbf{z}_{0}^{(0)} \in \mathcal{Z}$, 以及内层循环的最大迭代次数 $K$.
+2. 外层循环, 对于 $t = 0, 1, 2 \ldots$:
+    1. 内层循环, 对于 $k = 0, 1, 2, \ldots, K$:
+        - 迭代更新 $\mathbf{z}_{t}^{(k+1)} \leftarrow \text{Update }(\mathbf{z}_{t}^{(k)})$.
+    2. 检索收敛条件, 如果满足则退出循环.
+    3. 否则重启, 更新 $\mathbf{z}_{t+1}^{(0)} \leftarrow \text{Restart }(\mathbf{z}_{t}^{(K)})$.
+
+该策略的核心思想是, 如果在某个阶段能够满足一定的收敛条件, 如对于某个指标 $\Psi$, 有
 $$
-\text{dist}(\mathbf{z}, \mathcal{Z}^\star) \leq \alpha_H \Delta(\mathbf{z}) \leq \alpha_H l_{(1)}(\mathbf{z}), \quad \forall z \in \mathcal{Z}
+\Psi(\mathbf{z}_{t}) \leq \beta \Psi(\mathbf{z}_{t-1})
+$$
+其中 $\beta \in (0, 1)$ 是一个预设的收敛阈值, $\mathbf{z}_{t}:= \mathbf{z}_{t}^{(K)}$ 是内层循环结束后的结果, 则经过外层 $T$ 次迭代后, 就可以保证 $\Psi(\mathbf{z}_{T}) \leq \beta^T \Psi(\mathbf{z}_{0})$, 从而实现指数级的收敛.   
+
+## Optimization of $L_1$ with Restart
+
+如果考虑优化 $L_1$, 由于其是一个非光滑的目标函数, 使用 restart, 在当前第 $t$ 次迭代时, 在内层考虑使用标准 non-smooth 的优化方法 (例如 sub-gradient method). 对于该种标准优化方法, 在进行 $K$ 次迭代后, 有结论:
+$$
+L_1(\mathbf{z}_{t+1}^{(0)}) \lesssim \frac{M \text{dist}(\mathbf{z}_{t}^{(0)}, \mathcal{Z}^\star)}{\sqrt{K}}
 $$
 
+进一步代入 Hoeffman bound 的结论 $\text{dist}(\mathbf{z}, \mathcal{Z}^\star) \leq \alpha_H L_1(\mathbf{z})$, 可以得到如下的收敛率:
 $$
-\begin{aligned}
-\text{dist}(\mathbf{z}, \mathcal{Z}^\star) & \leq \alpha_H \Delta(\mathbf{z}) \leq \alpha_H  l_{(1)}(\mathbf{z}) \\
-\text{dist}(\mathbf{z}, \mathcal{Z}^\star)^2 & \leq \alpha_H^2 \Delta(\mathbf{z})^2 = \alpha_H^2 l_{(2)}(\mathbf{z})
-\end{aligned}
+L_1(\mathbf{z}_{t+1}^{(0)}) \lesssim \frac{M \alpha_H }{\sqrt{K}} L_1(\mathbf{z}_{t}^{(0)}) := \beta_1 L_1(\mathbf{z}_{t}^{(0)})
 $$
+
+因此只要保证每次的优化幅度
+$$
+\beta_1 = \frac{M \alpha_H }{\sqrt{K}} < 1
+$$
+就可以保证上述 restart 中描述的几何收敛(线性), 从而在第 $T$ 次外层迭代后, 有
+$$
+L_1(\mathbf{z}_{T}^{(0)}) \lesssim \beta_1^T L_1(\mathbf{z}_{0}^{(0)})
+$$
+因此若要求总的误差为 $L_1(\mathbf{z}_{T}^{(0)}) \leq \epsilon$, 则只需
+$$
+T \gtrsim \frac{\log(L_1(\mathbf{z}_{0}^{(0)})/\epsilon)}{\log(1/\beta_1)} 
+$$
+
+进而, 由$\beta$ 的选择反推 $K \asymp \frac{M^2 \alpha_H^2}{\beta_1^2}$ , 故总的迭代次数为 
+$$
+T \cdot K \asymp \frac{M^2 \alpha_H^2}{\beta_1^2 \log(1/\beta_1)} \log(L_1(\mathbf{z}_{0}^{(0)})/\epsilon).
+$$
+
+在特别地, 若强制 $\beta_1 = 1/2$, 则 $K \asymp 4 M^2 \alpha_H^2$, 从而总的迭代次数为 $\mathcal{O}(M^2 \alpha_H^2 \log(L_1(\mathbf{z}_{0}^{(0)})/\epsilon))$.
+
+> [!note]
+>
+> 这里给出优化中的更完整叙述. 对于凸目标函数 $l:\mathcal{Z} \to \mathbb{R}$, 以及其最优解集 $\mathcal{Z}^\star := \arg\min_{\mathbf{z} \in \mathcal{Z}} l(\mathbf{z})\neq \emptyset$. 此外, 假设 $f$ 在 $\mathcal{Z}$ 上是 $M$-Lipschitz 的, 即对于任意 $g \in \partial l(\mathbf{z})$, 都有 $\|g\| \leq M$. 则此时, 对于标准的 sub-gradient method, 在进行 $K$ 次迭代后, 有如下 $\mathcal{O}(\frac{1}{\sqrt{K}})$ 的收敛率:
+> $$
+> l(\mathbf{z}_K) - L^\star \leq \frac{\|z_0 - z^\star\|^2}{2 \sum_{k=1}^K \eta_k} + \frac{M^2 \sum_{k=1}^K \eta_k^2}{2 \sum_{k=1}^K \eta_k}
+> $$
+> - 其中 $\mathbf{z}_0$ 是初始点, $\mathbf{z}^\star$ 是最优解, $\eta_k$ 是第 $k$ 次迭代的学习率. 
+>
+> 如果选择合适的步长, 例如 $\eta_k \asymp \frac{\|z_0 - z^\star\|}{M \sqrt{K}}$, 则可以得到如下的收敛率:
+> $$
+> l(\bar{\mathbf{z}}_K) - L^\star \lesssim \frac{M \|z_0 - z^\star\|}{\sqrt{K}}
+> $$
+> - 其中 $\bar{\mathbf{z}}_K := \frac{1}{K} \sum_{k=1}^K \mathbf{z}_k$ 是迭代点的平均值.
+>
+> 再进一步对 $\|z_0 - z^\star\|$ 取最小化, 可以得到如下的收敛率:
+> $$
+> l(\bar{\mathbf{z}}_K) - L^\star \lesssim \frac{M \text{dist}(\mathbf{z}_0, \mathcal{Z}^\star)}{\sqrt{K}}
+> $$
