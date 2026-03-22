@@ -11,15 +11,111 @@ $$
 其中
 $$
 F_{\mathbf b}(\mathbf x)
-:=
+:= h(\mathbf A\mathbf x-\mathbf b) = 
 \frac1p\|\mathbf A\mathbf x-\mathbf b\|_p^p = \max_{\mathbf y\in\mathbb R^m}\left\{\langle \mathbf A\mathbf x-\mathbf b,\mathbf y\rangle - \frac1q\|\mathbf y\|_q^q\right\}.
 $$
 
+对应的 smooth surrogate function 可以定义为
+$$
+F_{\mathbf b, \mu}(\mathbf x) := \max_{\mathbf y\in\mathbb R^m}\left\{\langle \mathbf A\mathbf x-\mathbf b,\mathbf y\rangle - \frac1q\|\mathbf y\|_q^q - \frac\mu2\|\mathbf y\|_2^2\right\}.
+$$
+
 余下的部分我们会分为如下两种情况进行讨论:
-1. 对于 feasible point, 即 $\mathcal{X}^\star = \{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x=\mathbf b\} \neq \emptyset$. 此时, 对于任意 $\tilde{\mathbf x}\in\mathcal{X}^\star$, 任意 $\mathbf x\in\mathbb R^n$, 都有
+1. 对于 feasible point, 即 $\mathcal{X}^\star = \{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x=\mathbf b\} \neq \varnothing$. 此时, 对于任意 $\tilde{\mathbf x}\in\mathcal{X}^\star$, 任意 $\mathbf x\in\mathbb R^n$, 都有
     $$
-    \mathbf{A}\mathbf{x} - \mathbf{b}  = \mathbf{A}\mathbf{x} - \mathbf{A}\tilde{\mathbf{x}} := \mathbf{A}(\mathbf{z}),
+    \mathbf{A}\mathbf{x} - \mathbf{b}  = \mathbf{A}\mathbf{x} - \mathbf{A}\tilde{\mathbf{x}} := \mathbf{A}\mathbf{z},
     $$
     即相当于在 feasible point 上的 Canonical 模型. 因此, 该问题的分析与 Canonical 模型几乎完全一致, 可以直接进行推广. 
+    - 对于这类情况的分析, 我们的研究重点在于指出其可以通过 Restarting 技术来达到线性收敛的效果. 
+    - 纯粹的由推广可以较易得到的结论的证明将不再赘述.
 
-2. 
+2. 反之, 若 $\mathbf{A}\mathbf{x} = \mathbf{b}$ 无解, 则此时最优值将不再为 $0$, 此时我们将重新给出更细致的相应分析.
+
+
+## Feasible Case： $\mathcal{X}^\star = \{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x=\mathbf b\} \neq \varnothing$
+
+### 从 Canonical 模型到 Affine 模型的推广
+
+***Proposition* (原函数的最大值解)**: 对于 $F_{\mathbf b}(\mathbf x) = \frac1p\|\mathbf A\mathbf x-\mathbf b\|_p^p$, 其最大值解 $\mathbf y_F^\star$ 满足
+$$
+\mathbf y_F^\star = \arg\max_{\mathbf y\in\mathbb R^m}\left\{\langle \mathbf A\mathbf x-\mathbf b,\mathbf y\rangle - \frac1q\|\mathbf y\|_q^q\right\} = 
+\text{sign}(\mathbf A\mathbf x-\mathbf b)\odot|\mathbf A\mathbf x-\mathbf b|^{p-1}.
+$$
+
+其中 $\odot$ 与 $\text{sign}(\cdot)$ 等运算符号的定义与 Canonical 模型中的相同, 都是逐元素的.
+
+
+***Proposition* (平滑 surrogate 函数的最优性条件, 梯度表达与 Lipschitz Smoothness)**: 对于 $F_{\mathbf b, \mu}(\mathbf x) = \max_{\mathbf y\in\mathbb R^m}\left\{\langle \mathbf A\mathbf x-\mathbf b,\mathbf y\rangle - \frac1q\|\mathbf y\|_q^q - \frac\mu2\|\mathbf y\|_2^2\right\}$, 该最大化问题在给定 $\mathbf x$ 时具有唯一的最优解 $\mathbf y_\mu^\star(\mathbf x)$, 满足如下一阶最优性条件:
+$$
+\mathbf A\mathbf x-\mathbf b - \nabla h(\mathbf y_\mu^\star(\mathbf{x})) - \mu \mathbf y_\mu^\star(\mathbf x) = \mathbf 0.
+$$ 
+
+此外,  其梯度与最优解 $\mathbf y_\mu^\star(\mathbf x)$ 之间的关系为
+$$
+\nabla F_{\mathbf b, \mu}(\mathbf x) = \mathbf A^\top \mathbf y_\mu^\star(\mathbf x).
+$$
+
+并且 $\nabla F_{\mathbf{b},\mu}$  是 Lipschitz 连续的, 其 Lipschitz 常数为 $L_\mu = \frac{\|\mathbf A\|^2}{\mu}$.
+
+
+$\diamond$
+
+- *Proof*
+    - 上述证明与 Canonical 模型中的证明完全一致.
+  
+$\square$
+
+***Proposition* (可行情况下, 原问题与平滑问题共享最优解)**: 若 $\mathcal{X}^\star  = \{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x=\mathbf b\} \neq \varnothing$, 则对于原问题:
+$$
+\min_{\mathbf x\in\mathbb R^n} F_{\mathbf b}(\mathbf x) = \min_{\mathbf x\in\mathbb R^n} \frac1p\|\mathbf A\mathbf x-\mathbf b\|_p^p,
+$$
+与任意 $\mu > 0$ 下的平滑 surrogate 问题
+$$
+\min_{\mathbf x\in\mathbb R^n} F_{\mathbf b, \mu}(\mathbf x) = \min_{\mathbf x\in\mathbb R^n} \max_{\mathbf y\in\mathbb R^m}\left\{\langle \mathbf A\mathbf x-\mathbf b,\mathbf y\rangle - \frac1q\|\mathbf y\|_q^q - \frac\mu2\|\mathbf y\|_2^2\right\},
+$$
+具有完全相同的最优解集合 $\mathcal{X}^\star$, 且最优值也都同为 $0$.
+
+- *Proof*
+  - 对于原问题和平滑 surrogate 问题的证明都可以通过将 $\mathbf A\mathbf x-\mathbf b$ 代入到 Canonical 模型中的相应证明中来得到.
+  - 事实上, 对于 canonical 模型与当前 Feasible Case 的 affine 模型, 其最优解集合相当于通过 $\mathbf A\mathbf x-\mathbf b$ 进行了一次仿射变换, 因此两者的最优解集合是完全相同的.
+  
+$\square$
+
+
+***Proposition* (Pointwise Smoothing Error)**: 对于任意 $\mathbf x\in\mathbb R^n$, 任意 $\mu > 0$, 都有
+$$
+0 \leq F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf A\mathbf x-\mathbf b\|_p^{2(p-1)} = D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{\frac{2(p-1)}{p}}.
+$$  
+其中 $D_{p,m} = \frac{1}{2} m^{\frac{2-p}{p}} p^{2-\frac{2}{p}}$ 是一个仅依赖于 $p$ 和 $m$ 的常数.
+
+- *Proof*
+  - 关于下界的证明可以直接由定义得到. 
+  - 关于上界, 我们可以通过如下步骤来得到 (事实上也是完全相同的):
+    - 将原问题的最优解 $\mathbf y_F^\star$ 代入到平滑 surrogate 问题的定义中, 可以得到
+        $$
+        F_{\mathbf b, \mu}(\mathbf x) \geq \langle \mathbf A\mathbf x-\mathbf b,\mathbf y_F^\star\rangle - \frac1q\|\mathbf y_F^\star\|_q^q - \frac\mu2\|\mathbf y_F^\star\|_2^2 = F_{\mathbf b}(\mathbf x) - \frac\mu2\|\mathbf y_F^\star\|_2^2.
+        $$
+    - 同时, 注意到 $\|\mathbf y_F^\star\|_q^q = \|\mathbf A\mathbf x-\mathbf b\|_p^p$, 因此进一步由范数的关系可知
+        $$
+        \|\mathbf y_F^\star\|_2^2 \leq m^{\frac{2-p}{p}} \|\mathbf A\mathbf x-\mathbf b\|_p^{2(p-1)}.
+        $$
+    - 综上, 可以得到
+        $$
+        F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq \frac\mu2\|\mathbf y_F^\star\|_2^2 \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf A\mathbf x-\mathbf b\|_p^{2(p-1)} = D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{2-\frac{2}{p}}.
+        $$
+
+
+***Proposition* (精读转换)**: 对于任意 $\varepsilon > 0$, $\mu \leq  \frac{1}{2 D_{p,m}} \varepsilon^{\frac{2}{p}-1}$, 则对于任意 $\mathbf x\in\mathbb R^n$, 都有
+$$
+F_{\mathbf b, \mu}(\mathbf x)  \leq \frac{\varepsilon}{2}  \implies F_{\mathbf b}(\mathbf x) \leq \varepsilon.
+$$
+
+
+***Proposition* (单阶段优化算法的收敛率)**: 定义 $\mu_{\varepsilon} := \frac{1}{2 D_{p,m}} \varepsilon^{\frac{2}{p}-1}$, 且设 $R_0 = \text{dist}(\mathbf x_0, \mathcal{X}^\star)$. 若对光滑问题 $\min_{\mathbf x\in\mathbb R^n} F_{\mathbf b, \mu_\varepsilon}(\mathbf x)$ 应用 accelerated gradient method, 直到某迭代点 $\mathbf x_k$ 满足 $F_{\mathbf b, \mu_\varepsilon}(\mathbf x_k) \leq \frac{\varepsilon}{2}$, 则必有 $F_{\mathbf b}(\mathbf x_k) \leq \varepsilon$. 且迭代次数 $k$ 只需要满足
+$$
+k+1 \geq 2 \sqrt{2D_{p,m}} \|\mathbf A\|_2 R_0 \varepsilon^{-\frac{1}{p}},
+$$ 
+即可保证上述条件的满足. 从而, 
+$$
+k = \mathcal{O}\left(\|\mathbf A\|_2 R_0 \varepsilon^{-\frac{1}{p}}\right).
+$$
