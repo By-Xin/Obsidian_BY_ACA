@@ -6,59 +6,67 @@
 
 - 该论文提出了一种学习方法来为不动点优化算法提供热启动以加速其收敛速度.
 
-## 章节梳理
 
-### Introduction & Background
+## Introduction & Background
 
-**Fixed-point optimization**
+### Parametric Fixed-point Problem
 
-- 不动点优化本身是指: 寻找 $z$ 使得 $z = T(z)$, 其中 $T$ 是一个映射. 事实上许多优化问题都可以整理为这样的形式. 在迭代中, 即为:
+- 首先, 文中考虑的 Parametric Fixed-point Problem 的形式如下:
+  $$
+  \text{Find } \mathbf{z} \in \mathbb{R}^p \text{ such that } \mathbf{z} = T_\theta(\mathbf{z}) \qquad \text{(1)}
+  $$
+
+  - $\mathbf{z} \in \mathbb{R}^p$ 是决策变量; 
+  - $\theta \in \Theta \subseteq \mathbb{R}^d$ 是一个环境/问题参数,  不同的 $\theta$ 代表了不同的具体优化问题. 例如 $\theta$ 可以包含了数据集, 任务的具体要求等.  
+  - $T_\theta: \mathbb{R}^p \to \mathbb{R}^p$ 是一个由 $\theta$ 定义的映射, 代表了一个优化的 operator.
+
+- 若对应于迭代的过程, 则可以写成如下的迭代形式:
+  $$
+  \mathbf{z}^{(i+1)} = T_\theta(\mathbf{z}^{(i)}) \quad \text{for } i=0,1,2,\ldots
+  $$
+
+  - 若假设算法最终会收敛到一个不动点 $\mathbf{z}^\star(\theta)$, 即:
     $$
-    z^{(i+1)} = T_\theta(z^{(i)})
+    \lim_{i\to\infty} \|\mathbf{z}^{(i)} - \mathbf{z}^\star(\theta)\| = 0
     $$
-    - 其中 $\theta$ 是算法的参数, 例如学习率, 数据本身等.  $T_\theta$ 表示由 $\theta$ 定义的具体的更新规则.
-    - 若算法收敛了, 则 $z^\star = T_\theta(z^\star)$, 即 $z^\star$ 是 $T_\theta$ 的一个不动点.
+    则 $\mathbf{z}^\star(\theta)$ 就是满足 $(1)$ 的解.  
 
 
-- 论文中指出, 许多优化算法本身都是不动点优化算法, 例如: Proximal Gradient Descent, ADMM, 等等. 这些算法的迭代过程都可以看作是一个不动点迭代.
-  - 例如, 对于 SGD, 其迭代过程可以写成:
+  - 对于初值 $\mathbf{z}^{(0)}$, 其选择会影响迭代的收敛速度, 因此一个好的初值可以加速算法的收敛, 这也是 warm-start 的核心思想.
+
+
+  - 在实际的优化算法中, 往往会考虑 $\epsilon$-approximate 的收敛结构, 即当 **fixed-point residual** 有
     $$
-    z^{(i+1)} = z^{(i)} - \eta \nabla f(z^{(i)}) := T(z^{(i)})
+    \|\mathbf{z}^{(i)} - T_\theta(\mathbf{z}^{(i)})\| \leq \epsilon,
     $$
-    在收敛点 $\nabla f(z^\star) = 0$, 时, 则有
-    $$
-    T(z^\star) = z^\star - \eta \nabla f(z^\star) = z^\star
-    $$
-    因此是一个不动点.
-    - 在这个例子中, $T$ 的参数 $\theta$ 相当于一个由数据等抽象出的一个环境参数, 其影响了 $T$ 的具体形式.
+    就认为 $\mathbf{z}^{(i)}$ 已经足够接近一个不动点了.
 
 
 
-**Warm-starting**
 
-- 对于上述的不动点迭代问题, 一个减少迭代次数实现加速的方法是热启动 (warm-starting), 即选择一个好的初始点 $z^{(0)}$ 来加速收敛. warm-start 不会改变原有算法的迭代过程, 只是通过更聪明的初始点来减少迭代次数.
-- 当前已有 warm-start 的算法的主要问题:
-  - 缺少 generalization guarantee
-  - 本身的学习过程和后续的算法是 decoupled 的. 也就是一个 end-to-end 的问题. 容易导致在 unseen problem 上出现 sub-optimal.
+- 不动点问题本质上相当于参数化凸优化问题的最优性条件, 因此求解 $(1)$ 的过程就等价于求解这样的凸优化问题.  文中表示, 几乎所有的凸优化问题都可以转化为寻找一个不动点的形式, 许多优化算法表面上看是在更新变量, 但实际上都可以表示为寻找某个算子的一个不动点.  下面是文中举的几个具体的例子. 
+  - Gradient Descent: 
+    - 优化目标: $\min_z f_\theta(z)$
+    - 标准迭代过程: $z^{(i+1)} = z^{(i)} - \eta \nabla f_\theta(z^{(i)})$ 
+    - 对应的 fixed-point operator: $T_\theta(z) = z - \eta \nabla f_\theta(z)$. 
+    - 当达到 optimal point 时, $z^\star = T_\theta(z^\star) = z^\star - \eta \nabla f_\theta(z^\star)$, 也就是 $\nabla f_\theta(z^\star) = 0$, 满足 optimality condition (在凸优化的情况下).
+  - Proximal Gradient Descent:
+    - 优化目标: $\min_z f_\theta(z) + g_\theta(z)$
+    - 标准迭代过程: $z^{(i+1)} = \text{prox}_{\eta g_\theta}(z^{(i)} - \eta \nabla f_\theta(z^{(i)}))$
+    - 对应的 fixed-point operator: $T_\theta(z) = \text{prox}_{\eta g_\theta}(z - \eta \nabla f_\theta(z))$.
+    - 当达到 optimal point 时, $z^\star = T_\theta(z^\star) = \text{prox}_{\eta g_\theta}(z^\star - \eta \nabla f_\theta(z^\star))$, 也就是 $0 \in \nabla f_\theta(z^\star) + \partial g_\theta(z^\star)$, 满足 optimality condition (在凸优化的情况下).
+
+  - ADMM (Douglas-Rachford Splitting):
+    - 优化目标: $\min_{u} f_\theta(u) + g_\theta(u)$ (注意这里的 $u$ 是最终的决策变量, 而下文的 $z$ 是 ADMM 内部的一个迭代变量)
+    - 标准迭代过程:
+      - $\tilde{u}^{(i+1)} = \text{prox}_{g_\theta}(z^{(i)})$
+      - $u^{(i+1)} = \text{prox}_{f_\theta}(2\tilde{u}^{(i+1)} - z^{(i)})$
+      - $z^{(i+1)} = z^{(i)} + u^{(i+1)} - \tilde{u}^{(i+1)}$
+    - 对应的 fixed-point operator: $T_\theta(z) = z + \text{prox}_{f_\theta}(2\text{prox}_{g_\theta}(z) - z) - \text{prox}_{g_\theta}(z)$.
+    - 当达到 optimal point 时, $z^\star = z^\star +  u^\star - \tilde{u}^\star$, 也就是 $u^\star = \tilde{u}^\star$, 这意味着两个子 proximal 的步骤趋于一致, 这个共同点就是最终的 optimal point.
 
 
 
-### Warm-start Framework
-
-回忆, 给定数据等具体任务环境 $\theta$, 以及一个不动点算法 $T_\theta$, 其迭代过程为:
-$$
-z^{(i+1)} = T_\theta(z^{(i)})
-$$
-
-- 传统的 warm-start 的思路是: 设计一个神经网络 $h_w$, 输入任务 $\theta$, 输出一个初始点 $z^{(0)} = h_w(\theta)$. 后续的思路是, 直接让 $h_w(\theta)$ 接近最优解 $z^\star$.
-- 本文提出的 warm-start 框架则是: 设计一个神经网络 $h_w$, 输入任务 $\theta$, 输出一个初始点 $z^{(0)} = h_w(\theta)$, 但考虑的是该迭代点 $z^{(0)}$ 经过 $K$ 步迭代后的结果 $z^{(K)}$, 即:
-    $$
-    z^{(K)} = T_\theta^K(h_w(\theta))
-    $$
-    并以此为目标进行训练. 也就是说, 训练的目标不是让初始值 $h_w(\theta)$ 本身接近最优解, 而是让经过 $K$ 步迭代后的结果 $z^{(K)}$ 接近最优解. 这样就将 warm-start 的学习过程和后续的算法紧密结合在一起, 从而提高了 generalization 的能力.
-
-
-通过一些例子, 文章试图说明: 对于 warm start 的点的选取本身必须考虑后续的迭代过程. 虽然可能一些 warm start 到 $z^\star$ 的距离是相同的, 但是各自可能分别跑出完全不同的迭代轨迹. (也就是说只看静态的初始点是没有意义的).
 
 #### Training
 
