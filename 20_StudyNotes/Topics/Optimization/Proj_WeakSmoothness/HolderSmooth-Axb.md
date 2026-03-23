@@ -185,3 +185,165 @@ $\diamond$
     $$
 
 $\square$
+
+
+在得到该引理之后, 我们就可以通过 Restarting 技术来达到线性收敛的效果. 具体算法如下. 
+
+***Algorithm* (Restarting Accelerated Gradient Method for Feasible Case)**: 
+
+- INPUT: 初始点 $\mathbf x_0 \in \mathbb{R}^n$, 精度要求 $\varepsilon > 0$, 收缩因子 $\beta \in (0,1)$, Smooth surrogate 的优化算法 $\mathcal{M}$ (此处为 AGD).
+
+- OUTPUT: 满足 $F_{\mathbf b}(\mathbf x_N) \leq \varepsilon$ 的 $\mathbf x_N$.
+
+- 算法流程:
+    1. 初始化: 给定 $\mathbf x_0 \in \mathbb{R}^n$, 设当前阶段数 $n \leftarrow 0$.
+    2. 计算当前阶段的目标函数值之 gap:
+        $$
+        \Delta_n := F_{\mathbf b}(\mathbf x_n).
+        $$
+    3. 若 $\Delta_n \leq \varepsilon$, 则输出 $\mathbf x_n$ 并停止算法.
+    4. 设定本阶段目标精度: 令 
+        $$
+        \varepsilon_n := \beta \Delta_n.
+        $$
+    5. 设定本阶段的平滑问题: 
+        $$
+         F_{\mathbf b, \mu_n}(\mathbf x) = \max_{\mathbf y\in\mathbb R^m}\left\{\langle \mathbf A\mathbf x-\mathbf b,\mathbf y\rangle - \frac1q\|\mathbf y\|_q^q - \frac{\mu_n}{2}\|\mathbf y\|_2^2\right\},
+        $$
+        其中 $\mu_n := \frac{1}{2 D_{p,m}} \varepsilon_n^{\frac{2}{p}-1}$.
+    6. 在本阶段, 从 $\mathbf x_n$ 出发, 对 $\min_{\mathbf x\in\mathbb R^n} F_{\mathbf b, \mu_n}(\mathbf x)$ 应用优化算法 $\mathcal{M}$ (此处为 AGD), 直到某迭代点 $\mathbf x_{n+1}$ 满足 $F_{\mathbf b, \mu_n}(\mathbf x_{n+1}) \leq \frac{\varepsilon_n}{2}$.
+    7. 更新阶段数: $n \leftarrow n + 1$, 返回步骤 2.
+
+
+<!-- Algorithm 1 Restarted smoothing for the feasible affine residual model
+
+Input:
+    initial point x_0 ∈ R^n
+    target accuracy ε > 0
+    contraction factor β ∈ (0,1)
+    inner solver M = AGD
+
+Initialize:
+    n ← 0
+
+Repeat:
+    Δ_n ← F_b(x_n) = (1/p) ||Ax_n - b||_p^p
+
+    if Δ_n ≤ ε then
+        return x_n
+    end if
+
+    ε_n ← β Δ_n
+    μ_n ← (2D_{p,m})^{-1} ε_n^{2/p - 1}
+
+    define Φ_n(x) := F_{b,μ_n}(x)
+
+    starting from x_n, run AGD on Φ_n
+    until an iterate x_{n+1} is obtained such that
+        Φ_n(x_{n+1}) ≤ ε_n / 2
+
+    n ← n + 1
+
+Output:
+    x_n -->
+
+$\diamond$
+
+***Theorem* (Restarting 策略每阶段的收缩率)**: 在上述 Restarting Accelerated Gradient Method for Feasible Case 中, 应用上述算法. 令 $R_n := \text{dist}(\mathbf x_n, \mathcal{X}^\star)$, 则对于任意阶段 $n$, 其对应循环步数 $k_n$ 满足
+$$
+k_n + 1 \geq 2 \sqrt{2D_{p,m}} \|\mathbf A\|_2 R_n \varepsilon_n^{-\frac{1}{p}},
+$$
+则可以保证在该阶段的输出点 $\mathbf x_{n+1}$ 满足
+$$
+F_{\mathbf b}(\mathbf x_{n+1})  \leq \beta F_{\mathbf b}(\mathbf x_n) \iff \Delta_{n+1} \leq \beta \Delta_n.
+$$
+
+$\diamond$
+
+- *Proof*
+  - 首先, 对于当前 Feasible Case 的 affine 模型, 其最优值 $F_{\mathbf b}^\star$ 是 $0$. 因此, 对于任意阶段 $n$, 都有 $\Delta_n = F_{\mathbf b}(\mathbf x_n) - F_{\mathbf b}^\star = F_{\mathbf b}(\mathbf x_n)$.
+  - 对于第 $n$ 个阶段, 由前面的定理, 只要 $k_n + 1 \geq 2 \sqrt{2D_{p,m}} \|\mathbf A\|_2 R_n \varepsilon_n^{-\frac{1}{p}}$, 则可以保证 $F_{\mathbf b, \mu_n}(\mathbf x_{n+1}) \leq \frac{\varepsilon_n}{2}$.
+  - 由精度转换的定理, 可以得到 $F_{\mathbf b}(\mathbf x_{n+1}) \leq \varepsilon_n = \beta \Delta_n$. 从而, 可以得到 $\Delta_{n+1} = F_{\mathbf b}(\mathbf x_{n+1}) \leq \beta \Delta_n$.
+
+$\square$
+
+
+***Corollary* (由 Sharpness 保证的每 stage 下的常数更新)**: 在上述 *仿射可行系统的 sharpness / error bound*  的 Lemma 条件下, 上述算法的每个阶段 $n$ 的内部循环步数 $K$ 只要满足:
+$$
+K := \left\lceil 2 \sqrt{2D_{p,m}}   p^{\frac{1}{p}} \beta^{-\frac{1}{p}} \frac{\|\mathbf A\|_2}{\sigma_{\min}^+(\mathbf A)} \right\rceil,
+$$
+即可保证
+$$
+\Delta_{n+1} \leq \beta \Delta_n.
+$$
+
+- *Proof*
+  - 由前面的引理, 可以得到, 对于任意 $\mathbf x \in \mathbb{R}^n$, 都有
+    $$
+    \text{dist}(\mathbf x, \mathcal{X}^\star) \leq \frac{p^{\frac{1}{p}}}{\sigma_{\min}^+(\mathbf A)} F_{\mathbf b}(\mathbf x)^{\frac{1}{p}} = \frac{p^{\frac{1}{p}}}{\sigma_{\min}^+(\mathbf A)} \Delta_n^{\frac{1}{p}}.
+    $$
+
+  - 而又知 $\varepsilon_n = \beta \Delta_n$, 因此
+    $$
+    R_n \varepsilon_n^{-\frac{1}{p}} \leq \frac{p^{\frac{1}{p}}}{\sigma_{\min}^+(\mathbf A)} \Delta_n^{\frac{1}{p}} (\beta \Delta_n)^{-\frac{1}{p}} = \frac{p^{\frac{1}{p}}}{\sigma_{\min}^+(\mathbf A)} \beta^{-\frac{1}{p}}.
+    $$
+
+  - 再代回每个stage固定比例收缩的定理的充分条件中, 即有:
+    $$
+    k_n + 1 \geq 2 \sqrt{2D_{p,m}}   p^{\frac{1}{p}} \beta^{-\frac{1}{p}} \frac{\|\mathbf A\|_2}{\sigma_{\min}^+(\mathbf A)} \geq 2 \sqrt{2D_{p,m}} \|\mathbf A\|_2 R_n \varepsilon_n^{-\frac{1}{p}} .
+    $$
+
+  - 从而, 只要取 $K := \left\lceil 2 \sqrt{2D_{p,m}}   p^{\frac{1}{p}} \beta^{-\frac{1}{p}} \frac{\|\mathbf A\|_2}{\sigma_{\min}^+(\mathbf A)} \right\rceil$, 就可以保证 $\Delta_{n+1} \leq \beta \Delta_n$.
+
+
+$\square$
+
+
+
+***Corollary* (Restarting 技术下的线性收敛)**: 在上述 Restarting Accelerated Gradient Method for Feasible Case 中, 设定每个阶段的内部循环上述 Corollary 中的 $K$ 次, 则 residual $\Delta_n$ 有:
+$$
+\Delta_n \leq \beta^n \Delta_0.
+$$
+
+因此, 为了达到 $F_{\mathbf b}(\mathbf x_n) = \Delta_n \leq \varepsilon$, 只需要满足
+$$
+N \geq \frac{\log(\Delta_0 / \varepsilon)}{\log(1/\beta)}.
+$$
+
+对应总的 AGD 迭代次数满足:
+$$
+NK  = 
+\mathcal{O}\left(\sqrt{D_{p,m}}   p^{\frac{1}{p}} \beta^{-\frac{1}{p}} \frac{\|\mathbf A\|_2}{\sigma_{\min}^+(\mathbf A)} \log\left(\frac{\Delta_0}{\varepsilon}\right)\right).
+$$
+
+若进一步将 $p, m, \beta$ 视为常数, 则总的 AGD 迭代次数满足
+$$
+NK  = 
+\mathcal{O}\left(\frac{\|\mathbf A\|_2}{\sigma_{\min}^+(\mathbf A)} \log\left(\frac{\Delta_0}{\varepsilon}\right)\right).
+$$
+
+- *Proof*
+  - 由前面的 Corollary, 每个阶段 $n$ 的 residual $\Delta_n$ 满足 $\Delta_{n+1} \leq \beta \Delta_n$. 因此, 可以得到 $\Delta_n \leq \beta^n \Delta_0$.
+  - 为了达到 $\Delta_n \leq \varepsilon$, 只需要满足 $\beta^n \Delta_0 \leq \varepsilon$, 从而 $n \geq \frac{\log(\Delta_0 / \varepsilon)}{\log(1/\beta)}$.
+  - 每个阶段的内部循环步数为 $K$, 因此总的 AGD 迭代次数为 $NK = K\frac{\log(\Delta_0 / \varepsilon)}{\log(1/\beta)}$. 将 $K$ 的表达式代入, 即可得到总的 AGD 迭代次数的表达式.
+
+$\square$
+
+
+总结本章, 一旦我们从 $\frac1p\|\mathbf A\mathbf x\|_p^p$ 的 Canonical 模型推广到 $\frac1p\|\mathbf A\mathbf x-\mathbf b\|_p^p$ 的 affine 模型, 则只需保证 Feasible 假设
+$$
+\mathcal{X}^\star = \{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x=\mathbf b\} \neq \varnothing,
+$$
+则几乎所有关于 Canonical 模型的结论都可以通过 $\mathbf A\mathbf x-\mathbf b$ 的仿射变换来进行推广.  其中, 最为重要的, 我们依然保留了
+$$
+F^\star = 0, \quad \mathcal{X}^\star = \{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x=\mathbf b\},
+$$
+的良好性质, 因此依然可以将 $\Delta_n$ 定义为 $F_{\mathbf b}(\mathbf x_n) - F_{\mathbf b}^\star = F_{\mathbf b}(\mathbf x_n)$ 作为一个可以直接观测的 gap 来进行分析. 
+
+在此基础上, 我们可以通过 Restarting 技术, 借助 Feasible Case 下的 Sharpness 
+$$
+\text{dist}(\mathbf x, \mathcal{X}^\star) \lesssim F_{\mathbf b}(\mathbf x)^{\frac{1}{p}},
+$$
+来达到线性收敛的效果.  
+
+此时, 单阶段的迭代复杂度仍然是 $\mathcal{O}\left(\|\mathbf A\|_2 R_n \varepsilon_n^{-\frac{1}{p}}\right)$, 但由于每个阶段都能保证 $\Delta_{n+1} \leq \beta \Delta_n$, 因此总的迭代复杂度将是 $\mathcal{O}\left(\frac{\|\mathbf A\|_2}{\sigma_{\min}^+(\mathbf A)} \log\left(\frac{\Delta_0}{\varepsilon}\right)\right)$, 从而得到了额外的收益.
