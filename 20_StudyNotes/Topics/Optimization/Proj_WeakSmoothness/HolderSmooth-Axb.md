@@ -1,4 +1,4 @@
-# Holder Smooth: 从 Canonical 到 Affine 模型
+# From Canonical to Affine: The Feasible Affine Model and Restart Smoothing
 
 本节考虑一个稍微 general 一些的优化问题, 即在 Canonical 模型的基础上, 将残差 $\mathbf A\mathbf x$ 扩展为 affine 模型 $\mathbf A\mathbf x-\mathbf b$. 
 
@@ -105,7 +105,7 @@ $$
         $$
 
 
-***Proposition* (精读转换)**: 对于任意 $\varepsilon > 0$, $\mu \leq  \frac{1}{2 D_{p,m}} \varepsilon^{\frac{2}{p}-1}$, 则对于任意 $\mathbf x\in\mathbb R^n$, 都有
+***Proposition* (精度转换)**: 对于任意 $\varepsilon > 0$, $\mu \leq  \frac{1}{2 D_{p,m}} \varepsilon^{\frac{2}{p}-1}$, 则对于任意 $\mathbf x\in\mathbb R^n$, 都有
 $$
 F_{\mathbf b, \mu}(\mathbf x)  \leq \frac{\varepsilon}{2}  \implies F_{\mathbf b}(\mathbf x) \leq \varepsilon.
 $$
@@ -119,3 +119,69 @@ $$
 $$
 k = \mathcal{O}\left(\|\mathbf A\|_2 R_0 \varepsilon^{-\frac{1}{p}}\right).
 $$
+
+
+### Restarting 技术下的线性收敛
+
+下面这个部分, 我们将指出, 对于 Canonical 及延伸的 Feasible Case 的 affine 模型, 我们都可以利用其 Sharpness 的性质, 通过 Restarting 技术来达到线性收敛的效果.
+
+首先我们给出如下引理. 该引理将给出 Feasible Case 下残差 $\mathbf A\mathbf x-\mathbf b$ 和距离 $\text{dist}(\mathbf x, \mathcal{X}^\star)$ 之间的关系, 即一个 error bound, 这本身也体现了 Feasible Case 下的 Sharpness. 
+
+***Lemma*  (Feasible Case 下的 Sharpness)**:  设 $\mathbf{A} \in \mathbb{R}^{m\times n}$, $\mathbf{b} \in \mathbb{R}^m$, 且假设线性系统 $\mathbf{A}\mathbf{x} = \mathbf{b}$ 是可行的, 即 $\mathcal{X}^\star = \{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x=\mathbf b\} \neq \varnothing$. 记 $\sigma_{\min}^+(\mathbf A)$ 是 $\mathbf A$ 的最小非零奇异值,  则对于任意 $\mathbf x\in\mathbb R^n$, 都有
+$$
+\operatorname{dist}(\mathbf x, \mathcal{X}^\star)
+\leq
+\frac{\|\mathbf A\mathbf x-\mathbf b\|_2}{\sigma_{\min}^+(\mathbf A)} \leq
+\frac{\|\mathbf A\mathbf x-\mathbf b\|_p}{\sigma_{\min}^+(\mathbf A)} \leq 
+\frac{p^{\frac{1}{p}}}{\sigma_{\min}^+(\mathbf A)} F_{\mathbf b}(\mathbf x)^{\frac{1}{p}}.
+$$
+其中 
+$$
+F_{\mathbf b}(\mathbf x) := \frac1p\|\mathbf A\mathbf x-\mathbf b\|_p^p, \quad 1 < p \leq 2.
+$$
+
+$\diamond$
+
+- *Proof*
+  - 任取一可行点 $\tilde{\mathbf x}\in\mathcal{X}^\star$ (即满足 $\mathbf{A}\tilde{\mathbf{x}} = \mathbf{b}$), 以及任意给定 $\mathbf{x} \in  \mathbb{R}^n$, 有:
+    - 对于 $\mathbf{A}$ 的核空间 $\text{Null}(\mathbf A)$, 由于其是 $\mathbb{R}^n$ 的线性子空间, 因此存在唯一的 $\mathbf{u} \in \text{Null}(\mathbf A)$, 与对应的正交补空间上的 $\mathbf{v} \in \text{Null}(\mathbf A)^\perp$, 使得 $\mathbf{x} - \tilde{\mathbf{x}} = \mathbf{u} + \mathbf{v} \in \mathbb{R}^n$. 即 $\mathbf{x} = \tilde{\mathbf{x}} + \mathbf{u} + \mathbf{v}$.
+    - 定义 $\mathbf{x}^\Pi := \tilde{\mathbf{x}} + \mathbf{u}$, 则立刻有如下性质:
+      - $\mathbf{x}^\Pi \in \mathcal{X}^\star$. 理由如下.
+        - $\tilde{\mathbf{x}} \in \mathcal{X}^\star$ 且 $\mathbf{u} \in \text{Null}(\mathbf A)$, 因此 $\mathbf{A}\mathbf{x}^\Pi = \mathbf{A}\tilde{\mathbf{x}} + \mathbf{A}\mathbf{u} = \mathbf{b}$. 换言之, $\mathcal{X}^\star = \{\tilde{\mathbf x} + \mathbf z: \mathbf A\mathbf z = \mathbf 0\} := \tilde{\mathbf x} + \text{Null}(\mathbf A)$.
+      - $\mathbf{x}^\Pi$ 是 $\mathbf{x}$ 到 $\mathcal{X}^\star$ 的 Euclidean projection. 理由如下. 
+        - 对于任意 $\mathbf{z} \in \mathcal{X}^\star$,  都存在 $\mathbf{w} \in \text{Null}(\mathbf A)$, 使得 $\mathbf{z} = \tilde{\mathbf x} + \mathbf{w}$. 
+        - 因此 $\mathbf{x} - \mathbf{z} = (\tilde{\mathbf{x}} + \mathbf{u} + \mathbf{v}) - (\tilde{\mathbf x} + \mathbf{w}) = (\mathbf{u} - \mathbf{w}) + \mathbf{v}$.
+        - 注意到, $\mathbf{u} - \mathbf{w} \in \text{Null}(\mathbf A)$, $\mathbf{v} \in \text{Null}(\mathbf A)^\perp$, 因此 $\langle \mathbf{u} - \mathbf{w}, \mathbf{v}\rangle = 0$. 从而
+          $$
+          \|\mathbf{x} - \mathbf{z}\|_2^2 = \|\mathbf{u} - \mathbf{w}\|_2^2 + \|\mathbf{v}\|_2^2 \geq \|\mathbf{v}\|_2^2 ,
+          $$
+        - 上式当且仅当 $\mathbf{w} = \mathbf{u}$ 时取到等号. 而此时恰有: 
+          $$
+          \mathbf{z} = \tilde{\mathbf x} + \mathbf{w} = \tilde{\mathbf x} + \mathbf{u} = \mathbf{x}^\Pi.
+          $$
+          且知
+          $$
+          \text{dist}(\mathbf x, \mathcal{X}^\star) = \|\mathbf{x} - \mathbf{x}^\Pi\|_2 = \|\mathbf{v}\|_2.
+          $$
+          此时我们建立起 $\mathbf{x}$ 到 $\mathcal{X}^\star$ 的距离与 $\mathbf{v}$ 之间的关系.
+    - 另一方面, 我们将讨论 $\mathbf{A}\mathbf{x} - \mathbf{b}$ 与 $\mathbf{v}$ 之间的关系, 并根据奇异值将上述距离给出有效的上界. 
+      - 由于 $\mathbf{A}\mathbf{x} - \mathbf{b} = \mathbf{A}\mathbf{x} - \mathbf{A}\tilde{\mathbf{x}} = \mathbf{A}\mathbf{v} + \mathbf{A}\mathbf{u} = \mathbf{A}\mathbf{v}$, 因此 $\mathbf{A}\mathbf{x} - \mathbf{b}$ 与 $\mathbf{v}$ 之间的关系完全由 $\mathbf{A}$ 的奇异值来决定.
+      - 根据 SVD 的标准结论, 由于 $\mathbf{v} \in \text{Null}(\mathbf A)^\perp$, 而 $\sigma_{\min}^+(\mathbf A)$ 作为 $\mathbf{A}$ 的最小非零奇异值恰表示 $\mathbf{A}$ 在 $\text{Null}(\mathbf A)^\perp$ 上的最小伸缩因子, 因此
+        $$
+        \|\mathbf A\mathbf x-\mathbf b\|_2 = \|\mathbf{A}\mathbf{v}\|_2 \geq \sigma_{\min}^+(\mathbf A) \|\mathbf{v}\|_2 = \sigma_{\min}^+(\mathbf A) \text{dist}(\mathbf x, \mathcal{X}^\star).
+        $$
+    - 综上, 可以得到
+      $$
+        \text{dist}(\mathbf x, \mathcal{X}^\star) \leq \frac{\|\mathbf A\mathbf x-\mathbf b\|_2}{\sigma_{\min}^+(\mathbf A)} .
+      $$
+
+  - 最后根据在 $p \in (1,2]$ 区间内的范数关系, 以及 $F_{\mathbf b}(\mathbf x) = \frac1p\|\mathbf A\mathbf x-\mathbf b\|_p^p$, 可以得到
+    $$
+    \|\mathbf A\mathbf x-\mathbf b\|_2 \leq \|\mathbf A\mathbf x-\mathbf b\|_p = p^{\frac{1}{p}} F_{\mathbf b}(\mathbf x)^{\frac{1}{p}}.
+    $$
+    这样就得到了最后的结论
+    $$
+    \text{dist}(\mathbf x, \mathcal{X}^\star) \leq \frac{\|\mathbf A\mathbf x-\mathbf b\|_2}{\sigma_{\min}^+(\mathbf A)} \leq \frac{\|\mathbf A\mathbf x-\mathbf b\|_p}{\sigma_{\min}^+(\mathbf A)} \leq \frac{p^{\frac{1}{p}}}{\sigma_{\min}^+(\mathbf A)} F_{\mathbf b}(\mathbf x)^{\frac{1}{p}}.
+    $$
+
+$\square$
