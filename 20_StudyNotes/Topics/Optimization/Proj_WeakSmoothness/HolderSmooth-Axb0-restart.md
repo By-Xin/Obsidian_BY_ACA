@@ -32,6 +32,12 @@ $$
 2. 反之, 若 $\mathbf{A}\mathbf{x} = \mathbf{b}$ 无解, 则此时最优值将不再为 $0$, 此时我们将重新给出更细致的相应分析.
 
 
+> Throughout this section, we fix $\mathbf b\in\mathbb R^m$, and for notational simplicity write
+> $$
+> F(\mathbf x) := F_{\mathbf b}(\mathbf x), \quad F_\mu(\mathbf x) := F_{\mathbf b, \mu}(\mathbf x).
+> $$
+> When necessary, we revert to the full notation $F_{\mathbf b}(\mathbf x)$ and $F_{\mathbf b, \mu}(\mathbf x)$ to distinguish from the canonical model.
+
 ## Feasible Case： $\mathcal{X}^\star = \{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x=\mathbf b\} \neq \varnothing$
 
 ### 从 Canonical 模型到 Affine 模型的推广
@@ -48,7 +54,7 @@ $$
 ***Proposition* (平滑 surrogate 函数的最优性条件, 梯度表达与 Lipschitz Smoothness)**: 对于 $F_{\mathbf b, \mu}(\mathbf x) = \max_{\mathbf y\in\mathbb R^m}\left\{\langle \mathbf A\mathbf x-\mathbf b,\mathbf y\rangle - \frac1q\|\mathbf y\|_q^q - \frac\mu2\|\mathbf y\|_2^2\right\}$, 该最大化问题在给定 $\mathbf x$ 时具有唯一的最优解 $\mathbf y_\mu^\star(\mathbf x)$, 满足如下一阶最优性条件:
 $$
 \mathbf A\mathbf x-\mathbf b - \nabla h(\mathbf y_\mu^\star(\mathbf{x})) - \mu \mathbf y_\mu^\star(\mathbf x) = \mathbf 0.
-$$ 
+$$
 
 此外,  其梯度与最优解 $\mathbf y_\mu^\star(\mathbf x)$ 之间的关系为
 $$
@@ -62,7 +68,7 @@ $\diamond$
 
 - *Proof*
     - 上述证明与 Canonical 模型中的证明完全一致.
-  
+
 $\square$
 
 ***Proposition* (可行情况下, 原问题与平滑问题共享最优解)**: 若 $\mathcal{X}^\star  = \{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x=\mathbf b\} \neq \varnothing$, 则对于原问题:
@@ -79,13 +85,14 @@ $$
   - 对于原问题和平滑 surrogate 问题的证明都可以通过将 $\mathbf A\mathbf x-\mathbf b$ 代入到 Canonical 模型中的相应证明中来得到.
   - 事实上, 对于 canonical 模型与当前 Feasible Case 的 affine 模型, 其最优解集合相当于通过 $\mathbf A\mathbf x-\mathbf b$ 进行了一次仿射变换, 因此两者的最优解集合是完全相同的.
   
+
 $\square$
 
 
 ***Proposition* (Pointwise Smoothing Error)**: 对于任意 $\mathbf x\in\mathbb R^n$, 任意 $\mu > 0$, 都有
 $$
 0 \leq F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf A\mathbf x-\mathbf b\|_p^{2(p-1)} = D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{\frac{2(p-1)}{p}}.
-$$  
+$$
 其中 $D_{p,m} = \frac{1}{2} m^{\frac{2-p}{p}} p^{2-\frac{2}{p}}$ 是一个仅依赖于 $p$ 和 $m$ 的常数.
 
 - *Proof*
@@ -114,7 +121,7 @@ $$
 ***Proposition* (单阶段优化算法的收敛率)**: 定义 $\mu_{\varepsilon} := \frac{1}{2 D_{p,m}} \varepsilon^{\frac{2}{p}-1}$, 且设 $R_0 = \text{dist}(\mathbf x_0, \mathcal{X}^\star)$. 若对光滑问题 $\min_{\mathbf x\in\mathbb R^n} F_{\mathbf b, \mu_\varepsilon}(\mathbf x)$ 应用 accelerated gradient method, 直到某迭代点 $\mathbf x_k$ 满足 $F_{\mathbf b, \mu_\varepsilon}(\mathbf x_k) \leq \frac{\varepsilon}{2}$, 则必有 $F_{\mathbf b}(\mathbf x_k) \leq \varepsilon$. 且迭代次数 $k$ 只需要满足
 $$
 k+1 \geq 2 \sqrt{2D_{p,m}} \|\mathbf A\|_2 R_0 \varepsilon^{-\frac{1}{p}},
-$$ 
+$$
 即可保证上述条件的满足. 从而, 
 $$
 k = \mathcal{O}\left(\|\mathbf A\|_2 R_0 \varepsilon^{-\frac{1}{p}}\right).
@@ -232,16 +239,16 @@ Repeat:
     if Δ_n ≤ ε then
         return x_n
     end if
-
+    
     ε_n ← β Δ_n
     μ_n ← (2D_{p,m})^{-1} ε_n^{2/p - 1}
-
+    
     define Φ_n(x) := F_{b,μ_n}(x)
-
+    
     starting from x_n, run AGD on Φ_n
     until an iterate x_{n+1} is obtained such that
         Φ_n(x_{n+1}) ≤ ε_n / 2
-
+    
     n ← n + 1
 
 Output:
