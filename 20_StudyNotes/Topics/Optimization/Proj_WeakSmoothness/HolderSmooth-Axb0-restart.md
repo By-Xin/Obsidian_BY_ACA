@@ -32,12 +32,6 @@ $$
 2. 反之, 若 $\mathbf{A}\mathbf{x} = \mathbf{b}$ 无解, 则此时最优值将不再为 $0$, 此时我们将重新给出更细致的相应分析.
 
 
-> Throughout this section, we fix $\mathbf b\in\mathbb R^m$, and for notational simplicity write
-> $$
-> F(\mathbf x) := F_{\mathbf b}(\mathbf x), \quad F_\mu(\mathbf x) := F_{\mathbf b, \mu}(\mathbf x).
-> $$
-> When necessary, we revert to the full notation $F_{\mathbf b}(\mathbf x)$ and $F_{\mathbf b, \mu}(\mathbf x)$ to distinguish from the canonical model.
-
 ## Feasible Case： $\mathcal{X}^\star = \{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x=\mathbf b\} \neq \varnothing$
 
 ### 从 Canonical 模型到 Affine 模型的推广
@@ -354,3 +348,63 @@ $$
 来达到线性收敛的效果.  
 
 此时, 单阶段的迭代复杂度仍然是 $\mathcal{O}\left(\|\mathbf A\|_2 R_n \varepsilon_n^{-\frac{1}{p}}\right)$, 但由于每个阶段都能保证 $\Delta_{n+1} \leq \beta \Delta_n$, 因此总的迭代复杂度将是 $\mathcal{O}\left(\frac{\|\mathbf A\|_2}{\sigma_{\min}^+(\mathbf A)} \log\left(\frac{\Delta_0}{\varepsilon}\right)\right)$, 从而得到了额外的收益.
+
+
+
+## Non-feasible Case: $\mathbf{A}\mathbf{x} = \mathbf{b}$ 无解
+
+在 Non-feasible Case 中, 由于 $\mathbf{A}\mathbf{x} = \mathbf{b}$ 无解, 因此最优值 $F_{\mathbf b}^\star$ 将不再为 $0$, 而是一个大于 $0$ 的数. 此时, 我们将重新给出更细致的分析. 
+
+首先, 我们可以直接继承如下定义、结论或性质, 因为其证明完全不依赖于 Feasible Case 的假设.
+
+同样, 给定 $\mathbf b\in\mathbb R^m$, 
+$$
+F_{\mathbf b}(\mathbf x) := \frac1p\|\mathbf A\mathbf x-\mathbf b\|_p^p = \max_{\mathbf y\in\mathbb R^m}\left\{\langle \mathbf A\mathbf x-\mathbf b,\mathbf y\rangle - \frac1q\|\mathbf y\|_q^q\right\}, 
+$$
+其在给定 $\mathbf x$ 时的最大值解 $\mathbf y_F^\star(\mathbf x)$ 满足
+$$
+\mathbf y_F^\star(\mathbf x) = \text{sign}(\mathbf A\mathbf x-\mathbf b)\odot|\mathbf A\mathbf x-\mathbf b|^{p-1}.
+$$
+
+对应的平滑 surrogate 函数
+$$
+F_{\mathbf b, \mu}(\mathbf x) := F_\mu = \max_{\mathbf y\in\mathbb R^m}\left\{\langle \mathbf A\mathbf x-\mathbf b,\mathbf y\rangle - \frac1q\|\mathbf y\|_q^q - \frac\mu2\|\mathbf y\|_2^2\right\},
+$$
+
+并且其一阶最优性条件, 梯度表达与 Lipschitz Smoothness 的性质与 Feasible Case 完全相同:
+$$
+\mathbf A\mathbf x-\mathbf b - \nabla h(\mathbf y_\mu^\star(\mathbf{x})) - \mu \mathbf y_\mu^\star(\mathbf x) = \mathbf 0, \quad \nabla F_{\mathbf b, \mu}(\mathbf x) = \mathbf A^\top \mathbf y_\mu^\star(\mathbf x), \quad L_\mu = \frac{\|\mathbf A\|^2}{\mu}.
+$$
+
+且同样有 pointwise smoothing error 的性质, 即对于任意 $\mathbf x\in\mathbb R^n$, 任意 $\mu > 0$, 都有
+$$ 
+0 \leq F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf A\mathbf x-\mathbf b\|_p^{2(p-1)} = D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{\frac{2(p-1)}{p}}.
+$$
+其中 $D_{p,m} = \frac{1}{2} m^{\frac{2-p}{p}} p^{2-\frac{2}{p}}$ 是一个仅依赖于 $p$ 和 $m$ 的常数.
+
+此外, 继承 feasibility 的 residual space 的有关分析, 记 $\mathcal{R} := \{\mathbf A\mathbf x-\mathbf b: \mathbf x\in\mathbb R^n\} \subset \mathbb{R}^m$,  则原问题等价为
+$$
+\min_{\mathbf r\in\mathcal{R}} \frac1p\|\mathbf r\|_p^p.
+$$
+
+注意到, 此时由于 $\mathbf{A}\mathbf{x} = \mathbf{b}$ 无解, 因此 $\mathbf{0} \notin \mathcal{R}$.  且由于函数 $\mathbf{r} \mapsto \frac1p\|\mathbf r\|_p^p$ 是一个严格凸函数, 因此存在唯一的 $\mathbf{r}^\star \in \mathcal{R}$ 使得 $F_{\mathbf b}^\star = \frac1p\|\mathbf r^\star\|_p^p > 0$. 并且, 对任意满足 $\mathbf A\mathbf {\bar x}-\mathbf b = \mathbf r^\star$ 的 $\mathbf {\bar x}$, 都是原问题的最优解, 故最终的最优解集合 $\mathcal{X}^\star$ 可以表示为:
+$$
+\mathcal{X}^\star = \{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x-\mathbf b = \mathbf r^\star\} = \mathbf {\bar x} + \text{Null}(\mathbf A).
+$$
+
+同理, 对于平滑 surrogate 问题, 
+$$
+F_{\mathbf b, \mu}^\star = \min_{\mathbf x\in\mathbb R^n} F_{\mathbf b, \mu}(\mathbf x) = \min_{\mathbf r\in\mathcal{R}} \max_{\mathbf y\in\mathbb R^m}\left\{\langle \mathbf r,\mathbf y\rangle - \frac1q\|\mathbf y\|_q^q - \frac\mu2\|\mathbf y\|_2^2\right\}.
+$$
+其具有严格凸且可微的目标函数, 因此存在唯一的 $\mathbf r_\mu^\star \in \mathcal{R}$ 使得 $F_{\mathbf b, \mu}^\star = \min_{\mathbf x} F_{\mathbf b, \mu}(\mathbf x)$. 对应的最优解集合 $\mathcal{X}_\mu^\star$ 可以表示为 $\{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x-\mathbf b = \mathbf r_\mu^\star\} = \mathbf {\bar x}_\mu + \text{Null}(\mathbf A)$, 其中 $\mathbf {\bar x}_\mu$ 是满足 $\mathbf A\mathbf {\bar x}_\mu-\mathbf b = \mathbf r_\mu^\star$ 的任意点.
+
+一般而言, $\mathbf r_\mu^\star \neq \mathbf r^\star$, $\mathcal{X}_\mu^\star \neq \mathcal{X}^\star$, 原问题与平滑 surrogate 问题的最优值也不相同. 故我们需要对于 Non-feasible Case 的核心误差进行更细致的分解. 对于任意 $\mathbf x\in\mathbb R^n$, 都有
+$$
+F_{\mathbf b}(\mathbf x) - F_{\mathbf b}^\star = \underbrace{F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x)}_{\text{pointwise smoothing error}} + \underbrace{F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star}_{\text{optimization error}} + \underbrace{F_{\mathbf b, \mu}^\star - F_{\mathbf b}^\star}_{\text{surrogate optimal value error} \leq0}.
+$$
+其中, $F^\star_{\mathbf b, \mu} - F_{\mathbf b}^\star < 0$ 是由于 $F_{\mathbf b, \mu}(\mathbf x) \leq F_{\mathbf b}(\mathbf x)$ 对任意 $\mathbf x$ 都成立. 因此, 有如下不等式:
+$$
+F_{\mathbf b}(\mathbf x) - F_{\mathbf b}^\star \leq \bigl(F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x)\bigr) + \bigl(F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star\bigr).
+$$
+
+该分解说明, 对于 Non-feasible Case 的 affine 模型, 其核心误差主要由如下两部分控制: 优化误差 $F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star$ 和 surrogate 平滑误差 $F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{\frac{2(p-1)}{p}}$.  在 Feasible Case 中, 由于 $F_{\mathbf b}^\star = F_{\mathbf b, \mu}^\star = 0$, 因此只需要保证平滑误差即可. 但在 Non-feasible Case 中, 由于 $F_{\mathbf b}^\star > 0$, 因此我们需要对这两个误差来源进行同时控制, 实现 trade-off 的平衡.
