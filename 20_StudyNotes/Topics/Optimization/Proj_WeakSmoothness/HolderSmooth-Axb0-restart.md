@@ -83,7 +83,7 @@ $$
 $\square$
 
 
-***Proposition* (Pointwise Smoothing Error)**: 对于任意 $\mathbf x\in\mathbb R^n$, 任意 $\mu > 0$, 都有
+***Proposition* (pointwise smoothing bias)**: 对于任意 $\mathbf x\in\mathbb R^n$, 任意 $\mu > 0$, 都有
 $$
 0 \leq F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf A\mathbf x-\mathbf b\|_p^{2(p-1)} = D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{2-2/p}.
 $$
@@ -376,7 +376,7 @@ $$
 \mathbf A\mathbf x-\mathbf b - \nabla h(\mathbf y_\mu^\star(\mathbf{x})) - \mu \mathbf y_\mu^\star(\mathbf x) = \mathbf 0, \quad \nabla F_{\mathbf b, \mu}(\mathbf x) = \mathbf A^\top \mathbf y_\mu^\star(\mathbf x), \quad L_\mu = \frac{\|\mathbf A\|^2}{\mu}.
 $$
 
-且同样有 pointwise smoothing error 的性质, 即对于任意 $\mathbf x\in\mathbb R^n$, 任意 $\mu > 0$, 都有
+且同样有 pointwise smoothing bias 的性质, 即对于任意 $\mathbf x\in\mathbb R^n$, 任意 $\mu > 0$, 都有
 $$ 
 0 \leq F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf A\mathbf x-\mathbf b\|_p^{2(p-1)} = D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{2-2/p}.
 $$
@@ -400,7 +400,7 @@ $$
 
 一般而言, $\mathbf r_\mu^\star \neq \mathbf r^\star$, $\mathcal{X}_\mu^\star \neq \mathcal{X}^\star$, 原问题与平滑 surrogate 问题的最优值也不相同. 故我们需要对于 Non-feasible Case 的核心误差进行更细致的分解. 对于任意 $\mathbf x\in\mathbb R^n$, 都有
 $$
-F_{\mathbf b}(\mathbf x) - F_{\mathbf b}^\star = \underbrace{F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x)}_{\text{pointwise smoothing error}} + \underbrace{F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star}_{\text{optimization error}} + \underbrace{F_{\mathbf b, \mu}^\star - F_{\mathbf b}^\star}_{\text{surrogate optimal value error} \leq0}.
+F_{\mathbf b}(\mathbf x) - F_{\mathbf b}^\star = \underbrace{F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x)}_{\text{pointwise smoothing bias}} + \underbrace{F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star}_{\text{optimization error}} + \underbrace{F_{\mathbf b, \mu}^\star - F_{\mathbf b}^\star}_{\text{surrogate optimal value error} \leq0}.
 $$
 其中, $F^\star_{\mathbf b, \mu} - F_{\mathbf b}^\star < 0$ 是由于 $F_{\mathbf b, \mu}(\mathbf x) \leq F_{\mathbf b}(\mathbf x)$ 对任意 $\mathbf x$ 都成立. 因此, 有如下不等式:
 $$
@@ -428,7 +428,7 @@ $$
 
 - *Proof*
   - 用反证法. 若不然, 假设在 $F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star \leq \frac{\varepsilon}{2}$ 和 $\mu \leq \frac{\varepsilon}{4 D_{p,m} M_\varepsilon^{2-2/p}}$ 的条件下, 仍有 $F_{\mathbf b}(\mathbf x) - F_{\mathbf b}^\star \geq \varepsilon$. 或等价地, 记作 $F_{\mathbf b}(\mathbf x) \geq F_{\mathbf b}^\star + \varepsilon := M_\varepsilon$.
-  - 然而, 根据 pointwise smoothing error 的性质, 若 $F_{\mathbf b}(\mathbf x) \geq F_{\mathbf b}^\star +\varepsilon = M_\varepsilon$, 则
+  - 然而, 根据 pointwise smoothing bias 的性质, 若 $F_{\mathbf b}(\mathbf x) \geq F_{\mathbf b}^\star +\varepsilon = M_\varepsilon$, 则
     $$
     F_{\mathbf b, \mu}(\mathbf x) \geq F_{\mathbf b}^\star + \frac{3\varepsilon}{4} .
     $$
@@ -438,8 +438,8 @@ $$
         F_{\mathbf b, \mu}(\mathbf x) \stackrel{pse}{\geq} \varphi(F_{\mathbf b}(\mathbf x)) \stackrel{cont}{\geq} \varphi(M_\varepsilon).
         $$
         - 这是因为 $\varphi(t) = t - D_{p,m} \mu t^{2-2/p}$ 是一个关于 $t$ 的函数, 其导数为 $\varphi'(t) = 1 - D_{p,m} \mu (2-2/p) t^{1-2/p}$. 经过计算, 其在所有 $t \geq M_\varepsilon$ 的区间上, 有 $\varphi'(t) > 0$.  因此, 只要 $F_{\mathbf b}(\mathbf x) \geq M_\varepsilon$, 就必然有 $\varphi(F_{\mathbf b}(\mathbf x)) \geq \varphi(M_\varepsilon)$.
-        - $\varphi'(t) > 0$ 在 $t \geq M_\varepsilon$ 上成立的具体证明如下. 为方便起见, 进一步记 $\varphi'(t) = 1 - D\mu \alpha t^{\alpha-1}$, 其中 $D = D_{p,m}$, $\alpha = 2 - \frac{2}{p}\in (0,1]$. 因此, 函数 $t \mapsto t^{\alpha-1}$ 是一个单调递减函数. 因此, 对于任意 $t \geq M_\varepsilon$, 都有 $t^{\alpha-1} \leq M_\varepsilon^{\alpha-1}$. 从而, $\varphi'(t) = 1 - D\mu \alpha t^{\alpha-1} \geq 1 - D\mu \alpha M_\varepsilon^{\alpha-1}$, 对任意 $t \geq M_\varepsilon$ 都成立. 
-        - ![20260326191853](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260326191853.png)
+        - $\varphi'(t) > 0$ 在 $t \geq M_\varepsilon$ 上成立的具体证明如下. 为方便起见, 进一步记 $\varphi'(t) = 1 - D\mu \alpha t^{\alpha-1}$, 其中 $D = D_{p,m}$, $\alpha = 2 - \frac{2}{p}\in (0,1]$. 因此, 函数 $t \mapsto t^{\alpha-1}$ 是一个单调递减函数. 因此, 对于任意 $t \geq M_\varepsilon$, 都有 $t^{\alpha-1} \leq M_\varepsilon^{\alpha-1}$. 从而, $\varphi'(t) = 1 - D\mu \alpha t^{\alpha-1} \geq 1 - D\mu \alpha M_\varepsilon^{\alpha-1} \geq 1 - \frac{\varepsilon}{4 M_\varepsilon} \alpha > 0$, 对任意 $t \geq M_\varepsilon$ 都成立. 
+        
     - 而此时, 经过计算, $\varphi(M_\varepsilon) = M_\varepsilon - D_{p,m} \mu M_\varepsilon^{2-2/p} \geq M_\varepsilon - \frac{\varepsilon}{4} = F_{\mathbf b}^\star + \frac{3\varepsilon}{4}$. 其中不等式是由 $\mu \leq \frac{\varepsilon}{4 D_{p,m} M_\varepsilon^{2-2/p}}$ 得到的. 
       
   - 又因为 $F_{\mathbf b, \mu}^\star \leq F_{\mathbf b}^\star$, 因此
@@ -447,3 +447,90 @@ $$
     F_{\mathbf b, \mu}(\mathbf x) \geq F_{\mathbf b}^\star + \frac{3\varepsilon}{4} \geq F_{\mathbf b, \mu}^\star + \frac{3\varepsilon}{4}.
     $$
   - 这与初始条件 $F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star \leq \frac{\varepsilon}{2}$ 矛盾. 因此, 必有 $F_{\mathbf b}(\mathbf x) - F_{\mathbf b}^\star \leq \varepsilon$.
+
+$\square$
+
+上述定理给出了 Non-feasible Case 下的精度转换. 其核心思想仍是, 只要我们将 smoothing surrogate 的优化误差 $F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star$ 控制到一个足够小的水平 (即 $\frac{\varepsilon}{2}$), 同时将 smoothing parameter $\mu$ 设定到一个足够小的水平 (即 $\mu \lesssim \frac{\varepsilon}{(F_{\mathbf b}^\star + \varepsilon)^{\alpha}}$, $\alpha = 2-2/p \in (0,1]$) , 以控制 smoothing bias  , 就可以保证 Non-feasible Case 下的 affine 模型的核心误差 $F_{\mathbf b}(\mathbf x) - F_{\mathbf b}^\star$ 不超过 $\varepsilon$. 这也很好的体现出了整体的 tradeoff 关系. 当 $\mu$ 越大, 平滑的效果就越强 (平滑 Lipschitz constant $L_\mu = \frac{\|\mathbf A\|^2}{\mu}$ 越小) , 此时 surrogate $F_{\mathbf b, \mu}(\mathbf x)$ 本身的优化就越容易控制, 但此时 surrogate 的平滑误差, 即和原问题的最优值之间的 gap 就越大.  反过来 , 当 $\mu$ 越小, surrogate 的平滑误差就越小, 但此时 surrogate 的优化误差就越难以控制. 因此, 只有当我们同时将 surrogate 的优化误差和 surrogate 的平滑误差都控制到一个足够小的水平, 才能保证 Non-feasible Case 下的 affine 模型的核心误差 $F_{\mathbf b}(\mathbf x) - F_{\mathbf b}^\star$ 不超过 $\varepsilon$. 
+
+
+在给出了 Non-feasible Case 下的精度转换之后, 我们就可以给出 Non-feasible Case 下, 给定 $\mu$ 时的单阶段收敛分析.
+
+***Theorem* (Non-feasible Case 下的单阶段收敛)**: 在 Non-feasible Case 下, 设定 smoothing parameter 
+$$
+\mu_\varepsilon := \frac{\varepsilon}{4 D_{p,m} (F_{\mathbf b}^\star + \varepsilon)^\alpha}, \quad \alpha = 2 - \frac{2}{p} \in (0,1],
+$$
+且记
+$$
+\mathcal{X}_{\mu_\varepsilon}^\star = \arg\min_{\mathbf x\in\mathbb R^n} F_{\mathbf b, \mu_\varepsilon}(\mathbf x) = \{\mathbf x\in\mathbb R^n: \mathbf A\mathbf x-\mathbf b = \mathbf r_{\mu_\varepsilon}^\star\},
+$$
+以及初始点 $\mathbf x_0 \in \mathbb{R}^n$ 到 surrogate 最优解集合 $\mathcal{X}_{\mu_\varepsilon}^\star$ 的距离
+$$
+R_{0,\mu_\varepsilon} := \text{dist}(\mathbf x_0, \mathcal{X}_{\mu_\varepsilon}^\star).
+$$
+
+若对光滑 surrogate 问题 $\min_{\mathbf x\in\mathbb R^n} F_{\mathbf b, \mu_\varepsilon}(\mathbf x)$ 应用 AGD, 直到某迭代点 $\mathbf x_k$ 满足
+$$
+F_{\mathbf b, \mu_\varepsilon}(\mathbf x_k) - F_{\mathbf b, \mu_\varepsilon}^\star \leq \frac{\varepsilon}{2},
+$$
+则必有
+$$
+F_{\mathbf b}(\mathbf x_k) - F_{\mathbf b}^\star \leq \varepsilon.
+$$
+
+并且, 迭代次数 $k$ 的充分条件为
+$$
+k+1 \geq \frac{2\|\mathbf A\| R_{0,\mu_\varepsilon}}{\sqrt{\mu_\varepsilon \varepsilon}} .
+$$
+
+若进一步代入 $\mu_\varepsilon$ 的表达式, 则迭代次数 $k$ 满足
+$$
+k = \mathcal{O}\left( \|\mathbf A\| R_{0,\mu_\varepsilon}  \frac{(F_{\mathbf b}^\star + \varepsilon)^{1-1/p}}{\varepsilon} \right).
+$$
+
+$\diamond$
+
+- *Proof*
+  - 对于 $F_{\mathbf b, \mu_\varepsilon}(\mathbf x)$, 其 Lipschitz constant 为 $L_{\mu_\varepsilon} = \frac{\|\mathbf A\|^2}{\mu_\varepsilon}$, 因此由 AGD 可以给出:
+    $$
+    F_{\mathbf b, \mu_\varepsilon}(\mathbf x_k) - F_{\mathbf b, \mu_\varepsilon}^\star \leq
+    \frac{2L_{\mu_\varepsilon} R^2_{0,\mu_\varepsilon}}{(k+1)^2} 
+    $$
+
+  - 因此, 只要 $\frac{2L_{\mu_\varepsilon} R^2_{0,\mu_\varepsilon}}{(k+1)^2} \leq \frac{\varepsilon}{2}$, 即
+    $$
+    k+1  \geq 2 R_{0,\mu_\varepsilon} \sqrt{\frac{L_{\mu_\varepsilon}}{\varepsilon}} = 2 R_{0,\mu_\varepsilon} \|\mathbf A\| \frac{1}{\sqrt{\mu_\varepsilon \varepsilon}},
+    $$
+    就可以保证 $F_{\mathbf b, \mu_\varepsilon}(\mathbf x_k) - F_{\mathbf b, \mu_\varepsilon}^\star \leq \frac{\varepsilon}{2}$.
+
+  - 由前面的精度转换定理, 可以得到 $F_{\mathbf b}(\mathbf x_k) - F_{\mathbf b}^\star \leq \varepsilon$.
+
+$\square$
+
+对于上述收敛性质, 我们有如下解读. 
+- 从上述表达可以看出 Feasible Case 下的收敛率确实为 Non-feasible Case 下的一个特例. 这可以通过令 $F_{\mathbf b}^\star = 0$ 来得到原先的 $\mathcal{O}(\varepsilon^{-1/p})$ 的迭代复杂度. 
+- 在 non-feasible, 且 $\varepsilon \to 0$ 的极限情况下, 固定 $F_{\mathbf b}^\star > 0$, 则迭代复杂度
+  $$
+  (F_{\mathbf b}^\star + \varepsilon)^{1-1/p} \varepsilon^{-1} \asymp (F_{\mathbf b}^\star)^{1-1/p} \varepsilon^{-1},
+  $$
+  因此此时的迭代复杂度为 $\mathcal{O}(\varepsilon^{-1})$, 这与 Feasible Case 下的 $\mathcal{O}(\varepsilon^{-1/p})$ 的迭代复杂度相比, 是一个更慢的收敛率. 这也很好地体现了, feasible / overpara 的情况下, 给我们带来的不仅只有证明上的方便, 还实际地通过避免了 surrogate optimal value error 的存在, 从而实现了更快的收敛率.
+
+- 在 feasible 的情况下, 我们考虑的一直是 $R_0 = \text{dist}(\mathbf x_0, \mathcal{X}^\star)$ (因为 smoothing surrogate 和原问题的最优解集合是完全重合的), 而在 non-feasible 的情况下, 我们考虑的则是 $R_{0,\mu_\varepsilon} = \text{dist}(\mathbf x_0, \mathcal{X}_{\mu_\varepsilon}^\star)$, 而本身 $\mathcal{X}_{\mu_\varepsilon}^\star$ 也是一个依赖 $\mu$ 的. 因此, 我们目前的分析仍然局限在给定且固定 $\mu$ 的情况下的单阶段收敛分析. 然而, 我们并未对 $\mu$ 的设定进行指导性的建议, 这也是我们下一步的重点分析内容.
+
+- 此外, 上述的分析相当于一个 Oracle 的问题尺度的严格推导. 在实际分析中, 由于 $F_{\mathbf b}^\star$ 是未知的, 因此我们无法直接设定 $\mu_\varepsilon$ 的数值. 一个最基础的 implementation 是用一个已知的上界, 例如 $B_0 := F_{\mathbf b}(\mathbf x_0)$ 来作为 $F_{\mathbf b}^\star$ 的一个估计, 从而进行后续的分析. 但这仍然是一个比较粗糙保守的设定. 因此, 我们下一步的重点分析内容, 将是如何在 Non-feasible Case 下, 通过其他方法来更好进一步得到改进. 
+
+
+
+---
+
+下一步行动路线：
+1. 在 Oracle 情况下, 给定 $\varepsilon$ 或 budget $K$ 的情况下, 如何设定 $\mu$ 来达到最优的 tradeoff?
+   - Oracle  theorem: 给定 $\varepsilon$ 或 budget $K$, 以及假设 $F_{\mathbf b}^\star$ 已知的情况下, 给出 $\mu$ 的设定建议, 从而达到最优的 tradeoff. 明确 $\mu$ 对复杂度的影响作用方式, 并且得到一个最优 的 $\mu$ 的理论标度. 该部分也是后续进阶分析的一个重要 baseline.
+   - Implementable corollary: 通过一个保守的上界 $B_0$ 来替代 $F_{\mathbf b}^\star$, 从而得到一个可实施的 $\mu$ 的设定建议. 该部分虽然比较粗糙, 但至少是一个可行的 baseline.
+
+2. Variable Smoothing:
+    - 首先是 schedule-based, 该部分是一个预设的直接依赖于 iteration index 的 $\mu$ 的设定, 例如 $\mu_k = \frac{c}{k^2}$ 等. 该模式相对易于分析, 是较方便从 fixed $\mu$ 的单阶段分析过渡到 variable $\mu$ 的多阶段分析的一个重要 stepping stone. 通过该模块的分析, 我么可以给出一个总的关于动态 $\mu$ 的一个理论分析框架, 了解其对于我们整体复杂度讨论的影响作用方式. 该部分的分析也可以为后续的 adaptive $\mu$ 的设定提供一些启发性的指导.
+    - 其次是 general adaptive. 此时, 例如总的迭代次数 $K$ 是已知的, 那么我们期望先反推出一个合理的 smoothing scale 以决定误差尺度, 再由此来反推出一个合理的 $\mu$ 的设定建议. 
+    - 最后是根据当前的优化轨迹动态变化, 让 $\mu_k$ 以来一个可观测量来进行动态调整. 这就逐渐在向 parameter-free 的 adaptive 设定建议过渡了.
+
+3. Parameter-free 的 adaptation
+    - 通过一些 proxy 来代替未知量. 例如其中最核心的一个问题是 $R_{0,\mu}$ 的估计, 因此我们可以通过一些 proxy, 例如 $\|x_0 - x_k\|$ 来进行估计, 从而得到一个 adaptive 的 $\mu$ 的设定建议. 整体而言, 可以先做一个 heuristic algorithm 的设计, 给出一个合理的 $\mu$ 的设定建议, 接着可以再做出一些 theoretical guarantee 来说明该 heuristic algorithm 的有效性. 
