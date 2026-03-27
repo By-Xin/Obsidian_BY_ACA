@@ -85,7 +85,7 @@ $\square$
 
 ***Proposition* (Pointwise Smoothing Error)**: 对于任意 $\mathbf x\in\mathbb R^n$, 任意 $\mu > 0$, 都有
 $$
-0 \leq F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf A\mathbf x-\mathbf b\|_p^{2(p-1)} = D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{\frac{2(p-1)}{p}}.
+0 \leq F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf A\mathbf x-\mathbf b\|_p^{2(p-1)} = D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{2-2/p}.
 $$
 其中 $D_{p,m} = \frac{1}{2} m^{\frac{2-p}{p}} p^{2-\frac{2}{p}}$ 是一个仅依赖于 $p$ 和 $m$ 的常数.
 
@@ -378,7 +378,7 @@ $$
 
 且同样有 pointwise smoothing error 的性质, 即对于任意 $\mathbf x\in\mathbb R^n$, 任意 $\mu > 0$, 都有
 $$ 
-0 \leq F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf A\mathbf x-\mathbf b\|_p^{2(p-1)} = D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{\frac{2(p-1)}{p}}.
+0 \leq F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf A\mathbf x-\mathbf b\|_p^{2(p-1)} = D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{2-2/p}.
 $$
 其中 $D_{p,m} = \frac{1}{2} m^{\frac{2-p}{p}} p^{2-\frac{2}{p}}$ 是一个仅依赖于 $p$ 和 $m$ 的常数.
 
@@ -407,4 +407,43 @@ $$
 F_{\mathbf b}(\mathbf x) - F_{\mathbf b}^\star \leq \bigl(F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x)\bigr) + \bigl(F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star\bigr).
 $$
 
-该分解说明, 对于 Non-feasible Case 的 affine 模型, 其核心误差主要由如下两部分控制: 优化误差 $F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star$ 和 surrogate 平滑误差 $F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{\frac{2(p-1)}{p}}$.  在 Feasible Case 中, 由于 $F_{\mathbf b}^\star = F_{\mathbf b, \mu}^\star = 0$, 因此只需要保证平滑误差即可. 但在 Non-feasible Case 中, 由于 $F_{\mathbf b}^\star > 0$, 因此我们需要对这两个误差来源进行同时控制, 实现 trade-off 的平衡.
+该分解说明, 对于 Non-feasible Case 的 affine 模型, 其核心误差主要由如下两部分控制: 优化误差 $F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star$ 和 surrogate 平滑误差 $F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{2-2/p}$.  在 Feasible Case 中, 由于 $F_{\mathbf b}^\star = F_{\mathbf b, \mu}^\star = 0$, 因此只需要保证平滑误差即可. 但在 Non-feasible Case 中, 由于 $F_{\mathbf b}^\star > 0$, 因此我们需要对这两个误差来源进行同时控制, 实现 trade-off 的平衡.
+
+***Proposition* (Non-feasible Case 下的精度转换)**: 对于任意给定精度 $\varepsilon > 0$, 令 
+$$
+M_\varepsilon := F_{\mathbf b}^\star + \varepsilon.
+$$
+当 $\mu > 0$ 满足
+$$
+\mu \leq \frac{\varepsilon}{4 D_{p,m} M_\varepsilon^{2-2/p}} ,
+$$
+且对于某 $\mathbf x\in\mathbb R^n$, 满足
+$$
+F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star \leq \frac{\varepsilon}{2},
+$$
+则必有
+$$
+F_{\mathbf b}(\mathbf x) - F_{\mathbf b}^\star \leq \varepsilon.
+$$
+
+- *Proof*
+  - 用反证法. 若不然, 假设在 $F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star \leq \frac{\varepsilon}{2}$ 和 $\mu \leq \frac{\varepsilon}{4 D_{p,m} M_\varepsilon^{2-2/p}}$ 的条件下, 仍有 $F_{\mathbf b}(\mathbf x) - F_{\mathbf b}^\star \geq \varepsilon$. 或等价地, 记作 $F_{\mathbf b}(\mathbf x) \geq F_{\mathbf b}^\star + \varepsilon := M_\varepsilon$.
+  - 然而, 根据 pointwise smoothing error 的性质, 若 $F_{\mathbf b}(\mathbf x) \geq F_{\mathbf b}^\star +\varepsilon = M_\varepsilon$, 则
+    $$
+    F_{\mathbf b, \mu}(\mathbf x) \geq F_{\mathbf b}^\star + \frac{3\varepsilon}{4} .
+    $$
+      - 这是由于, 根据 pse, $0\leq F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{2-2/p}$. 即 $F_{\mathbf b, \mu}(\mathbf x) \geq F_{\mathbf b}(\mathbf x) - D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{2-2/p}$. 为方便起见, $\varphi(t) := t - D_{p,m} \mu t^{2-2/p}$, 则上述的 pse 不等式等价于 $F_{\mathbf b, \mu}(\mathbf x) \geq \varphi(F_{\mathbf b}(\mathbf x))$. 这部分都是已知的事实. 
+      - 接下来试图说明, 若 $F_{\mathbf b}(\mathbf x) \geq M_\varepsilon$ (反证法假设), 则可以推出 $\varphi(F_{\mathbf b}(\mathbf x)) \geq \varphi(M_\varepsilon)$. 因为若该不等式成立, 则立刻再根据 pse, 就有 
+        $$
+        F_{\mathbf b, \mu}(\mathbf x) \stackrel{pse}{\geq} \varphi(F_{\mathbf b}(\mathbf x)) \stackrel{cont}{\geq} \varphi(M_\varepsilon).
+        $$
+        - 这是因为 $\varphi(t) = t - D_{p,m} \mu t^{2-2/p}$ 是一个关于 $t$ 的函数, 其导数为 $\varphi'(t) = 1 - D_{p,m} \mu (2-2/p) t^{1-2/p}$. 经过计算, 其在所有 $t \geq M_\varepsilon$ 的区间上, 有 $\varphi'(t) > 0$.  因此, 只要 $F_{\mathbf b}(\mathbf x) \geq M_\varepsilon$, 就必然有 $\varphi(F_{\mathbf b}(\mathbf x)) \geq \varphi(M_\varepsilon)$.
+        - $\varphi'(t) > 0$ 在 $t \geq M_\varepsilon$ 上成立的具体证明如下. 为方便起见, 进一步记 $\varphi'(t) = 1 - D\mu \alpha t^{\alpha-1}$, 其中 $D = D_{p,m}$, $\alpha = 2 - \frac{2}{p}\in (0,1]$. 因此, 函数 $t \mapsto t^{\alpha-1}$ 是一个单调递减函数. 因此, 对于任意 $t \geq M_\varepsilon$, 都有 $t^{\alpha-1} \leq M_\varepsilon^{\alpha-1}$. 从而, $\varphi'(t) = 1 - D\mu \alpha t^{\alpha-1} \geq 1 - D\mu \alpha M_\varepsilon^{\alpha-1}$, 对任意 $t \geq M_\varepsilon$ 都成立. 
+        - ![20260326191853](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260326191853.png)
+    - 而此时, 经过计算, $\varphi(M_\varepsilon) = M_\varepsilon - D_{p,m} \mu M_\varepsilon^{2-2/p} \geq M_\varepsilon - \frac{\varepsilon}{4} = F_{\mathbf b}^\star + \frac{3\varepsilon}{4}$. 其中不等式是由 $\mu \leq \frac{\varepsilon}{4 D_{p,m} M_\varepsilon^{2-2/p}}$ 得到的. 
+      
+  - 又因为 $F_{\mathbf b, \mu}^\star \leq F_{\mathbf b}^\star$, 因此
+    $$
+    F_{\mathbf b, \mu}(\mathbf x) \geq F_{\mathbf b}^\star + \frac{3\varepsilon}{4} \geq F_{\mathbf b, \mu}^\star + \frac{3\varepsilon}{4}.
+    $$
+  - 这与初始条件 $F_{\mathbf b, \mu}(\mathbf x) - F_{\mathbf b, \mu}^\star \leq \frac{\varepsilon}{2}$ 矛盾. 因此, 必有 $F_{\mathbf b}(\mathbf x) - F_{\mathbf b}^\star \leq \varepsilon$.
