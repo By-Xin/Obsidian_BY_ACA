@@ -377,7 +377,7 @@ $$
 $$
 
 且同样有 pointwise smoothing bias 的性质, 即对于任意 $\mathbf x\in\mathbb R^n$, 任意 $\mu > 0$, 都有
-$$ 
+$$
 0 \leq F_{\mathbf b}(\mathbf x) - F_{\mathbf b, \mu}(\mathbf x) \leq \frac{\mu}{2} m^{\frac{2-p}{p}} \|\mathbf A\mathbf x-\mathbf b\|_p^{2(p-1)} = D_{p,m} \mu F_{\mathbf b}(\mathbf x)^{2-2/p}.
 $$
 其中 $D_{p,m} = \frac{1}{2} m^{\frac{2-p}{p}} p^{2-\frac{2}{p}}$ 是一个仅依赖于 $p$ 和 $m$ 的常数.
@@ -441,7 +441,7 @@ $$
         - $\varphi'(t) > 0$ 在 $t \geq M_\varepsilon$ 上成立的具体证明如下. 为方便起见, 进一步记 $\varphi'(t) = 1 - D\mu \alpha t^{\alpha-1}$, 其中 $D = D_{p,m}$, $\alpha = 2 - \frac{2}{p}\in (0,1]$. 因此, 函数 $t \mapsto t^{\alpha-1}$ 是一个单调递减函数. 因此, 对于任意 $t \geq M_\varepsilon$, 都有 $t^{\alpha-1} \leq M_\varepsilon^{\alpha-1}$. 从而, $\varphi'(t) = 1 - D\mu \alpha t^{\alpha-1} \geq 1 - D\mu \alpha M_\varepsilon^{\alpha-1} \geq 1 - \frac{\varepsilon}{4 M_\varepsilon} \alpha > 0$, 对任意 $t \geq M_\varepsilon$ 都成立. 
         
     - 而此时, 经过计算, $\varphi(M_\varepsilon) = M_\varepsilon - D_{p,m} \mu M_\varepsilon^{2-2/p} \geq M_\varepsilon - \frac{\varepsilon}{4} = F_{\mathbf b}^\star + \frac{3\varepsilon}{4}$. 其中不等式是由 $\mu \leq \frac{\varepsilon}{4 D_{p,m} M_\varepsilon^{2-2/p}}$ 得到的. 
-      
+    
   - 又因为 $F_{\mathbf b, \mu}^\star \leq F_{\mathbf b}^\star$, 因此
     $$
     F_{\mathbf b, \mu}(\mathbf x) \geq F_{\mathbf b}^\star + \frac{3\varepsilon}{4} \geq F_{\mathbf b, \mu}^\star + \frac{3\varepsilon}{4}.
