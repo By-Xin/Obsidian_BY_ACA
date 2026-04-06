@@ -15,6 +15,7 @@
 | `Ck_Functions.md` | $C^k$ 函数 | 可微性、Hölder 条件 |
 | `Holder_Continuous.md` | Hölder 连续 | 连续性强度、正则性 |
 | `Lipschitz_Continuous.md` | Lipschitz 连续 | 有界变化率、光滑性分析 |
+| `Inequalities.md` | 不等式速查表 | 纯代数、分析、概率集中不等式 |
 
 ## 🔗 跨目录关联
 
