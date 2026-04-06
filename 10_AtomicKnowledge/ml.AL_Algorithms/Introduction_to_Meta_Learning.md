@@ -20,7 +20,7 @@
     - Actually, for a meta-learning algorithm, we should provide a triplet of data: $\{(\mathcal{T}_i, \mathcal{D_{\text{train}}}, \mathcal{D_{\text{test}}})\}_{i=1}^{N}$.
     - The training for meta-learning sometimes is called *Across-task Training*, and that of machine learning is called *Within-task Training*. So in one episode of across-task training, it will include within-task training and within-task testing.  The across-task training sometimes is called *outer loop*, and the within-task training is called *inner loop*.
 
-- ***3. Optimize the meta-learning algorithm $F_{\phi^*}$***
+- ***3. Optimize the meta-learning algorithm $F_{\phi^\star}$***
   $$\phi^* = \arg\min_{\phi}\mathcal{L}(\phi) \quad \text{(Ideally)}$$
   - If $\phi$ is gradient-based, we can use gradient descent to optimize $\phi$.
   - If $\mathcal{L}(\phi)$ is non-differentiable, **we can use reinforcement learning / evolutionary algorithms to optimize $\phi$**.
@@ -59,7 +59,7 @@ Something happens in ML that also happens in Meta Learning:
 - [How to train your MAML? (ICLR, 2019)](https://arxiv.org/abs/1810.09502)
 
 
-  
+
 - [Rapid Learning or Feature Reuse? Towards Understanding the Effectiveness of MAML (ICLR, 2020)](https://arxiv.org/abs/1909.09157)
   - ANIL (Almost no inner loop) algorithm
 
