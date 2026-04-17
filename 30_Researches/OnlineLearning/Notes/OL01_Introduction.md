@@ -174,4 +174,13 @@ $$
 
 #### Randomization
 
-另一种试图突破 Cover's impossibility 的思路是引入随机化, 不过这事实上相当于对于整体的 online learning 的机制设定上做了一个放松. 
+另一种试图突破 Cover's impossibility 的思路是引入随机化, 不过这事实上相当于对于整体的 online learning 的机制设定上做了一个放松. 具体而言, 在第 $t$ 轮, 其信息流为:
+
+1. Learner 看到 $\mathbf{x}_t$. Learner 根据 $\mathbf{x}_t$ 和历史数据 $\{(\mathbf{x}_1, y_1), \ldots, (\mathbf{x}_{t-1}, y_{t-1})\}$ 来计算一个概率参数 $\mathrm{p}_t \in [0, 1]$, 其表示在当前轮选择 $1$ 的概率.
+2. Adversary 知道这一轮的真实标签 $y_t \in \{0,1\}$, 历史的所有数据, 整体的随机化策略, 以及 learner 的随机参数 $\mathrm{p}_t$, 但不知道 learner 在当前轮的具体随机采样结果 (即, learner 最终选择了 $0$ 还是 $1$). Adversary 根据这些信息来揭示 $y_t$.
+
+此时, 由于随机性的引入, 评价指标应当转而变成期望意义上的. 在每一轮 $t$ 上, learner 的输出 $\hat{y}_t$ 是一个 Bernoulli 随机变量, 其 $\mathbb{P}(\hat{y}_t = 1) = \mathrm{p}_t$, 因此期望意义上的错误率为
+$$
+\mathbb{E}[ \boldsymbol{1}\{\hat{y}_t \neq y_t\} ] = \mathbb{P}(\hat{y}_t \neq y_t) = |\mathrm{p}_t - y_t|.
+$$
+- 最后一个等式可以简单分类讨论得到. 若 $y_t = 0$, 则 $\mathbb{P}(\hat{y}_t \neq y_t) = \mathbb{P}(\hat{y}_t = 1) = \mathrm{p}_t$. 若 $y_t = 1$, 则 $\mathbb{P}(\hat{y}_t \neq y_t) = \mathbb{P}(\hat{y}_t = 0) = 1 - \mathrm{p}_t$. 因此, 无论 $y_t$ 是 $0$ 还是 $1$, 都有 $\mathbb{P}(\hat{y}_t \neq y_t) = |\mathrm{p}_t - y_t|$.
