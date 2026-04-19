@@ -184,3 +184,20 @@ $$
 \mathbb{E}[ \boldsymbol{1}\{\hat{y}_t \neq y_t\} ] = \mathbb{P}(\hat{y}_t \neq y_t) = |\mathrm{p}_t - y_t|.
 $$
 - 最后一个等式可以简单分类讨论得到. 若 $y_t = 0$, 则 $\mathbb{P}(\hat{y}_t \neq y_t) = \mathbb{P}(\hat{y}_t = 1) = \mathrm{p}_t$. 若 $y_t = 1$, 则 $\mathbb{P}(\hat{y}_t \neq y_t) = \mathbb{P}(\hat{y}_t = 0) = 1 - \mathrm{p}_t$. 因此, 无论 $y_t$ 是 $0$ 还是 $1$, 都有 $\mathbb{P}(\hat{y}_t \neq y_t) = |\mathrm{p}_t - y_t|$.
+
+可以证明, 在当前的随机化设定下, 对于有限的 $\mathcal{H}$, 确实存在一个 sublinear 的 low regret:
+$$
+\sum_{t=1}^T |\mathrm{p}_t - y_t| - \min_{h^\star \in \mathcal{H}} \sum_{t=1}^T |h^\star(\mathbf{x}_t) - y_t| \leq \sqrt{0.5 T \log(|\mathcal{H}|)}.
+$$
+
+事实上, 对于上述的两种假设 (realizable 和 randomization), 都起到相当于是一种 convexification 的技巧, 而这种凸化的思想也将是后续章节中一个重要的设计思路. 
+
+### Structure of the Notes
+
+事实上, Online Learning 作为一个非常 general 的学习框架, 其可以从不同的领域进行解释, 如 game theory, optimization, machine learning, information theory 等等. 而不同领域的结果往往可以通过 prediction with expert advice 来进行统一的解释. 而这个 note 主要将从 Online Convex Optimization 的角度来进行展开.
+
+在后续的章节中, 主体的安排如下:
+- [[OL02_Online_Convex_Optimization]]: 介绍 Online Convex Optimization 的基本设定
+- [[OL03_Online_Classification]]: 在熟悉 Online Convex Optimization 的基础算法后, 说明其是如何解决具体的学习问题的.
+- [[OL04_Limited_Feedback_Bandits]]: 介绍 bandit setting 的 online learning, 以及其与 full information setting 的区别. 该小节在讨论一些信息更为受限的 online learning 的设定, 以及其对应的算法设计和分析.
+- [[OL05_Online_to_Batch_Conversion]]: 通过统计学习理论的角度来说明, 如何将 online learning 的算法和分析结果转化为 batch learning 的算法和分析结果. 
