@@ -16,7 +16,6 @@ related_concepts:
 
 # LLM Sampling 方法综述
 
-## 1. 引言
 
 本综述旨在对当前主流的采样方法进行整理和概述，主要关注大型语言模型（LLMs）中的文本生成解码策略。当前解码方法主要分为确定性采样和随机性采样两大类。
 
@@ -30,9 +29,75 @@ related_concepts:
 
 以下将详细梳理多篇关于采样方法的文献。
 
+## 1. Language Model (LM) 的解码过程
+
+现有一个输入序列 $\mathbf{x_{1:t}} := (x_1, x_2, \ldots, x_t)^\top$, 其中每个 $x_i \in \mathcal{V}$ 是一个 token，$\mathcal{V}$ 是 token 的集合 (vocabulary). 一个典型的 Transformer-based 的自回归语言模型 (LLM) 主要包含如下几个板块:
+
+1. **Input Embedding** $f_\text{emb}$: 将输入的 token 序列 $\mathbf{x_{1:t}}$ 映射到一个实数向量序列 $\mathbf{h_{1:t}} := (h_1, h_2, \ldots, h_t)^\top$, 其中每个 $h_i \in \mathbb{R}^d$ 是一个长度为 $d$ 的实数向量. 故:
+
+$$
+\mathbf{h_{1:t}} = f_\text{emb}(\mathbf{x_{1:t}}) \in \mathbb{R}^{t \times d}
+$$
+
+2. **Decoder Layers** $f_\text{dec}$: 将输入的实数向量序列 $\mathbf{h_{1:t}}$ 通过一系列的解码层 (decoder layers) 进行处理，得到一个新的实数向量序列 $\mathbf{z_{1:t}} := (z_1, z_2, \ldots, z_t)^\top$, 其中每个 $z_i \in \mathbb{R}^d$ . 故:
+
+$$
+\mathbf{z_{1:t}} = f_\text{dec}(\mathbf{h_{1:t}}) \in \mathbb{R}^{t \times d}
+$$
+
+3. **Language Modeling Head** $f_\text{lm}$: 将解码层输出的实数向量序列 $\mathbf{z_{1:t}}$ 映射到一个长度为 $t$ 的 token 得分序列 (logits) $\mathbf{l_{1:t}} := (l_1, l_2, \ldots, l_t)^\top$, 其中每个 $l_i \in \mathbb{R}^{|\mathcal{V}|}$ 是一个长度为 $|\mathcal{V}|$ 的实数向量，表示每个 token 在该位置的得分. 故:
+
+$$
+\mathbf{l_{1:t}} = f_\text{lm}(\mathbf{z_{1:t}}) \in \mathbb{R}^{t \times |\mathcal{V}|}
+$$
+
+4. **Decoding Function** $f_\text{decoding}$: 将 token 得分序列 $\mathbf{l_{1:t}}$ 通常取最后一个 token 的得分 $l_t$ 作为输入, 经过 softmax 等解码函数处理后, 得到最终选择输出的 token $x_{t+1}$, 即:
+
+$$
+x_{t+1} = f_\text{decoding}(l_t) \in \mathcal{V}
+$$
+
+整个语言模型本质上也可以看作是对如下概率分布的建模 (假设序列长为 $T$):
+
+$$
+\mathcal P(x_{1:T}) =  \prod_{t=1}^T \mathcal P(x_t | x_{1:t-1})
+$$
+
+由于我们要重点讨论模型的解码过程, 因此将从上述的输入嵌入 (input embedding) 直到解码函数前得到 logits 的部分抽象为一个函数 $\mathcal{M} : \mathcal{V}^t \to \mathbb{R}^t$，即:
+
+$$
+\mathbf{l_{1:t}} = \mathcal{M}(\mathbf{x_{1:t}}) \in \mathbb{R}^{t \times |\mathcal{V}|}
+$$
+
+这时最后一个 token 的 logits 为 (在不引起歧义的情况下，省略下标 $t$):
+
+$$
+\mathrm l = \begin{bmatrix}
+\ell_{1} \\
+\ell_{2} \\
+\vdots \\
+\ell_{|\mathcal{V}|}
+\end{bmatrix} \in \mathbb{R}^{|\mathcal{V}|}
+$$
+
+传统的做法中我们会直接对这个 $l_t$ 进行 softmax 处理得到概率分布:
+
+$$
+\mathrm p = \begin{bmatrix}
+\vdots \\
+p_i \\
+\vdots \\
+\end{bmatrix} = 
+\text{softmax}(l) = \begin{bmatrix}
+\vdots \\
+\frac{e^{\ell_{i}}}{\sum_{j=1}^{|\mathcal{V}|} e^{\ell_{j}}} \\
+\vdots \\
+\end{bmatrix}\in \mathbb{R}^{|\mathcal{V}|}
+$$
+
 ## 2. 核心采样方法梳理
 
-### 2.1 Gambel-Top-k*
+### 2.1 Gumbel-Top-k
 
 *   **论文标题**: [Stochastic Beams and Where to Find Them: The Gumbel-Top-k Trick for Sampling Sequences Without Replacement](https://www.arxiv.org/abs/1903.06059)
 *   **作者**: Wouter Kool, Herke van Hoof, Max Welling
@@ -63,7 +128,7 @@ related_concepts:
         \phi(\boldsymbol{y}_{1:T}) = \log p_\theta(\boldsymbol{y}_{1:T}) = \sum_{t=1}^T p_\theta(y_t | \boldsymbol{y}_{1:t-1}) \in\mathbb{R}
         $$
     *   即使是对于同样的 $1:T$ 的序列也有不同的路径, 因此对于某个路径这里简记为 $\boldsymbol{y}^{(i)}$. 若在不引起歧义的情况下, 有时也忽略序列长度记上述对数概率分布为 $\phi_i$.
-*   Perturbed Log- Probability on Partial Sequences
+*   Perturbed Log-Probability on Partial Sequences
     *   延续上述记号, 用 $y^{(i)} \in S\subset \mathcal Y$ 表示以某个中间节点延伸出的所有叶节点的集合 (所有以该 prefix 开头接龙生发出的完整序列). 对 $S$ 中的每个向量再计算其 Gumbel 得分:
         $$
         G_{\phi_i} = \phi_i +G_i, ~G_i\stackrel{i.i.d}{\sim} \text{Gumbel}(0)
@@ -84,15 +149,15 @@ related_concepts:
     > *   我们可以为这个子树打一个 perturbed score $G_{\phi_S}$，而不用展开所有 $y \in S$
     > *   **高的 $G_{\phi_S}$** 表示这个 prefix 有可能生成落入 top-k 的完整序列，因此应该保留并扩展它
 
-    ***Algorithm Implementation***
+##### Algorithm Implementation
 
-    ![20250604151640](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20250604151640.png)
+![20250604151640](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20250604151640.png)
 
 #### 3. Experiment
 
-*   实验 1: 验证 Gumbel-Top-k 是否可以用于从 softmax 分布中 无放回地采样 top-k 项
-*   实验2: 检查 Stochastic Beam Search（SBS）生成的 top-k 序列是否符合 Gumbel-Top-k 理论分布
-*   实验3: SBS 用于生成任务 (BLEU 与 Entropy 的估计)
+- 实验 1: 验证 Gumbel-Top-k 是否可以用于从 softmax 分布中无放回地采样 top-k 项
+- 实验 2: 检查 Stochastic Beam Search（SBS）生成的 top-k 序列是否符合 Gumbel-Top-k 理论分布
+- 实验 3: SBS 用于生成任务（BLEU 与 Entropy 的估计）
     *   模型：Transformer-based seq2seq 模型（用于机器翻译，En → De）
     *   对比模型: Beam Search, Top-k Sampling, Ancestral Sampling, SBS
     *   评价标准: BLEU, Entropy
@@ -201,7 +266,7 @@ $$
     $$
     因此我们可以通过选择合适的 $k$ 使得该期望近似于给定目标 $\tau$.
 
-    ***Algorithm Implimentation***
+##### Algorithm Implementation
 
     1.  估计 Zipf 分布参数:
         $$
@@ -230,7 +295,7 @@ $$
     *   Repetition rate (1-gram / 6-gram): 测量重复情况，衡量生成质量
     *   人类评估: Fluency (1–7）, Coherence (1–7）, 被人类判为“非 AI”的概率
 
-### 2.4 Arithmetic Coding*
+### 2.4 Arithmetic Coding
 
 *   **论文标题**: [Arithmetic Sampling: Parallel Diverse Decoding for Large Language Models](https://www.arxiv.org/abs/2210.15458v2)
 *   **作者**: Luke Vilnis, Yury Zemlyanskiy, Patrick Murray, Alexandre Passos, Sumit Sanghai
@@ -290,7 +355,7 @@ $$
 
 #### 2. Methodology
 
-***Theory***
+##### Theory
 
 *   语言模型的 Smoothing 框架
 
@@ -318,13 +383,15 @@ $$
     1.  Absolute probability principle：若某个词的概率 $P_{\text{true}}(x \mid \mathbf{x}_{<t})$ 明显高于平滑项上限，则应保留.
     2.  Relative probability principle：若当前分布熵很高（模型不确定），则应允许更多词被采样，反之则保守.
 
-***Algorithm***
+##### Algorithm
 
-*   **η-Sampling:** 根据当前概率分布的熵动态调整截断阈值
-    1.  计算当前时刻模型输出的词分布 $\{p_i\}_{i=1}^V$ (词表大小为 $V$) 之[信息熵](https://www.notion.so/1fd60a551112802cb5a5e0c7c941d765?pvs=21)
+- **η-Sampling:** 根据当前概率分布的熵动态调整截断阈值
+
+    1.  计算当前时刻模型输出的词分布 $\{p_i\}_{i=1}^V$（词表大小为 $V$）的信息熵
         $$
         H = -\sum_{i} p_i \log p_i
         $$
+
     2.  设定截断值
         $$
         \eta(H) = \min(\varepsilon, \alpha \cdot \exp(-H))
@@ -332,6 +399,7 @@ $$
         *   $\epsilon$ 为绝对概率下限, 防止截断所有词. 常取 $\epsilon = 0.001$.
         *   $\alpha >0$ 为超参数, 控制采样的保守程度, 越大则对应的阈值越大.推荐 $\alpha = \sqrt{\epsilon}$.
         *   $\exp(-H)$ 为信息熵的指数函数，熵越大说明概率分布越平均 (模型越不确定)，阈值越小（采样越开放）
+
     3.  截断低频词
         $$
         \mathcal{S} = \{x_i\in\mathcal{V}:p_i \ge \tau\}
@@ -381,7 +449,7 @@ $$
     *   **Mistral 7B** 模型, 并在部分实验中使用了 **Mistral Large（123B 参数）** 模型，以评估 min-p 方法在不同规模模型上的表现
     *   采用了 **vLLM** 框架进行推理
 *   数据集:
-    涵盖从小学数学到博士级别的推理任务，以及创意写作任务
+    *   涵盖从小学数学到博士级别的推理任务，以及创意写作任务
     *   **GPQA**：博士级别的常识问答数据集，评估模型的高级推理能力
     *   **GSM8K**：小学数学问题解答数据集，采用 Chain-of-Thought（CoT）提示，评估模型的数学推理能力
     *   **AlpacaEval Creative Writing**：创意写作任务，评估模型在生成富有创造性和连贯性的文本方面的能力
@@ -395,10 +463,10 @@ $$
 *   评估指标:
     *   **准确率（Accuracy）**：在 GPQA 和 GSM8K 数据集上, 评估模型生成的答案与参考答案的匹配程度.
     *   **人类评估（Human Evaluation）**：在 AlpacaEval Creative Writing 任务中, 采用双盲偏好测试，评估生成文本的质量和创造性.
-*   关键发现 :
-    1.  在温度 $T\ge1.2$ 区间，min-p 在“连贯度—创造性”二维上显著优于 top-p、ϵ-sampling、Mirostat.
-    2.  人类评审对故事叙事性与画面感给出更高偏好比例.
-    3.  负载开销与 top-p 基本持平，GPU 推理速度差异<3%.
+*   关键发现:
+    1.  在温度 $T \ge 1.2$ 区间，min-p 在“连贯度-创造性”二维上显著优于 top-p、ϵ-sampling、Mirostat。
+    2.  人类评审对故事叙事性与画面感给出更高偏好比例。
+    3.  负载开销与 top-p 基本持平，GPU 推理速度差异小于 3%。
 
 #### 4. Key Takeaways
 
@@ -431,7 +499,7 @@ $$
     *   该操作的直觉为: 只保留在最高 logit 附近的 token，排除 Gaussian“噪声区”
 *   在得到当前 candidate token 后再进行标准 softmax 采样
 
-***Theory***
+##### Theory
 
 *   Logit 分布建模：
     *   “噪声区”：近似 Gaussian（大量无关 token），
@@ -444,7 +512,7 @@ $$
         *   由于筛选条件基于相对距离（标准差的倍数），因此不会受温度缩放影响；
         *   其他方法会因 temperature 改变 logits 分布形状，导致选择集变化。
 *   公式性质分析：
-    *   推导了 Gaussian 与 Uniform 情形下阈值与累积概率质量 $p$ 的对应关系 (参考 [Nucleus Mass](https://www.notion.so/Nucleus-Mass-1fd60a55111280d8848de69b75a2ca6e?pvs=21) : Top-nσ 在不同分布类型下都能保留高质量的概率核)
+    *   推导了 Gaussian 与 Uniform 情形下阈值与累积概率质量 $p$ 的对应关系；Top-nσ 在不同分布类型下都能保留高质量的概率核
     *   合理的 n 的取值范围为: $n \in (0, 2\sqrt{3}) \approx (0, 3.46)$
 
 #### 3. Experiments
@@ -453,11 +521,11 @@ $$
     *   LLaMA-3-8B-Instruct 模型进行评估
     *   采用了 vLLM 框架进行推理
 *   数据集:
-    以推理为主的问答数据集上进行了评估，涵盖从小学数学到博士级别的问题. 所有数据集都被转换为开放式生成任务，模型需要生成答案，然后与参考答案进行比较.
-    1.  **AQuA**：代数问题解答数据集。
-    2.  **MATH**：涵盖高中到研究生水平的数学问题。
-    3.  **GSM8K**：小学数学问题解答数据集。
-    4.  **GPQA**：博士级别的常识问答数据集。
+    *   以推理为主的问答数据集上进行了评估，涵盖从小学数学到博士级别的问题。所有数据集都被转换为开放式生成任务，模型需要生成答案，然后与参考答案进行比较。
+    *   **AQuA**：代数问题解答数据集。
+    *   **MATH**：涵盖高中到研究生水平的数学问题。
+    *   **GSM8K**：小学数学问题解答数据集。
+    *   **GPQA**：博士级别的常识问答数据集。
 *   评估指标:
     *   Exact Match (EM)：单次采样生成的答案与参考答案完全匹配的比例
     *   Maj@N：模型生成 N 个不同的响应，通过多数投票确定最终答案，然后计算与参考答案的匹配度
@@ -501,4 +569,4 @@ $$
 *   **Accelerating Large Language Model Decoding with Speculative Sampling**. [Lee, K., Zoph, B., Shazeer, N., et al.](https://arxiv.org/pdf/2302.01318). Published: 2023.
 *   **Tail-Free Sampling**. Bricken, T.. Published: 2019 (blog post).
 *   **Literature Review on Sampling Techniques for Language Models**. [Kumar, N.J.](https://www.njkumar.com/literature-review-sampling-techniques/). Published: 2023 (blog article).
-*   top-p、ϵ-sampling、Mirostat
+*   其他关键词: top-p、ϵ-sampling、Mirostat

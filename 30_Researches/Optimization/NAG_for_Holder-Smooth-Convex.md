@@ -191,7 +191,10 @@ $\square$
   - $\|\mathbf{z}^{(t)} - \mathbf{z}^{(t-1)}\|^2$ 则刻画了 $\mathbf{z}$ 在两次迭代之间的移动幅度.
 
 
-下给出其收敛率的分析. 对于满足 $M_p$-Holder smooth 的函数 $f$, 通过上述算法, 在第 $T$ 次迭代后, 可以得到如下的收敛率:
+下给出其收敛率的分析.
+ 
+***Theorem* (Convergence Rate of NAG for Holder Smooth Convex Optimization)**: 
+对于满足 $M_p$-Holder smooth 的函数 $f$, 通过上述算法, 在第 $T$ 次迭代后, 可以得到如下的收敛率:
 $$
 f(\mathbf{y}^{(T)}) - f(\mathbf{x}^\star) \leq \underbrace{\frac{H_\delta R_0^2}{2\Gamma_T}}_{\scriptsize\text{main optimization}} + \underbrace{\frac{\delta}{2\Gamma_T} \sum_{t=1}^T \Gamma_t}_{\scriptsize\text{residual accumulation}},
 $$
@@ -456,3 +459,101 @@ $$
         $$
 
 $\square !!!!!!!!!!!!!$
+
+- 最终 wrap-up 总结一下我们的结果. 
+  $$
+  f(\mathbf{y}^{(T)}) - f(\mathbf{x}^\star) \leq \underbrace{\frac{H_\delta R_0^2}{2\Gamma_T}}_{\scriptsize\text{main optimization}} + \underbrace{\frac{\delta}{2\Gamma_T} \sum_{t=1}^T \Gamma_t}_{\scriptsize\text{residual accumulation}},
+  $$
+  - 其核心的证明思路为: 从 Holder smoothness 的性质出发, 首先将其化为一个 quadratic + residual error 的形式; 然后将内积几何化为距离项之间的差, 最后通过把单步的误差进行 telescoping 的累加处理, 得到最终的收敛率.
+
+上述的内容给出了一个通用的收敛速率. 然而其中的 $\Gamma_T$ 和 $\sum_{t=1}^T \Gamma_t$ 的具体形式还没有展开. 下面的引理及推论给出了进一步的推论. 
+
+***Lemma***. 对于 $\alpha_t$ 的递推关系 $\alpha_{t+1}^2 + \alpha_{t+1} \alpha_t^2 - \alpha_t^2 = 0$, 以及 $\alpha_1 = 1$, 可以推出有:
+$$
+\alpha_t \leq \frac{2}{t+1}, 
+$$
+从而
+$$
+\Gamma_t = \frac{1}{\alpha_T^2} \geq \frac{(T+1)^2}{4},
+$$
+以及 
+$$
+\sum_{t=1}^T \Gamma_t \leq T \Gamma_T.
+$$
+
+
+- *Proof*
+  - 根据递推关系 $\alpha_{t+1}^2 + \alpha_{t+1} \alpha_t^2 - \alpha_t^2 = 0$, 可以从中解二次方程求出:
+    $$
+    \alpha_{t+1} = \frac{ 2 \alpha_t^2}{\alpha_t^2 + \sqrt{\alpha_t^4 + 4 \alpha_t^2}} = \frac{2}{1 + \sqrt{1 + \frac{4}{\alpha_t^2}}}.
+    $$
+  - 根据该式, 可以通过归纳法证明:
+    $$
+    \alpha_t \leq \frac{2}{t+1}.
+    $$
+    - 理由如下. 首先, 当 $t=1$ 时, $\alpha_1 = 1 \leq \frac{2}{2}$. 假设当 $t=k$ 时, $\alpha_k \leq \frac{2}{k+1}$. 则当 $t=k+1$ 时, 
+      $$
+      \begin{aligned}
+      \alpha_{k+1} &= \frac{2}{1 + \sqrt{1 + \frac{4}{\alpha_k^2}}} \stackrel{\text{IH}}{\leq} \frac{2}{1 + \sqrt{1 + (k+1)^2}}.
+      \end{aligned}
+      $$
+      下面的目标是证明 $\frac{2}{1 + \sqrt{1 + (k+1)^2}} \leq \frac{2}{k+2}$, 等价于证明 $k+2 \leq 1 + \sqrt{1 + (k+1)^2}$, 等价于证明 $(k+1)^2  \leq 1 + (k+1)^2$, 显然成立. 故证毕.
+
+
+  - 因此, 由于我们还已证出: $\Gamma_t \alpha_t^2 \equiv 1$, 故立刻可由 $\alpha_t \leq \frac{2}{t+1}$ 推出
+    $$
+    \Gamma_T = \frac{1}{\alpha_T^2} \geq \frac{(T+1)^2}{4}.
+    $$
+
+
+  -  此外, 由于 $\Gamma_t$ 是一个递增的数列, 因此
+    $$
+    \sum_{t=1}^T \Gamma_t \leq T \Gamma_T.
+    $$
+
+
+$\square$
+
+***Corollary***. 在主定理中, 给出了一个通用的收敛速率:
+$$
+f(\mathbf{y}^{(T)}) - f(\mathbf{x}^\star) \leq \frac{H_\delta R_0^2}{2\Gamma_T} + \frac{\delta}{2\Gamma_T} \sum_{t=1}^T \Gamma_t.
+$$
+根据上面的引理, 直接代入整理即可进一步推导出如下的收敛速率:
+$$
+f(\mathbf{y}^{(T)}) - f(\mathbf{x}^\star) \leq \frac{2 H_\delta R_0^2}{(T+1)^2} + \frac{\delta T}{2}.
+$$
+
+$\diamond$
+
+注意到, 在上述推论的收敛率中, RHS 两项中都是 $\delta$ 的函数. Recall, 其中
+$$
+H_\delta = M_p^{\frac{2}{p}} \left(\frac{2-p}{p\delta}\right)^{\frac{2-p}{p}}.
+$$
+ 故可以通过关于 $\delta$ 的适当选择, 来平衡两项之间的关系, 从而得到一个更好的收敛率. 
+
+***Corollary***. 对于上述的收敛速率, 最优的 $\delta$ 的选择为
+$$
+\delta^\star = \left(\frac{2(2-p)}{pT}A\right)^{\frac{p}{2}} = \frac{2^p (2-p)}{p} \frac{M_p R_0^p}{T^{\frac{p}{2}}(T+1)^p} .
+$$
+其中
+$$
+A  = \frac{2R_0^2}{(T+1)^2} \left(\frac{2-p}{p}\right)^{\frac{2-p}{p}} M_p^{\frac{2}{p}}.
+$$
+
+此时, 对应的最优 $H_\delta$ 的选择为
+$$
+H^\star = H_{\delta^\star} = M_p \left(\frac{T(T+1)^2}{4R_0^2}\right)^{\frac{2-p}{2}}.
+$$
+
+对应的最优收敛速率为
+$$
+f(\mathbf{y}^{(T)}) - f(\mathbf{x}^\star) \leq \frac{2^p}{p} \frac{M_p R_0^p T^{\frac{2-p}{2}}}{(T+1)^p} \leq \frac{2^p}{p} \frac{M_p R_0^p}{T^{\frac{3p-2}{2}}} = \mathcal{O}\Bigl(\frac{1}{T^{\frac{3p-2}{2}}}\Bigr).
+$$
+
+- *Proof*: 该定理的证明完全是基本的 calculus 的内容, 数学部分被 GPT 单独验证, 暂且略过. 
+- 这个推论的 intuition 是, 若 $p \to 2$, 则 $f$ 越趋近于一个 smooth function, 对应的收敛率为 $\mathcal{O}(\frac{1}{T^2})$, 与 Nesterov's Accelerated Gradient Descent 的收敛率相匹配; 若 $p \to 1$, 则 $f$ 越趋近于一个 non-smooth function, 对应的收敛率为 $\mathcal{O}(\frac{1}{T^{\frac{1}{2}}})$, 与 subgradient method 的收敛率相匹配. 因此, 该算法在 $p \in (1,2)$ 的范围内, 可以实现一个平滑和非平滑之间的 interpolation 的收敛率.
+
+***Corollary***. 对于上述的收敛速率, 对应过来的迭代次数 $T$ 的选择为
+$$
+T = \mathcal{O}\left(\left(\frac{M_p R_0^p}{\epsilon}\right)^{\frac{2}{3p-2}}\right).
+$$
