@@ -4,6 +4,8 @@
 >
 > - Lecture Reference: <https://www.stat.cmu.edu/~ryantibs/convexopt-F18/>
 
+## Introduction
+
 回顾对于无约束问题,
 $$
 \min_{\mathbf{x}\in\mathbb{R}^n} f(\mathbf{x}),
@@ -52,7 +54,7 @@ $$
 
 ### Log Barrier Function
 
-考虑如下优化问题
+考虑如下约束优化问题
 $$
 \begin{aligned}
 \min_{\mathbf{x}\in\mathbb{R}^n} \quad & f(\mathbf{x}) \\
@@ -81,7 +83,7 @@ $$
 
 - 事实上, 这样的 barrier function 就相当于一个光滑版本的 indicator function $\delta(\mathbf{x})$:
     $$
-    \min_{\mathbf{x}\in\mathbb{R}^n} f(\mathbf{x})+\sum_{i=1}^m \delta_{\{h_i(\mathbf{x})\leq 0\}}(\mathbf{x}),
+    \min_{\mathbf{x}\in\mathbb{R}^n} \quad f(\mathbf{x})+\sum_{i=1}^m \delta_{\{h_i(\mathbf{x})\leq 0\}}(\mathbf{x}),
     $$
 - 考虑函数 $-\log(-u) / t$. 事实上, 当 $t \to \infty$, 该函数就是上述 indicator function.
 
@@ -112,3 +114,71 @@ $$
 - 当 $t$ 较小时, $\phi(\mathbf{x})$ 的影响较大, 因此 $\mathbf{x}^\star(t)$ 会远离约束的边界; 当 $t$ 较大时, $tf(\mathbf{x})$ 的影响较大, 因此 $\mathbf{x}^\star(t)$ 会更接近原问题的最优解.
 - 因此, 最终的  central path 的感觉就是, 从较小的 $t$ 开始, 即从一个可行域内部比较中央远离边界的点开始, 随着 $t$ 的增加, 沿着一条轨迹逐渐接近原问题的最优解.
 - 特别的, 我们之所以从小的 $t$ 开始而不是一上来就使用较大的 $t$, 是因为当 $t$ 越大就越接近非光滑的 indicator function, 这会导致优化问题变得更加困难. 而如果我们先用一个较小的 $t$ 来较为平稳的求解一个光滑的近似问题, 那么我们就可以以这个解作为下一次迭代的初始点, 从而逐渐增加 $t$ 来更接近原问题的最优解. 这也是 Barrier Method 的核心思想.
+
+#### Central Path 的 KKT 条件和 Duality
+
+对于上述的 barrier problem
+$$
+\begin{aligned}
+\min_{\mathbf{x}\in\mathbb{R}^n} \quad & tf(\mathbf{x}) - \sum_{i=1}^m \log(-h_i(\mathbf{x})) := tf(\mathbf{x}) + \phi(\mathbf{x})  \\
+\text{s.t.} \quad & \mathbf{A}\mathbf{x}=\mathbf{b},
+\end{aligned}
+$$
+- 其 Lagrangian function 可以写作
+    $$
+    \mathcal{L}_t(\mathbf{x}, \mathbf{w}) = tf(\mathbf{x}) + \phi(\mathbf{x}) + \mathbf{w}^\top (\mathbf{A}\mathbf{x}-\mathbf{b}),
+    $$
+- 其关于 $\mathbf{x}$ 的梯度为:
+    $$
+    \nabla_{\mathbf{x}} \mathcal{L}_t(\mathbf{x}, \mathbf{w}) = t\nabla f(\mathbf{x}) + \nabla \phi(\mathbf{x}) + \mathbf{A}^\top \mathbf{w} = t\nabla f(\mathbf{x}) - \sum_{i=1}^m \frac{1}{h_i(\mathbf{x})}\nabla h_i(\mathbf{x}) + \mathbf{A}^\top \mathbf{w}.
+    $$
+- 关于 $\mathbf{w}$ 的梯度为:
+    $$
+    \nabla_{\mathbf{w}} \mathcal{L}_t(\mathbf{x}, \mathbf{w}) = \mathbf{A}\mathbf{x}-\mathbf{b}.
+    $$
+- 故在 central path $\mathbf{x}^\star(t)$ 上, 需满足:
+    $$
+    t\nabla f(\mathbf{x}^\star(t)) - \sum_{i=1}^m \frac{1}{h_i(\mathbf{x}^\star(t))}\nabla h_i(\mathbf{x}^\star(t)) + \mathbf{A}^\top \mathbf{w}^\star(t) = 0,
+    $$
+    $$
+    \mathbf{A}\mathbf{x}^\star(t)-\mathbf{b} = 0.
+    $$
+
+但是另一方面, 我们真正关注的并不是这个 barrier problem 的对偶变量 $\mathbf{w}$, 而是原问题的相应变量. 其中
+$$
+\begin{aligned}
+\min_{\mathbf{x}\in\mathbb{R}^n} \quad & f(\mathbf{x}) \\
+\text{s.t.} \quad & h_i(\mathbf{x})\leq 0, \quad i=1,\ldots,m, \\
+& \mathbf{A}\mathbf{x}=\mathbf{b},
+\end{aligned}
+$$
+对应的 Lagrangian function 
+$$
+\mathcal{L}(\mathbf{x}, \mathbf{u}, \mathbf{v}) = f(\mathbf{x}) + \sum_{i=1}^m u_i h_i(\mathbf{x}) + \mathbf{v}^\top (\mathbf{A}\mathbf{x}-\mathbf{b}),
+$$
+中的对偶变量 $\mathbf{u}$ 和 $\mathbf{v}$. 
+
+- 下根据上述的 central path 的 KKT 条件, 可以得到如下的关系:
+    $$
+    \begin{aligned}
+    u_i^\star(t) &= -\frac{1}{t h_i(\mathbf{x}^\star(t))}, \quad i=1,\ldots,m, \\ 
+    \mathbf{v}^\star(t) &= \frac{\mathbf{w}^\star(t)}{t}.
+    \end{aligned}
+    $$
+    
+    - 理由如下. 对于 Barrier 的 KKT 条件, 可以对其左右两侧同时除以 $t$, 从而得到
+        $$
+        \nabla f(\mathbf{x}^\star(t)) - \sum_{i=1}^m \frac{1}{t h_i(\mathbf{x}^\star(t))}\nabla h_i(\mathbf{x}^\star(t)) + \mathbf{A}^\top \frac{\mathbf{w}^\star(t)}{t} = 0,
+        $$
+        对应原问题的 KKT 条件, 可以得到上述的关系.
+
+
+- 该原始问题对应的 dual function 为:
+    $$
+    g(\mathbf{u}, \mathbf{v}) = \inf_{\mathbf{x}\in\mathbb{R}^n} \mathcal{L}(\mathbf{x}, \mathbf{u}, \mathbf{v}) 
+    $$
+    若其为 dual feasible 的, 需要满足 $\mathbf{u}\geq 0$ 和 $g(\mathbf{u}, \mathbf{v}) > -\infty$. 故下尝试证明由上面得到的 $\mathbf{u}^\star(t)$ 和 $\mathbf{v}^\star(t)$ 满足上述条件. 
+    - 首先断言 $\mathbf{u}^\star(t) > 0$. 理由如下.
+        - 由于 $\mathbf{x}^\star(t)$ 是 central path 上的点是严格可行的, 因此 $h_i(\mathbf{x}^\star(t)) < 0$ 对于所有 $i=1,\ldots,m$ 都成立. 因此, 对于 $t > 0$, 可以得到 $u_i^\star(t) = -(t h_i(\mathbf{x}^\star(t)))^{-1} > 0$.
+    - 其次断言 $g(\mathbf{u}^\star(t), \mathbf{v}^\star(t)) > -\infty$. 理由如下.
+        - 由于 $\mathbf{x}^\star(t)$ 是 barrier problem 的最优解, 而 Barrier problem 本身和
