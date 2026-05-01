@@ -392,3 +392,44 @@ $$
 
 ## Indirect Methods for Solving Linear Systems
 
+前面介绍的诸如 QR, Cholesky, LU 等分解方法, 都是直接方法 (direct method) 的范畴. 其核心思想是仍然是通过直接给出一个 closed-form 的解来求解线性系统. 但在一些特定的情况下, 例如当 $\mathbf{A}$ 是一个非常大的稀疏矩阵时, 矩阵分解的方法也会非常昂贵. 此时, 我们可以考虑一些迭代方法 (iterative method) 来求解线性系统. 其核心思想是通过不断地迭代来逐渐逼近线性系统的解. 
+
+### Jacobi and Gauss-Seidel Methods
+
+考虑正定矩阵 $\mathbf{A} \in \mathbb{S}_{++}^n$, Jacobi method 要求解
+$$
+\mathbf{A} \mathbf{x} = \mathbf{b}.
+$$
+其推导的迭代公式如下.  在第 $k$ 轮迭代中, $\mathbf{x}^{(k)}$ 的第 $i$ 个坐标的更新公式为:
+$$
+x_i^{(k)} = \frac{1}{A_{ii}} \left(b_i - \sum_{j \neq i} A_{ij} x_j^{(k-1)}\right)
+$$
+
+- 该方法的推导过程如下. 
+  - 考虑线性系统 $\mathbf{A} \mathbf{x} = \mathbf{b}$ 的第 $i$ 行:
+    $$
+    A_{i1} x_1 + A_{i2} x_2 + \cdots + A_{ii} x_i + \cdots + A_{in} x_n = b_i
+    $$
+    将 $x_i$ 提取则有
+    $$
+    A_{ii} x_i = b_i - \sum_{j \neq i} A_{ij} x_j
+    $$
+
+  - 因此可以用上式来更新 $x_i$. 由于在第 $k$ 轮迭代中, $x_j$ 的值还没有被更新, 因此只能使用上一轮迭代的值 $x_j^{(k-1)}$ 来进行更新.
+
+- 然而, Jacobi method 并不保证收敛. 一个判断方法如下. 可以将 $\mathbf{A}$ 分解为 $\mathbf{A} = \mathbf{D} + \mathbf{R}$, 其中 $\mathbf{D}$ 是 $\mathbf{A}$ 的对角线部分, $\mathbf{R}$ 是 $\mathbf{A}$ 的非对角线部分. 定义 $T_J = - \mathbf{D}^{-1} \mathbf{R}$, 并计算其谱半径 $\rho(T_J)$ (谱半径为矩阵的特征值的绝对值的最大值). 则 Jacobi method 当且仅当 $\rho(T_J) < 1$ 时收敛. 例如, 当 $\mathbf{A}$ 是一个严格对角占优矩阵时, 则 Jacobi method 一定收敛.
+
+
+
+### Gauss-Seidel method
+
+- Gauss-Seidel method 的迭代公式如下. 在第 $k$ 轮迭代中, $\mathbf{x}^{(k)}$ 的第 $i$ 个坐标的更新公式为:
+    $$
+    x_i^{(k)} = \frac{1}{A_{ii}} \left(b_i - \sum_{j < i} A_{ij} x_j^{(k)} - \sum_{j > i} A_{ij} x_j^{(k-1)}\right)
+    $$
+    其中对于 $j < i$ 的部分, 使用了当前轮迭代已经更新的值 $x_j^{(k)}$, 而对于 $j > i$ 的部分, 则只能使用上一轮迭代的值 $x_j^{(k-1)}$ 来进行更新.
+
+
+- Gauss-Seidel method 的收敛速度通常较快, 但由于具有强序列性, 因此不太适合并行计算. 
+
+
