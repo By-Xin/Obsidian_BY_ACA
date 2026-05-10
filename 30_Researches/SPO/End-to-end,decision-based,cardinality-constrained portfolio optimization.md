@@ -157,14 +157,17 @@ $$
 总的而言, E2E 的训练目标为:
 $$
 \begin{aligned}
-  \min_{\mathbf{B},\boldsymbol{\Psi}} \quad & \mathbb E[\ell_d(w^*(\mathbf{B},\boldsymbol{\Psi},\mathbf{F}),\mathbf{R})] \\
-  &\text{s.t.} \quad w^*(\mathbf{B},\boldsymbol{\Psi},\mathbf{F}) \in \argmin_{w \in \mathcal{W}_k} w^\top \Sigma(\mathbf{B},\boldsymbol{\Psi}; \Sigma_f) w
+  \min_{\mathbf{B},\boldsymbol{\Psi}} \quad & \mathbb E[\ell_d(\mathbf{w}^*(\mathbf{B},\boldsymbol{\Psi},\mathbf{F}),\mathbf{R})] \\
+  &\text{s.t.} \quad \mathbf{w}^*(\mathbf{B},\boldsymbol{\Psi},\mathbf{F}) \in \argmin_{\mathbf{w} \in \mathcal{W}_k} w\mathbf{w}^\top \Sigma(\mathbf{B},\boldsymbol{\Psi}; \Sigma_f) \mathbf{w}
 \end{aligned}
 $$
 在具体训练过程中, 每次会有一个 batch 的数据 $\mathcal{B}^{(m)}$ 被送入模型 (这里 $\mathcal{B}^{(m)}$ 表示该 batch 的 index), 最终的优化目标为:
 $$
 \begin{aligned}
-  \min_{\mathbf{B},\boldsymbol{\Psi}} \quad & \frac{1}{|\mathcal{B}^{(m)}|} \sum_{j \in \mathcal{B}^{(m)}} \ell_d(w^*(\mathbf{B},\boldsymbol{\Psi},\mathbf{F}^{(j)}),\mathbf{R}^{(j)}) \\
-  &\text{s.t.} \quad w^*(\mathbf{B},\boldsymbol{\Psi},\mathbf{F}^{(j)}) \in \argmin_{w \in \mathcal{W}_k} w^\top \Sigma(\mathbf{B},\boldsymbol{\Psi}; \Sigma_f) w, \forall j \in \mathcal{B}^{(m)}
+  \min_{\mathbf{B},\boldsymbol{\Psi}} \quad & \frac{1}{|\mathcal{B}^{(m)}|} \sum_{j \in \mathcal{B}^{(m)}} \ell_d(\mathbf{w}^*(\mathbf{B},\boldsymbol{\Psi},\mathbf{F}^{(j)}),\mathbf{R}^{(j)}) \\
+  &\text{s.t.} \quad \mathbf{w}^*(\mathbf{B},\boldsymbol{\Psi},\mathbf{F}^{(j)}) \in \argmin_{\mathbf{w} \in \mathcal{W}_k} \mathbf{w}^\top \Sigma(\mathbf{B},\boldsymbol{\Psi}; \Sigma_f) \mathbf{w}, \forall j \in \mathcal{B}^{(m)}
 \end{aligned}
 $$
+- 有时约束条件也会 generally  地写作
+  $$
+  \mathbf{w}^{*(j)} (\boldsymbol{\theta}, \mathbf{F}^{(j)}) = \argmin_{\mathbf{w} \in \mathcal{W}} P_{mV} 
