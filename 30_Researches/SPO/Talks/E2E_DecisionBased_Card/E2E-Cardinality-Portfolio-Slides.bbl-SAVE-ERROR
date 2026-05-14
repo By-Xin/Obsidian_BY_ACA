@@ -1,0 +1,371 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{ElmachtoubGrigas2021SPO}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=72760cf91be43b7e1173e52ad2ec220a}{%
+           family={Elmachtoub},
+           familyi={E\bibinitperiod},
+           given={Adam\bibnamedelima N.},
+           giveni={A\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+        {{hash=16bb9e78aff555f22b13c959b6e5fbe4}{%
+           family={Grigas},
+           familyi={G\bibinitperiod},
+           given={Paul},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{5bfb2026397a29247bcd040100a45599}
+      \strng{fullhash}{5bfb2026397a29247bcd040100a45599}
+      \strng{fullhashraw}{5bfb2026397a29247bcd040100a45599}
+      \strng{bibnamehash}{5bfb2026397a29247bcd040100a45599}
+      \strng{authorbibnamehash}{5bfb2026397a29247bcd040100a45599}
+      \strng{authornamehash}{5bfb2026397a29247bcd040100a45599}
+      \strng{authorfullhash}{5bfb2026397a29247bcd040100a45599}
+      \strng{authorfullhashraw}{5bfb2026397a29247bcd040100a45599}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Management Science}
+      \field{number}{1}
+      \field{title}{Smart ``Predict, then Optimize''}
+      \field{volume}{68}
+      \field{year}{2021}
+      \field{pages}{9\bibrangedash 26}
+      \range{pages}{18}
+    \endentry
+    \entry{FamaFrench2015FiveFactor}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=cf1dad75742cba1f00261a0ee70e7ba2}{%
+           family={Fama},
+           familyi={F\bibinitperiod},
+           given={Eugene\bibnamedelima F.},
+           giveni={E\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
+        {{hash=4ca55f4db61ae3245d066a218dca72c8}{%
+           family={French},
+           familyi={F\bibinitperiod},
+           given={Kenneth\bibnamedelima R.},
+           giveni={K\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \strng{namehash}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{fullhash}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{fullhashraw}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{bibnamehash}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{authorbibnamehash}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{authornamehash}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{authorfullhash}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{authorfullhashraw}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Financial Economics}
+      \field{number}{1}
+      \field{title}{A Five-factor Asset Pricing Model}
+      \field{volume}{116}
+      \field{year}{2015}
+      \field{pages}{1\bibrangedash 22}
+      \range{pages}{22}
+    \endentry
+    \entry{CuiZhengZhuSun2013Relaxations}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=ee80ee9732d177f7c5452f8ca5b78a42}{%
+           family={Cui},
+           familyi={C\bibinitperiod},
+           given={Xiangyu},
+           giveni={X\bibinitperiod}}}%
+        {{hash=13e2c2e0e2c8e0acbaed5ede2268b193}{%
+           family={Zheng},
+           familyi={Z\bibinitperiod},
+           given={Xiaoling},
+           giveni={X\bibinitperiod}}}%
+        {{hash=0e44593a7680e4a5aa840a9fe64f2659}{%
+           family={Zhu},
+           familyi={Z\bibinitperiod},
+           given={Shushang},
+           giveni={S\bibinitperiod}}}%
+        {{hash=1003bdc86336d38192279bce840d8588}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Xiaoling},
+           giveni={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{ac5c728baed41a9cb893b370dfad158c}
+      \strng{fullhash}{2de7fe45c69a61eb21518fb3dd5925b7}
+      \strng{fullhashraw}{2de7fe45c69a61eb21518fb3dd5925b7}
+      \strng{bibnamehash}{2de7fe45c69a61eb21518fb3dd5925b7}
+      \strng{authorbibnamehash}{2de7fe45c69a61eb21518fb3dd5925b7}
+      \strng{authornamehash}{ac5c728baed41a9cb893b370dfad158c}
+      \strng{authorfullhash}{2de7fe45c69a61eb21518fb3dd5925b7}
+      \strng{authorfullhashraw}{2de7fe45c69a61eb21518fb3dd5925b7}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Global Optimization}
+      \field{number}{4}
+      \field{title}{Convex Relaxations and {MIQCQP} Reformulations for a Class of Cardinality-constrained Portfolio Selection Problems}
+      \field{volume}{56}
+      \field{year}{2013}
+      \field{pages}{1409\bibrangedash 1423}
+      \range{pages}{15}
+    \endentry
+    \entry{WiegeleZhao2022SDP}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=1cd3603a9dfbb623151650ef43805563}{%
+           family={Wiegele},
+           familyi={W\bibinitperiod},
+           given={Angelika},
+           giveni={A\bibinitperiod}}}%
+        {{hash=fc9df660d0643dba8f10d6132d7264c0}{%
+           family={Zhao},
+           familyi={Z\bibinitperiod},
+           given={Shun},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{fullhash}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{fullhashraw}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{bibnamehash}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{authorbibnamehash}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{authornamehash}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{authorfullhash}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{authorfullhashraw}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Operations Research Proceedings 2021}
+      \field{title}{Tight {SDP} Relaxations for Cardinality-constrained Problems}
+      \field{year}{2022}
+      \field{pages}{167\bibrangedash 172}
+      \range{pages}{6}
+    \endentry
+    \entry{AgrawalAmosEtAl2019Layers}{inproceedings}{}{}
+      \name{author}{6}{}{%
+        {{hash=a01da305d6760b61e7a044009347e400}{%
+           family={Agrawal},
+           familyi={A\bibinitperiod},
+           given={Akshay},
+           giveni={A\bibinitperiod}}}%
+        {{hash=783779089b4b78ed86b990f3397d0abb}{%
+           family={Amos},
+           familyi={A\bibinitperiod},
+           given={Brandon},
+           giveni={B\bibinitperiod}}}%
+        {{hash=05d60e84db408eae57c88cbd2f3de051}{%
+           family={Barratt},
+           familyi={B\bibinitperiod},
+           given={Shane},
+           giveni={S\bibinitperiod}}}%
+        {{hash=ec94d94cc487dd71939a90cbeaaf47d0}{%
+           family={Boyd},
+           familyi={B\bibinitperiod},
+           given={Stephen},
+           giveni={S\bibinitperiod}}}%
+        {{hash=d50bdcda78beb231a5057a4372dac2fd}{%
+           family={Diamond},
+           familyi={D\bibinitperiod},
+           given={Steven},
+           giveni={S\bibinitperiod}}}%
+        {{hash=0288715a83a3349e44f9292c5c2149f7}{%
+           family={Kolter},
+           familyi={K\bibinitperiod},
+           given={J.\bibnamedelimi Zico},
+           giveni={J\bibinitperiod\bibinitdelim Z\bibinitperiod}}}%
+      }
+      \strng{namehash}{1bd4fa79a599220ad95416c72b7b66b1}
+      \strng{fullhash}{36ca76dae6243cba5552395020bc03db}
+      \strng{fullhashraw}{36ca76dae6243cba5552395020bc03db}
+      \strng{bibnamehash}{36ca76dae6243cba5552395020bc03db}
+      \strng{authorbibnamehash}{36ca76dae6243cba5552395020bc03db}
+      \strng{authornamehash}{1bd4fa79a599220ad95416c72b7b66b1}
+      \strng{authorfullhash}{36ca76dae6243cba5552395020bc03db}
+      \strng{authorfullhashraw}{36ca76dae6243cba5552395020bc03db}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Advances in Neural Information Processing Systems}
+      \field{title}{Differentiable Convex Optimization Layers}
+      \field{volume}{32}
+      \field{year}{2019}
+      \field{pages}{9562\bibrangedash 9574}
+      \range{pages}{13}
+    \endentry
+    \entry{WilderDilkinaTambe2019Melding}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=8d38c5fdde0e1a85968302e1188e5423}{%
+           family={Wilder},
+           familyi={W\bibinitperiod},
+           given={Bryan},
+           giveni={B\bibinitperiod}}}%
+        {{hash=f59f0a4dd18946cd06c0fddbc0a44eaa}{%
+           family={Dilkina},
+           familyi={D\bibinitperiod},
+           given={Bistra},
+           giveni={B\bibinitperiod}}}%
+        {{hash=0002f004c0bbf54fb46776c3a82af7a2}{%
+           family={Tambe},
+           familyi={T\bibinitperiod},
+           given={Milind},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{9b2c6303c2bc9e417b3332d620c69f59}
+      \strng{fullhash}{9b2c6303c2bc9e417b3332d620c69f59}
+      \strng{fullhashraw}{9b2c6303c2bc9e417b3332d620c69f59}
+      \strng{bibnamehash}{9b2c6303c2bc9e417b3332d620c69f59}
+      \strng{authorbibnamehash}{9b2c6303c2bc9e417b3332d620c69f59}
+      \strng{authornamehash}{9b2c6303c2bc9e417b3332d620c69f59}
+      \strng{authorfullhash}{9b2c6303c2bc9e417b3332d620c69f59}
+      \strng{authorfullhashraw}{9b2c6303c2bc9e417b3332d620c69f59}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the AAAI Conference on Artificial Intelligence}
+      \field{number}{1}
+      \field{title}{Melding the Data-Decisions Pipeline: Decision-focused Learning for Combinatorial Optimization}
+      \field{volume}{33}
+      \field{year}{2019}
+      \field{pages}{1658\bibrangedash 1665}
+      \range{pages}{8}
+    \endentry
+    \entry{FerberWilderDilkinaTambe2020Mipaal}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=99530c2ba76da4c7a61a007ee1703b3e}{%
+           family={Ferber},
+           familyi={F\bibinitperiod},
+           given={Aaron},
+           giveni={A\bibinitperiod}}}%
+        {{hash=8d38c5fdde0e1a85968302e1188e5423}{%
+           family={Wilder},
+           familyi={W\bibinitperiod},
+           given={Bryan},
+           giveni={B\bibinitperiod}}}%
+        {{hash=f59f0a4dd18946cd06c0fddbc0a44eaa}{%
+           family={Dilkina},
+           familyi={D\bibinitperiod},
+           given={Bistra},
+           giveni={B\bibinitperiod}}}%
+        {{hash=0002f004c0bbf54fb46776c3a82af7a2}{%
+           family={Tambe},
+           familyi={T\bibinitperiod},
+           given={Milind},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{cd670c1a748a91e775fdf4bdd1ca96b4}
+      \strng{fullhash}{4899e3606fb0de49d63854c373875b2e}
+      \strng{fullhashraw}{4899e3606fb0de49d63854c373875b2e}
+      \strng{bibnamehash}{4899e3606fb0de49d63854c373875b2e}
+      \strng{authorbibnamehash}{4899e3606fb0de49d63854c373875b2e}
+      \strng{authornamehash}{cd670c1a748a91e775fdf4bdd1ca96b4}
+      \strng{authorfullhash}{4899e3606fb0de49d63854c373875b2e}
+      \strng{authorfullhashraw}{4899e3606fb0de49d63854c373875b2e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the AAAI Conference on Artificial Intelligence}
+      \field{number}{02}
+      \field{title}{{MIPaaL}: Mixed Integer Program as a Layer}
+      \field{volume}{34}
+      \field{year}{2020}
+      \field{pages}{1504\bibrangedash 1511}
+      \range{pages}{8}
+    \endentry
+    \entry{MandiStuckeyGuns2020Hard}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=585cbabbe51e265ae378d05f9ca866ac}{%
+           family={Mandi},
+           familyi={M\bibinitperiod},
+           given={Jayanta},
+           giveni={J\bibinitperiod}}}%
+        {{hash=763c041036682c7c20675dab8c437fb0}{%
+           family={Stuckey},
+           familyi={S\bibinitperiod},
+           given={Peter\bibnamedelima J.},
+           giveni={P\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=2a9ad3a0307f4d7e4e3a864aa91a28ef}{%
+           family={Guns},
+           familyi={G\bibinitperiod},
+           given={Tias},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{d7d85c725052d5700ef530fcf24ca1a5}
+      \strng{fullhash}{d7d85c725052d5700ef530fcf24ca1a5}
+      \strng{fullhashraw}{d7d85c725052d5700ef530fcf24ca1a5}
+      \strng{bibnamehash}{d7d85c725052d5700ef530fcf24ca1a5}
+      \strng{authorbibnamehash}{d7d85c725052d5700ef530fcf24ca1a5}
+      \strng{authornamehash}{d7d85c725052d5700ef530fcf24ca1a5}
+      \strng{authorfullhash}{d7d85c725052d5700ef530fcf24ca1a5}
+      \strng{authorfullhashraw}{d7d85c725052d5700ef530fcf24ca1a5}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the AAAI Conference on Artificial Intelligence}
+      \field{number}{02}
+      \field{title}{Smart Predict-and-Optimize for Hard Combinatorial Optimization Problems}
+      \field{volume}{34}
+      \field{year}{2020}
+      \field{pages}{1603\bibrangedash 1610}
+      \range{pages}{8}
+    \endentry
+    \entry{ButlerKwon2021Integrated}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=dfce8fcd6b20ae490d1cdc0b5c67c9dc}{%
+           family={Butler},
+           familyi={B\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod}}}%
+        {{hash=49655b6b15d90c80aeacd49a66150ec7}{%
+           family={Kwon},
+           familyi={K\bibinitperiod},
+           given={Roy\bibnamedelima H.},
+           giveni={R\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+      }
+      \strng{namehash}{40291d27f650071e41346b5a332fdc04}
+      \strng{fullhash}{40291d27f650071e41346b5a332fdc04}
+      \strng{fullhashraw}{40291d27f650071e41346b5a332fdc04}
+      \strng{bibnamehash}{40291d27f650071e41346b5a332fdc04}
+      \strng{authorbibnamehash}{40291d27f650071e41346b5a332fdc04}
+      \strng{authornamehash}{40291d27f650071e41346b5a332fdc04}
+      \strng{authorfullhash}{40291d27f650071e41346b5a332fdc04}
+      \strng{authorfullhashraw}{40291d27f650071e41346b5a332fdc04}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Risk}
+      \field{number}{2}
+      \field{title}{Covariance Estimation for Risk-based Portfolio Optimization: An Integrated Approach}
+      \field{volume}{24}
+      \field{year}{2021}
+    \endentry
+  \enddatalist
+  \missing{PolitisRomano1992Circular}
+\endrefsection
+\endinput
+

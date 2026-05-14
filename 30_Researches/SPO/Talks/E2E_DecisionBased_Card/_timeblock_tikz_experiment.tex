@@ -1,0 +1,54 @@
+\documentclass[10pt,aspectratio=169]{beamer}
+\input{preamble.tex}
+
+\definecolor{tbBorder}{HTML}{0F5D78}
+\definecolor{tbLight}{HTML}{D7E8F6}
+\definecolor{tbMid}{HTML}{9DC2E1}
+\definecolor{tbBlue}{HTML}{4F97D6}
+\definecolor{tbDark}{HTML}{28679F}
+\definecolor{tbNavy}{HTML}{173E61}
+\definecolor{tbPeach}{HTML}{F4BEA4}
+
+\newcommand{\timeblockstrip}[3]{%
+  \foreach \fill [count=\i from 0] in {#3} {%
+    \draw[draw=tbBorder, line width=.55pt, fill=\fill]
+      ({#1+\i*.36},{#2}) rectangle ++(.36,.30);
+  }%
+}
+
+\begin{document}
+
+\begin{frame}{Circular block bootstrap for training data generation}
+  \centering
+  \resizebox{.96\textwidth}{!}{%
+  \begin{tikzpicture}[
+    font=\sffamily,
+    title/.style={font=\sffamily\Large},
+    rowlab/.style={font=\sffamily\large},
+    dots/.style={font=\sffamily\Large}
+  ]
+    \node[title] at (2.7,2.85) {Window 1};
+    \node[title] at (8.2,2.85) {Window 2};
+
+    \foreach \lab/\y in {1/2.10,2/1.50,3/.90,J/-.55} {
+      \node[rowlab, anchor=east] at (.45,\y+.15) {\lab};
+    }
+
+    \timeblockstrip{.70}{2.10}{tbLight,tbMid,tbBlue,tbDark,tbNavy,tbPeach,white,white,white,white,white}
+    \timeblockstrip{.70}{1.50}{tbLight,tbMid,tbLight,tbNavy,tbNavy,tbPeach,white,white,white,white,white}
+    \timeblockstrip{.70}{.90}{tbNavy,tbMid,tbLight,tbMid,tbLight,tbPeach,white,white,white,white,white}
+    \timeblockstrip{.70}{-.55}{tbBlue,tbDark,tbMid,tbLight,tbLight,tbPeach,white,white,white,white,white}
+
+    \timeblockstrip{6.15}{2.10}{white,tbLight,tbMid,tbBlue,tbDark,tbNavy,tbPeach,white,white,white,white}
+    \timeblockstrip{6.15}{1.50}{white,tbBlue,tbDark,tbMid,tbLight,tbLight,tbPeach,white,white,white,white}
+    \timeblockstrip{6.15}{.90}{white,tbLight,tbMid,tbLight,tbDark,tbNavy,tbPeach,white,white,white,white}
+    \timeblockstrip{6.15}{-.55}{white,tbNavy,tbMid,tbLight,tbMid,tbLight,tbPeach,white,white,white,white}
+
+    \node[dots] at (2.55,.30) {$\vdots$};
+    \node[dots] at (8.00,.30) {$\vdots$};
+    \node[dots] at (10.42,1.05) {$\cdots$};
+  \end{tikzpicture}%
+  }
+\end{frame}
+
+\end{document}

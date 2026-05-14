@@ -1,0 +1,88 @@
+\documentclass[10pt,aspectratio=169]{beamer}
+\input{preamble.tex}
+
+\newcommand{\Kcard}{k}
+\newcommand{\Wset}{\mathcal{W}}
+\newcommand{\Param}{\theta}
+
+\begin{document}
+
+\begin{frame}{End-to-End architecture as a computational graph}
+  \centering
+  \resizebox{0.98\textwidth}{!}{%
+  \begin{tikzpicture}[
+    >=Latex,
+    font=\small,
+    basebox/.style={
+      rounded corners=2pt,
+      line width=.65pt,
+      align=center,
+      inner xsep=5pt,
+      inner ysep=4pt,
+      minimum height=11mm
+    },
+    data/.style={basebox, draw=blue!55!black, fill=blue!4, text width=28mm},
+    model/.style={basebox, draw=orange!70!black, fill=orange!6, text width=33mm},
+    covbox/.style={basebox, draw=orange!70!black, fill=orange!6, text width=42mm},
+    opt/.style={basebox, draw=green!50!black, fill=green!5, text width=51mm},
+    loss/.style={basebox, draw=red!60!black, fill=red!5, text width=38mm},
+    signal/.style={basebox, draw=black!55, fill=black!3, text width=34mm},
+    flow/.style={-{Latex[length=2.1mm]}, draw=black!85, line width=.95pt},
+    train/.style={-{Latex[length=2.1mm]}, draw=black!85, dashed, line width=.95pt},
+    lab/.style={font=\scriptsize, align=center, inner sep=.4pt, text=black}
+  ]
+    \node[data] (sample) at (0,0) {
+      Training sample $j$\\[.6mm]
+      $\mathcal D_j=\{\mathbf F_j,\mathbf R_j\}$
+    };
+
+    \node[model] (risk) at (5.4,0) {
+      Risk model\\[.6mm]
+      $\Param=\{\mathbf B,\Psi\}$\\
+      {\tiny trainable parameters}
+    };
+
+    \node[covbox] (cov) at (11.6,0) {
+      Covariance\\[.6mm]
+      $\widehat{\mathbf\Sigma}_j
+      =
+      \mathbf B\widehat{\mathbf\Sigma}_{f,j}\mathbf B^\top+\Psi$
+    };
+
+    \node[opt] (solver) at (18.7,0) {
+      Differentiable optimization layer\\[.6mm]
+      $\displaystyle
+      \mathbf w_j^\star
+      =
+      \arg\min_{\mathbf w\in\mathcal W_k}
+      \mathbf w^\top
+      \widehat{\mathbf\Sigma}_j
+      \mathbf w$
+    };
+
+    \node[loss] (loss) at (18.7,-3.05) {
+      Realized decision loss\\[.6mm]
+      $\ell_j=\ell_d(\mathbf w_j^\star,\mathbf R_j)$
+    };
+
+    \node[signal] (update) at (5.4,-3.05) {
+      Backward update\\[.6mm]
+      $\nabla_\Param \ell_j$\\
+      {\tiny implicit / surrogate gradient}
+    };
+
+    \draw[flow] (sample) -- node[above=2pt, lab] {input\\factors} (risk);
+    \draw[flow] (risk) -- node[above=2pt, lab] {learned\\parameters} (cov);
+    \draw[flow] (cov) -- node[above=2pt, lab] {predicted\\covariance} (solver);
+    \draw[flow] (solver) -- node[right=2pt, lab] {optimal\\portfolio} (loss);
+    \draw[flow] (loss) -- node[above=2pt, lab] {training\\signal} (update);
+    \draw[train] (update) -- node[right, lab] {update $\Param$} (risk);
+    \draw[flow] (sample.south) -- ++(0,-4.55)
+      -| node[pos=.56, below=2pt, lab] {realized returns $\mathbf R_j$} (loss.south);
+    \draw[flow] (sample.north) -- ++(0,.8)
+      -| node[pos=.72, above=2pt, lab] {estimate\\$\widehat{\mathbf\Sigma}_{f,j}$} (cov.north);
+  \end{tikzpicture}
+  }
+\end{frame}
+
+\end{document}

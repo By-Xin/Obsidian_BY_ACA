@@ -1,0 +1,8 @@
+\beamer@sectionintoc {1}{Motivation \& Background}{3}{0}{1}
+\beamer@sectionintoc {2}{Methodology}{8}{0}{2}
+\beamer@subsectionintoc {2}{1}{Predict, then optimize baseline}{10}{0}{2}
+\beamer@subsectionintoc {2}{2}{End-to-end framework}{12}{0}{2}
+\beamer@sectionintoc {3}{Experiments}{28}{0}{3}
+\beamer@subsectionintoc {3}{1}{Experimental setup}{29}{0}{3}
+\beamer@subsectionintoc {3}{2}{Results}{37}{0}{3}
+\beamer@sectionintoc {4}{Discussion}{43}{0}{4}
