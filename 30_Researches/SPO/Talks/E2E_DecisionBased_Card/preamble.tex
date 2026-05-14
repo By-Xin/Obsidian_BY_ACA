@@ -1,10 +1,13 @@
 % =======================================================================
-% preamble.tex — Metropolis-themed Beamer preamble for technical paper talks
+% preamble.tex -- Metropolis-themed Beamer preamble for technical paper talks
 % Intended to be included from <paper-slug>-Slides.tex via \input{preamble.tex}.
-% Compile with xelatex (preferred) or lualatex.
+% Compile with pdflatex by default; xelatex/lualatex also work.
 % =======================================================================
 
 % ---- Document class is set in <paper-slug>-Slides.tex: \documentclass[aspectratio=169]{beamer}
+
+% ---- Engine -----------------------------------------------------------
+\usepackage{iftex}
 
 % ---- Theme ------------------------------------------------------------
 \usetheme{metropolis}
@@ -17,12 +20,18 @@
   subsectionpage=progressbar
 }
 \usefonttheme{professionalfonts}
-\setsansfont{Fira Sans Light}[
-  Ligatures=TeX,
-  ItalicFont={Fira Sans Light Italic},
-  BoldFont={Fira Sans},
-  BoldItalicFont={Fira Sans Italic}
-]
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage[sfdefault,light]{FiraSans}
+\else
+  \setsansfont{Fira Sans Light}[
+    Ligatures=TeX,
+    ItalicFont={Fira Sans Light Italic},
+    BoldFont={Fira Sans},
+    BoldItalicFont={Fira Sans Italic}
+  ]
+\fi
 
 % ---- Math / symbols ---------------------------------------------------
 \usepackage{amsmath,amssymb,amsthm,mathtools}
@@ -45,17 +54,12 @@
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta,calc,shapes.geometric,fit,backgrounds}
 \usepackage{pgfplots}
-\pgfplotsset{compat=1.18}
+% Metropolis loads its Tol pgfplots theme late and resets compat to 1.9.
+\AtEndPreamble{\pgfplotsset{compat=1.18}}
 
 % ---- References -------------------------------------------------------
 \usepackage[backend=biber,style=numeric,sorting=none,maxbibnames=99]{biblatex}
 \addbibresource{references.bib}
-
-% ---- Fonts / encoding (xelatex) ---------------------------------------
-% If compiling with xelatex, Metropolis handles Fira; no extra font setup needed.
-% For pdflatex users, comment-out metropolis's default fira and uncomment below:
-% \usepackage[T1]{fontenc}
-% \usepackage[utf8]{inputenc}
 
 % ---- Theorem environments --------------------------------------------
 % Keep paper numbering; if authors' Thm 3.2 appears, we cite as "(Thm 3.2)".
@@ -78,6 +82,30 @@
 % ---- Custom block colors (second accent for definitions vs theorems) --
 \setbeamercolor{block title}{bg=mDarkTeal,fg=white}
 \setbeamercolor{block body}{bg=mDarkTeal!10,fg=black}
+
+% Add modest outer and inner padding to Metropolis callout blocks.
+\makeatletter
+\newlength{\BY@blockmargin}
+\setlength{\BY@blockmargin}{0.45em}
+\setlength{\metropolis@blocksep}{0.95ex}
+\setlength{\metropolis@blockadjust}{0.30ex}
+
+\newcommand{\BY@blockbegin}[1]{%
+  \par\noindent\hfill%
+  \begin{minipage}{\dimexpr\linewidth-2\BY@blockmargin\relax}%
+  \metropolis@block{#1}%
+}
+\newcommand{\BY@blockend}{%
+  \end{beamercolorbox}\vspace*{0.2ex}%
+  \end{minipage}\hfill\par%
+}
+\setbeamertemplate{block begin}{\BY@blockbegin{}}
+\setbeamertemplate{block alerted begin}{\BY@blockbegin{ alerted}}
+\setbeamertemplate{block example begin}{\BY@blockbegin{ example}}
+\setbeamertemplate{block end}{\BY@blockend}
+\setbeamertemplate{block alerted end}{\BY@blockend}
+\setbeamertemplate{block example end}{\BY@blockend}
+\makeatother
 
 % ---- Common math macros ----------------------------------------------
 \newcommand{\RR}{\mathbb{R}}
