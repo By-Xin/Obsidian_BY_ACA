@@ -1,0 +1,26 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.xdv
+*SAVE-ERROR
+
+# Local preview and experiment artifacts
+_arch_diagram_experiment.*
+_timeblock_tikz_experiment.*
+arch-*.png
+bilevel-preview-*.png
+socp-overlay-preview-*.png
+timeblock-*.png
+diagram.pdf
+timeblock.pdf

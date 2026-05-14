@@ -1,0 +1,117 @@
+% =======================================================================
+% preamble.tex — Metropolis-themed Beamer preamble for technical paper talks
+% Intended to be included from <paper-slug>-Slides.tex via \input{preamble.tex}.
+% Compile with xelatex (preferred) or lualatex.
+% =======================================================================
+
+% ---- Document class is set in <paper-slug>-Slides.tex: \documentclass[aspectratio=169]{beamer}
+
+% ---- Theme ------------------------------------------------------------
+\usetheme{metropolis}
+\setbeamercovered{transparent}
+\metroset{
+  progressbar=frametitle,
+  numbering=fraction,
+  block=fill,
+  sectionpage=progressbar,
+  subsectionpage=progressbar
+}
+\usefonttheme{professionalfonts}
+\setsansfont{Fira Sans Light}[
+  Ligatures=TeX,
+  ItalicFont={Fira Sans Light Italic},
+  BoldFont={Fira Sans},
+  BoldItalicFont={Fira Sans Italic}
+]
+
+% ---- Math / symbols ---------------------------------------------------
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{bbm}
+\usepackage{dsfont}
+
+% ---- Algorithms -------------------------------------------------------
+\usepackage[ruled,linesnumbered,vlined]{algorithm2e}
+% \usepackage{algpseudocode}  % alternative
+
+% ---- Graphics / tables ------------------------------------------------
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{makecell}
+\graphicspath{{figs/}}
+
+% ---- TikZ / PGF -------------------------------------------------------
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc,shapes.geometric,fit,backgrounds}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% ---- References -------------------------------------------------------
+\usepackage[backend=biber,style=numeric,sorting=none,maxbibnames=99]{biblatex}
+\addbibresource{references.bib}
+
+% ---- Fonts / encoding (xelatex) ---------------------------------------
+% If compiling with xelatex, Metropolis handles Fira; no extra font setup needed.
+% For pdflatex users, comment-out metropolis's default fira and uncomment below:
+% \usepackage[T1]{fontenc}
+% \usepackage[utf8]{inputenc}
+
+% ---- Theorem environments --------------------------------------------
+% Keep paper numbering; if authors' Thm 3.2 appears, we cite as "(Thm 3.2)".
+\makeatletter
+\theoremstyle{definition}
+\@ifundefined{assumption}{\newtheorem{assumption}{Assumption}}{}
+\@ifundefined{definition}{\newtheorem{definition}{Definition}[section]}{}
+
+\theoremstyle{plain}
+\@ifundefined{theorem}{\newtheorem{theorem}{Theorem}[section]}{}
+\@ifundefined{lemma}{\newtheorem{lemma}[theorem]{Lemma}}{}
+\@ifundefined{proposition}{\newtheorem{proposition}[theorem]{Proposition}}{}
+\@ifundefined{corollary}{\newtheorem{corollary}[theorem]{Corollary}}{}
+
+\theoremstyle{remark}
+\@ifundefined{remark}{\newtheorem*{remark}{Remark}}{}
+\@ifundefined{question}{\newtheorem*{question}{Question}}{}       % for socratic questions
+\makeatother
+
+% ---- Custom block colors (second accent for definitions vs theorems) --
+\setbeamercolor{block title}{bg=mDarkTeal,fg=white}
+\setbeamercolor{block body}{bg=mDarkTeal!10,fg=black}
+
+% ---- Common math macros ----------------------------------------------
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\EE}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\one}{\mathbf{1}}
+
+\newcommand{\eps}{\varepsilon}
+\newcommand{\lam}{\lambda}
+\newcommand{\grad}{\nabla}
+\newcommand{\inner}[2]{\langle #1,\, #2 \rangle}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\abs}[1]{\left|#1\right|}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\prox}{prox}
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\diag}{diag}
+
+% ---- Discussion cue environment --------------------------------------
+% Use \begin{discuss}{title}...\end{discuss} for group-meeting hooks.
+\newenvironment{discuss}[1]{%
+  \begin{alertblock}{\textbf{Discussion:} #1}%
+}{%
+  \end{alertblock}%
+}
+
+% ---- Minor spacing fixes ---------------------------------------------
+\setbeamertemplate{itemize items}[circle]
+\setlength{\leftmargini}{1em}
