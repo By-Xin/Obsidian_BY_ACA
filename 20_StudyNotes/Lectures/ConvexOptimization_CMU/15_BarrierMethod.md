@@ -225,4 +225,28 @@ $$
     3. 直到 $t \geq \frac{m}{\varepsilon}$ 时停止.
     4. 若 $t < \frac{m}{\varepsilon}$, 则更新 $t \leftarrow \mu t$.
 
-总的而言, 这里其实会有内外两层迭代结构. 外层迭代是对 $t$ 的更新, 每次定义了一个新的 barrier subproblem; 内层迭代是对当前的 barrier subproblem 的例如通过 Newton 方法来求解. Newton 方法的求解过程总是能够保证每次迭代都在 log-barrier 函数的定义域内, 但我们确实需要 Newton 的解的精度 $\varepsilon_{\text{Newton}} \ll \varepsilon$ 来保证最终的解 $\mathbf{x}^\star(t)$ 的精度 $\varepsilon$.
+总的而言, 这里其实会有内外两层迭代结构. 外层迭代是对 $t$ 的更新, 每次定义了一个新的 barrier subproblem; 内层迭代是对当前的 barrier subproblem 的例如通过 Newton 方法来求解.
+
+在实现细节上, 有如下讨论.
+
+- 关于内层 centering 的精度: 
+  - 在理论推导上, 我们总是假设每次的内层方法都能得到一个收敛的最优解 $\mathbf{x}^\star(t)$.
+  - 在实际的算法实现中, 由于数值计算的限制, 我们只能得到一个近似的解 $\hat{\mathbf{x}}(t) \approx \mathbf{x}^\star(t)$. 不过可以证明, 只要每次的求解足够精确, 即使不是完全收敛到 $\mathbf{x}^\star(t)$, 也能在渐近的意义上保证收敛. 
+  - 需要承认, 这样的估计会影响我们对于 Stationarity 的判断, 从而会影响 $m/t$ 这个 gap 的估计.
+  - 后续也有一些工作会在这样的情况下对 $\boldsymbol{\lambda}, \boldsymbol{\nu}$ 的估计进行一些修正. 
+
+- 关于 $\mu$ 的选择:
+  - 过小的 $\mu$ 会导致需要求解更多的 barrier subproblem, 从而增加外层迭代的次数; 过大的 $\mu$ 会导致每次的 barrier subproblem 变得更难求解, 从而增加内层迭代的次数. 因此, $\mu$ 的选择需要在外层迭代的次数和内层迭代的难度之间进行权衡.
+  - 不过经验上, $\mu$ 的选择并不敏感, 大概在 $\mu \in [3,100]$ 的范围内都能得到不错的性能. 通常会选择 $\mu = 10, 20$ 等.
+  - 若需要在理论上进行 worst case 的一些复杂度相关分析, 则往往会选择 $\mu$ 接近 $1^+$, 从而保证每次的 barrier subproblem 之间比较接近. 
+
+
+- 关于初始强度 $t_0$ 的选择:
+  - 若 $t_0$ 过小, 则初始的 barrier subproblem 会比较容易求解, 但这个 gap $m/t$ 会比较大, 从而需要更多的外层迭代来逐步缩小 gap; 若 $t_0$ 过大, 则初始的 barrier subproblem 就会比较难求解, 从而增加内层迭代的次数. 
+  - 若在初始时, 我们有 primal-dual gap 的初始估计, 例如已经有一个 primal feasible 解 $\mathbf{x}_0$ 和一个 dual feasible 解 $(\boldsymbol{\lambda}_0, \boldsymbol{\nu}_0)$, 则可以通过 $t_0 = \frac{m}{f_0(\mathbf{x}_0) - g(\boldsymbol{\lambda}_0, \boldsymbol{\nu}_0)}$ 来选择一个合适的 $t_0$. 
+  - 若只有一个 feasible 的初始点 $\mathbf{x}_0$ (即满足 $f_i(\mathbf{x}_0) < 0$ 且 $\mathbf{A} \mathbf{x}_0 = \mathbf{b}$), 但并不知道 $\boldsymbol{\lambda}_0, \boldsymbol{\nu}_0$ 的话, 可以选择一个 $t_0$ 使得当前已知的初始值 $\mathbf{x}_0$ 尽量接近于这一步想要的最优值 $\mathbf{x}^\star(t_0)$, 从而保证内层迭代的效率. 
+    - 当然这个条件的判断不是让我们去求解 $\mathbf{x}^\star(t_0)$ 来进行比较. 考虑这个问题的 KKT Stationary 条件. 对于最优解 $\mathbf{x}^\star(t_0)$, 其当然满足 $t_0 \nabla f_0(\mathbf{x}^\star(t_0)) + \nabla \phi(\mathbf{x}^\star(t_0)) + \mathbf{A}^\top \boldsymbol{\hat{\nu}}^\star(t_0) = 0$. 因此, 可以通过求解 $\min_{\boldsymbol{\nu}, t>0} \|t \nabla f_0(\mathbf{x}_0) + \nabla \phi(\mathbf{x}_0) + \mathbf{A}^\top \boldsymbol{\nu}\|$ 来选择一个合适的 $t_0$. 这是一个标准的最小二乘问题. 
+    - 还有一个细节是, 这里的范数可以考虑使用这个残差的由 $H_0^{-1}$ (Hessian 诱导的范数) 来进行度量, 其中 $H_0$ 是 $\mathbf{x}_0$ 处的 Hessian 矩阵. 这是因为 $\ell_2$ 的 norm 是各项同性的, 而 Hessian 诱导的 norm 则能够更好地反映出不同维度上残差的相对重要性.
+
+- 关于初始点 $\mathbf{x}_0$ 的选择:
+  - 一般而言, 需要选择一个严格可行的初始点 $\mathbf{x}_0$. 不论如何, $f_i(\mathbf{x}_0) < 0$ 的约束是不可以违反的 (至少在当前传统框架下). 不过对于 $\mathbf{A} \mathbf{x}_0 = \mathbf{b}$ 的约束, 在一开始时也可以允许其被违反. 此时, 可以通过 infeasible-start Newton method 来开始优化, 这个方法将逐步调整 $\mathbf{x}$ 来满足等式约束, 同时逐步优化目标函数. 
