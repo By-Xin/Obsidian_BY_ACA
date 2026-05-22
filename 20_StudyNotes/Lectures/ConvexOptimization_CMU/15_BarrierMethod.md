@@ -201,6 +201,8 @@ $$
 
 ## Barrier Method Algorithm
 
+### Algorithm Details
+
 基于上述分析, 下正式讨论使用 Barrier Method 来求解原问题 $(\text{P})$ 的算法细节. 由于已知 $f_0(\mathbf{x}^\star(t)) - p^\star \leq \frac{m}{t}$, 则给定优化精度 $\varepsilon > 0$, 只需要选择 $t \geq \frac{m}{\varepsilon}$ 即可保证 $\mathbf{x}^\star(t)$ 是一个 $\varepsilon$-optimal 的解. 故下考虑
 $$
 \begin{aligned}
@@ -250,3 +252,142 @@ $$
 
 - 关于初始点 $\mathbf{x}_0$ 的选择:
   - 一般而言, 需要选择一个严格可行的初始点 $\mathbf{x}_0$. 不论如何, $f_i(\mathbf{x}_0) < 0$ 的约束是不可以违反的 (至少在当前传统框架下). 不过对于 $\mathbf{A} \mathbf{x}_0 = \mathbf{b}$ 的约束, 在一开始时也可以允许其被违反. 此时, 可以通过 infeasible-start Newton method 来开始优化, 这个方法将逐步调整 $\mathbf{x}$ 来满足等式约束, 同时逐步优化目标函数. 
+
+- 简单的收敛性分析:
+  - 根据结论, $f_0(\mathbf{x}^\star(t)) - p^\star \leq \frac{m}{t}$, 若使用 $t_k = t_0 \mu^k$, 则当 $t_k \geq \frac{m}{\varepsilon}$ 时, 就有 $f_0(\mathbf{x}^\star(t_k)) - p^\star \leq \varepsilon$. 因此, 只需要 $k \geq \log_\mu(\frac{m}{t_0 \varepsilon})$ 就能保证 $\mathbf{x}^\star(t_k)$ 是一个 $\varepsilon$-optimal 的解. 这说明外层迭代的次数是 $O(\log(\frac{1}{\varepsilon}))$ 的级别.
+
+
+## Feasibility and Phase I Problem
+
+### Basic Phase I Problem
+
+上面我们曾提过, 对于一个初始解 $\mathbf{x}_0$ 来说, 其必须是严格可行的, 即满足 $f_i(\mathbf{x}_0) < 0$ 对所有 $i=1, \ldots, m$ 都成立, 且 $\mathbf{A} \mathbf{x}_0 = \mathbf{b}$. 这里, 对于 $\mathbf{A} \mathbf{x}_0 = \mathbf{b}$ 的违反可以通过 infeasible-start Newton method 来逐步调整. 然而若 $f_i(\mathbf{x}_0) < 0$ 的约束被违反, 则根本无法开始优化. 因此, 需要先解决一个 feasibility problem 来找到一个满足 $f_i(\mathbf{x}) < 0$ 对所有 $i=1, \ldots, m$ 都成立的初始点 $\mathbf{x}_0$. 这就是所谓的 Phase I problem, 是 barrier method 的一个预处理步骤.
+
+
+对于 Phase I 问题, 其目标是通过 barrier method 逐步优化求解如下优化问题:
+$$
+\begin{aligned}
+& \min_{\mathbf{x}, s} && s \\
+& \text{subject to } && f_i(\mathbf{x}) \leq s, \quad i=1, \ldots, m \\
+& \quad\quad\quad\quad\quad && \mathbf{A} \mathbf{x} = \mathbf{b}
+\end{aligned} \tag{P-Phase I}
+$$
+换言之其 centering problem 的形式为:
+$$
+\begin{aligned}
+& \min_{\mathbf{x}, s} && t s - \sum_{i=1}^m \log(s - f_i(\mathbf{x})) \\
+& \text{subject to } && \mathbf{A} \mathbf{x} = \mathbf{b}
+\end{aligned} \tag{CP-Phase I($t$)}
+$$
+其中 $s$ 是一个 slack variable, 其值越小, 则 $\mathbf{x}$ 就越接近于满足 $f_i(\mathbf{x}) < 0$ 的约束. 
+
+在迭代过程中 ($(s^{(0)}, \mathbf{x}^{(0)}) \to (s^{(1)}, \mathbf{x}^{(1)}) \to \cdots$), 初始时可以选择一个足够大的 $s^{(0)}$ 来保证 $f_i(\mathbf{x}^{(0)}) \leq s^{(0)}$ 对所有 $i=1, \ldots, m$ 都成立, 从而保证初始点的可行性. 随着迭代的进行, $s^{(k)}$ 会逐渐减小, 从而 $\mathbf{x}^{(k)}$ 也会逐渐趋近于满足 $f_i(\mathbf{x}) < 0$ 的约束. 因此只需要在某次迭代过程中有 $s^{(k)} < 0$ 就可以停止, 此时 $\mathbf{x}^{(k)}$ 就是一个满足 $f_i(\mathbf{x}) \leq s < 0$ 的可行解, 从而可以作为后续 barrier method 的初始点 $\mathbf{x}_0$ 来使用.
+
+相应地, 根据这个 Phase I 问题的最优值 $p^\star_{\text{Phase I}}$, 可以得到如下结论:
+- 若 $p^\star_{\text{Phase I}} < 0$, 则原问题 $(\text{P})$ 是可行的. 并且我们这个g于辅助的题的求解也不需要太过精确, 只要能够得到一个 $s < 0$ 的解即可.
+- 若 $p^\star_{\text{Phase I}} > 0$, 则原问题 $(\text{P})$ 是不可行的. 可以直接停止算法, 输出原问题不可行.
+- 若 $p^\star_{\text{Phase I}} = 0$, 则还会分为两种具体情况. 如果 $p^\star_{\text{Phase I}} = 0$ 的最优解 $\mathbf{x}^\star_{\text{Phase I}}$ 是可达的, 说明其不等式组是可行的, 但是没有严格可行解 (没有内点). 若 $p^\star_{\text{Phase I}} = 0$ 的最优解 $\mathbf{x}^\star_{\text{Phase I}}$ 是不可达的, 则说明其不等式组是不可行的. 
+
+
+### Sum-of-Infeasibilities Phase I Variant
+
+上述的 Phase I 辅助问题还有许多其他的变体, 例如 sum of infeasibilities 的形式:
+$$
+\begin{aligned}
+& \min_{\mathbf{x}, s} && \sum_{i=1}^m s_i \\
+& \text{subject to } && f_i(\mathbf{x}) \leq s_i, \quad i=1, \ldots, m \\
+& \quad\quad\quad\quad\quad && \mathbf{A} \mathbf{x} = \mathbf{b} \\
+& \quad\quad\quad\quad\quad && s_i \geq 0, \quad i=1, \ldots, m
+\end{aligned} \tag{P-Phase I-Sum}
+$$
+
+相比于 (P-Phase I) 中的单一 slack variable $s$, 这里为每个约束引入了一个 slack variable $s_i$, 相当于优化的更为细致. 让所有的约束共享一个 $s$ 的形式优化, 就很有可能造成 "许多约束都违背一点点" 的情况. 然而, 如果对于每个约束各自引入一个 slack variable, 则可以更好地反映出每个约束的具体违背程度, 从而只让少部分约束违背, 从而到更为稀疏的违背情况. 
+
+![](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260522174227.png)
+
+如图左右两侧分别是 (P-Phase I) 和 (P-Phase I-Sum) 的违背情况的 histogram. 对于传统方法, 其只满足 100 个约束中的 39 个. 而对于 sum of infeasibilities 的方法, 其满足了 100 个约束中的 79 个.
+
+### Termination near the Phase II central path
+
+上述的 Phase I 过程中, 尽管找到了严格可行点  $\mathbf{x} \in \{f_i(\mathbf{x}) < 0, \mathbf{A} \mathbf{x} = \mathbf{b}\}$, 然而这个点可能离 Phase II 的 central path 比较远, 从而导致后续的 barrier method 需要多步的 Newton 迭代才能逐步调整到 central path 上, 从而增加了整体的计算成本. 因此, 在 Phase I 的过程中, 可以进一步考虑让 $\mathbf{x}$ 不仅满足严格可行, 并且尽量能够接近 Phase II 的 central path. 
+
+考虑回 basic Phase I 的问题, 对其进行进一步改造为:
+$$
+\begin{aligned}
+& \min_{\mathbf{x}, s} && s  \\
+& \text{subject to } && f_i(\mathbf{x}) \leq s, \quad i=1, \ldots, m \\
+& \quad\quad\quad\quad\quad && \mathbf{A} \mathbf{x} = \mathbf{b} \\
+& \quad\quad\quad\quad\quad && f_0(\mathbf{x}) \leq M 
+\end{aligned} \tag{P-Phase I-Modified}
+$$
+其中 $M$ 是一个 sufficiently large 的常数, 其值需要满足
+$$ 
+M > \max \{f_0(\mathbf{x^{(0)}}), p^\star\}
+$$
+
+为说明其作用, 对 (P-Phase I-Modified) 使用 log-barrier 来进行求解, 给定 $\tilde{t}$, 则其 centering problem 的形式为:
+$$
+\begin{aligned}
+& \min_{\mathbf{x}, s} && \tilde{t} s - \sum_{i=1}^m \log(s - f_i(\mathbf{x})) - \log(M - f_0(\mathbf{x})) \\
+& \text{subject to } && \mathbf{A} \mathbf{x} = \mathbf{b}
+\end{aligned} \tag{CP-Phase I-Modified($t$)}
+$$
+- 求解其 KKT 条件的 Stationary 条件, 可以得到如下表达式:
+    $$
+    \begin{aligned}
+    & \tilde{t} - \sum_{i=1}^m \frac{1}{s - f_i(\mathbf{x})} = 0 \\
+    & \sum_{i=1}^m \frac{1}{s - f_i(\mathbf{x})} \nabla f_i(\mathbf{x}) + \frac{1}{M - f_0(\mathbf{x})} \nabla f_0(\mathbf{x}) + \mathbf{A}^\top \boldsymbol{\hat{\nu}} = 0
+    \end{aligned}
+    $$
+
+
+- 特别地, 对于这个 Stationary 条件, 其在 $s = 0$ 时, 有
+    $$
+    \begin{aligned}
+    & \tilde{t} - \sum_{i=1}^m \frac{1}{- f_i(\mathbf{x})} = 0 \\
+    &  \frac{1}{M - f_0(\mathbf{x})} \nabla f_0(\mathbf{x}) -  \sum_{i=1}^m \frac{1}{f_i(\mathbf{x})} \nabla f_i(\mathbf{x}) + \mathbf{A}^\top \boldsymbol{\hat{\nu}} = 0
+    \end{aligned}
+    $$
+    回顾, 对于原先的 Phase II 的 Barrier 子问题的 Stationary 条件, 其表达式为:
+    $$
+    t \nabla f_0(\mathbf{x}^\star(t)) - \sum_{i=1}^m \frac{1}{f_i(\mathbf{x}^\star(t))} \nabla f_i(\mathbf{x}^\star(t)) + \mathbf{A}^\top \boldsymbol{\hat{\nu}}^\star(t) = 0
+    $$
+    故只要令 $t = (M - f_0(\mathbf{x}))^{-1}$, 则上式就和 Phase II 的 Stationary 条件的表达式完全一样了. 
+
+
+- 综上, 通过在 Phase I 的问题中引入一个额外的约束 $f_0(\mathbf{x}) \leq M$, 就能够让 Phase I 的 central path 上的点在 $s=0$ 时, 就满足 Phase II 的 Stationary 条件. 因此, 通过求解 Phase I 的问题, 就能够直接得到一个满足 Phase II 的 Stationary 条件的点, 从而避免了后续的 barrier method 需要多步的 Newton 迭代来逐步调整到 central path 上的问题.
+
+
+### Phase I via infeasible start Newton method
+
+与前述不同, 这里不再专门考虑通过求解 Phase I 来找严格可行点, 而是用 infeasible start Newton method, 从一个不满足等是约束的点开始, 逐渐拉回到满足等式约束的 feasible region 上. 考虑如下问题:
+$$
+\begin{aligned}
+    & \min_{\mathbf{x}} && f_0(\mathbf{x}) \\
+    & \text{subject to } && f_i(\mathbf{x}) \leq s, \quad i=1, \ldots, m \\
+    & \quad\quad\quad\quad\quad && \mathbf{A} \mathbf{x} = \mathbf{b} \\
+    & \quad\quad\quad\quad\quad && s_i = 0, \quad i=1, \ldots, m
+\end{aligned}
+$$
+
+这个设置非常的 tricky, 显然这个优化问题和原始优化问题是等价的. 然而此时即使我们 $f_i(\mathbf{x}) > 0$, 我们违反的仍然是 $s_i = 0$ 的约束, 而非 $f_i(\mathbf{x}) \leq s$ 的约束. 因此, 在实践中, 我们最开始先取 $s > \max_i f_i(\mathbf{x})$, 从而保证 $f_i(\mathbf{x}) \leq s$ 的约束是严格满足的, 从而保证初始点的可行性. 因此我们可以求解这个问题的 barrier subproblem 来得到一个满足 $f_i(\mathbf{x}) \leq s$ 的可行点, 从而作为后续 barrier method 的初始点 $\mathbf{x}_0$ 来使用:
+$$
+\begin{aligned}
+& \min_{\mathbf{x}, s} && \bar{t} s - \sum_{i=1}^m \log(s - f_i(\mathbf{x})) \\
+& \text{subject to } && \mathbf{A} \mathbf{x} = \mathbf{b}
+\end{aligned}
+$$
+这是一个标准的 barrier subproblem, 可以通过 Newton 方法来求解. 
+
+进一步, 记这个优化问题中所有函数的公共定义域 $\mathcal{D} = \bigcap_{i=0}^m \text{dom}(f_i)$. 若可以确定任意一个 $\mathbf{x} \in \mathcal{D}$, 则可以选择一个足够大的 $s > \max_i f_i(\mathbf{x})$, 从而保证 log barrier $-\log(s - f_i(\mathbf{x}))$ 全部有定义. 因此, 虽然此时 $s = 0$ 的约束被违反了, 但可以通过 infeasible start Newton method 来完成优化. 
+
+不过有时本身, 当约束本身就比较复杂, 能够直接确定一个 $\mathbf{x} \in \mathcal{D}$ 也较为困难时, 可以进一步给每一个函数单独引入一个 shift: $z_0, \ldots, z_m$, 从而考虑如下的优化问题:
+$$
+\begin{aligned}
+& \min_{\mathbf{x}, s, z_0, \ldots, z_m} &&  \bar{t} f_0(\mathbf{x} + z_0) + \bar{t} s - \sum_{i=1}^m \log(s - f_i(\mathbf{x} + z_i)) \\
+& \text{subject to } && \mathbf{A} \mathbf{x} = \mathbf{b} \\
+& \quad\quad\quad\quad\quad && s_i = 0, \quad i=1, \ldots, m \\
+& \quad\quad\quad\quad\quad && z_i = 0, \quad i=0, 1, \ldots, m
+\end{aligned}
+$$
+也就是先不必费力去寻找所有函数的一个公共定义域的点, 而是通过引入 shift variable 来让每个函数都能够有一个单独的定义域, 从而保证初始点的可行性. 当然, 这里的 shift variable 最终也需要被优化到 $0$ 的位置, 从而保证最终求解的 $\mathbf{x}$ 是原问题的一个可行解. 
