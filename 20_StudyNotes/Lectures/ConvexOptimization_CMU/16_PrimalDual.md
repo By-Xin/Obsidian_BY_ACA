@@ -3,7 +3,9 @@
 >[!quote]
 >
 > - Lecture Reference: <https://www.stat.cmu.edu/~ryantibs/convexopt-F18/>
-> - Readings: Boyd & Vandenberghe, Convex Optimization, Chapter 11.7
+> - Readings: 
+>   - Boyd & Vandenberghe, Convex Optimization, Chapter 11.7
+>   - 刘浩洋, 最优化: 建模、算法与理论, Chapter 7.3.  
 
 ## Introduction
 
@@ -69,7 +71,12 @@ $$
 \mathbf{r}_{\text{primal}}(\mathbf{x})
 \end{bmatrix}
 $$
-其中 $\text{diag}(\boldsymbol{\lambda})$ 是一个 $m \times m$ 的对角矩阵, 其对角线元素为 $\lambda_1, \ldots, \lambda_m$. 可以看出, 当 $\mathbf{r}_t(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\nu}) = 0$ 时, 就满足了 modified KKT condition. 因此, primal-dual method 的核心就是通过 Newton's method 来求解 $\mathbf{r}_t(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\nu}) = 0$.
+其中 $\text{diag}(\boldsymbol{\lambda})$ 是一个 $m \times m$ 的对角矩阵, 其对角线元素为 $\lambda_1, \ldots, \lambda_m$. 这三个 residual 分别衡量:
+- $\mathbf{r}_{\text{primal}}(\mathbf{x})$ 衡量 primal feasibility. 即 equality constraint 的满足程度, 当 $\mathbf{r}_{\text{primal}}(\mathbf{x}) = 0$ 时, 就满足了 primal feasibility.
+- $\mathbf{r}_{\text{dual}}(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\nu})$ 衡量 stationarity condition 的满足程度, 当 $\mathbf{r}_{\text{dual}}(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\nu}) = 0$ 时, 原问题的 Lagrangian 关于 $\mathbf{x}$ 的梯度为 $0$, 即满足了 stationarity condition.
+- $\mathbf{r}_{\text{cent}}(\mathbf{x}, \boldsymbol{\lambda})$ 衡量 centrality condition 的满足程度, 当 $\mathbf{r}_{\text{cent}}(\mathbf{x}, \boldsymbol{\lambda}) = 0$ 时, 对应第 $i$ 个分量为 $r_t^{(i)} = -\lambda_i f_i(\mathbf{x}) - \frac{1}{t} = 0$, 即 $\lambda_i f_i(\mathbf{x}) = -\frac{1}{t}$, 也就是 modified KKT condition 中的 centrality condition.
+
+可以看出, 当 $\mathbf{r}_t(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\nu}) = 0$ 时, 就满足了 modified KKT condition. 因此, primal-dual method 的核心就是通过 Newton's method 来求解 $\mathbf{r}_t(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\nu}) = 0$.
 
 因此用牛顿法的思路来尝试求解. 记 $\mathbf{y} = \begin{bmatrix}\mathbf{x} \\ \boldsymbol{\lambda} \\ \boldsymbol{\nu}\end{bmatrix}$, 对应 $\Delta \mathbf{y} = \begin{bmatrix}\Delta \mathbf{x} \\ \Delta \boldsymbol{\lambda} \\ \Delta \boldsymbol{\nu}\end{bmatrix}$, 考虑对当前点 $\mathbf{y}$ 进行一阶近似:
 $$
@@ -172,3 +179,76 @@ $$
 $$
 
 因此, 通过对比不难看出, 若令 $\lambda_i = \frac{1}{t} \frac{1}{-f_i(\mathbf{x})}$, 则 $\mathbf{H}_{\text{pd}} = \nabla^2 \psi(\mathbf{x})$. 并且二者的 search direction 的 RHS 也是一样的. 因此, 可以看出, barrier method 的 Newton step 是 primal-dual method 的一个 special case, 其对应 $\lambda_i = \frac{1}{t} \frac{1}{-f_i(\mathbf{x})}$.
+
+
+## The surrogate duality gap & Primal-dual interior-point method
+
+### Surrogate duality gap
+
+上一个小节展示了在给定 $t$ 的情况下, primal-dual 方法通过 Newton method 来求解 $\mathbf{r}_t(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\nu}) = 0$ 来得到 $\mathbf{x}^*(t), \boldsymbol{\lambda}^*(t), \boldsymbol{\nu}^*(t)$.  这一小节将讨论 $t$ 的选择, 算法的终止策略等内容. 
+
+首先引入 surrogate gap 的概念. 对于原问题而言, 其 Lagrangian 为:
+$$
+L(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\nu}) = f_0(\mathbf{x}) + \sum_{i=1}^m \lambda_i f_i(\mathbf{x}) + \boldsymbol{\nu}^\top (\mathbf{A} \mathbf{x} - \mathbf{b})
+$$
+对于一个 primal feasible 的 $\mathbf{\tilde{x}}$, 在 $\boldsymbol{\lambda}\geq 0$ 恒有
+$$
+\begin{aligned}
+L(\mathbf{\tilde{x}}, \boldsymbol{\lambda}, \boldsymbol{\nu}) & = f_0(\mathbf{\tilde{x}}) + \sum_{i=1}^m \lambda_i f_i(\mathbf{\tilde{x}}) + \boldsymbol{\nu}^\top (\mathbf{A} \mathbf{\tilde{x}} - \mathbf{b}) \\
+& \leq f_0(\mathbf{\tilde{x}}) + \boldsymbol{\nu}^\top (\mathbf{A} \mathbf{\tilde{x}} - \mathbf{b}) = f_0(\mathbf{\tilde{x}})
+\end{aligned}
+$$
+故其 dual function $g(\boldsymbol{\lambda}, \boldsymbol{\nu}) = \inf_{\mathbf{x}} L(\mathbf{x}, \boldsymbol{\lambda}, \boldsymbol{\nu})$ 满足 $g(\boldsymbol{\lambda}, \boldsymbol{\nu}) \leq L(\mathbf{\tilde{x}}, \boldsymbol{\lambda}, \boldsymbol{\nu}) \leq f_0(\mathbf{\tilde{x}})$. 因此, 真正的 duality gap 可以定义为 $f_0(\mathbf{\tilde{x}}) - g(\boldsymbol{\lambda}, \boldsymbol{\nu})$. 进一步, 在 primal feasible 的基础上, 还有其 dual residual 为 $0$, 即:
+$$
+\mathbf{r}_{\text{dual}}(\mathbf{\tilde{x}}, \boldsymbol{\lambda}, \boldsymbol{\nu}) = \nabla f_0(\mathbf{\tilde{x}}) + Df(\mathbf{\tilde{x}})^\top \boldsymbol{\lambda} + \mathbf{A}^\top \boldsymbol{\nu} = 0
+$$
+这相当于说, $\mathbf{\tilde{x}}$ 是 dual function $g(\boldsymbol{\lambda}, \boldsymbol{\nu})$ 的一个 minimizer. 则此时, duality gap 就变为:
+$$
+\begin{aligned}
+f_0(\mathbf{\tilde{x}}) - g(\boldsymbol{\lambda}, \boldsymbol{\nu}) 
+&= f_0(\mathbf{\tilde{x}}) - [f_0(\mathbf{\tilde{x}}) + \sum_{i=1}^m \lambda_i f_i(\mathbf{\tilde{x}}) + \boldsymbol{\nu}^\top (\mathbf{A} \mathbf{\tilde{x}} - \mathbf{b})] \\
+&= -\sum_{i=1}^m \lambda_i f_i(\mathbf{\tilde{x}}) = - \boldsymbol{\lambda}^\top f(\mathbf{\tilde{x}})
+\end{aligned}
+$$
+
+然而在 primal-dual 方法中, 我们需要求解如下方程:
+$$
+\begin{bmatrix}
+\nabla^2 f_0(\mathbf{x}) + \sum_{i=1}^m \lambda_i \nabla^2 f_i(\mathbf{x}) & Df(\mathbf{x})^\top & \mathbf{A}^\top \\
+-\text{diag}(\boldsymbol{\lambda}) Df(\mathbf{x}) & -\text{diag}(f(\mathbf{x})) & \mathbf{0} \\
+\mathbf{A} & \mathbf{0} & \mathbf{0}
+\end{bmatrix} \begin{bmatrix}\Delta \mathbf{x} \\ \Delta \boldsymbol{\lambda} \\ \Delta \boldsymbol{\nu}\end{bmatrix} = -\begin{bmatrix}\mathbf{r}_{\text{dual}}(\mathbf{y}) \\ \mathbf{r}_{\text{cent}}(\mathbf{y}) \\ \mathbf{r}_{\text{primal}}(\mathbf{y})\end{bmatrix}
+$$
+在第 $k$ 次迭代点 $\mathbf{y}^{(k)} = (\mathbf{x}^{(k)}, \boldsymbol{\lambda}^{(k)}, \boldsymbol{\nu}^{(k)})$ 上, 通常有 $\mathbf{r}_{t, \text{primal}}(\mathbf{y}^{(k)}) = \mathbf{A} \mathbf{x}^{(k)} - \mathbf{b} \neq 0$, $\mathbf{r}_{t, \text{dual}}(\mathbf{y}^{(k)}) = \nabla f_0(\mathbf{x}^{(k)}) + Df(\mathbf{x}^{(k)})^\top \boldsymbol{\lambda}^{(k)} + \mathbf{A}^\top \boldsymbol{\nu}^{(k)} \neq 0$. 即其 primal 和 dual 不一定是 feasible 的. 因此, 只能将最后的结果定义为 surrogate duality gap, 
+$$
+{\hat\eta^{(k)}} = -\boldsymbol{\lambda}^{(k)\top} f(\mathbf{x}^{(k)})
+$$
+
+另一方面, $\hat{\eta}^{(k)}$ 也可以看成是对于互补松弛条件的一个度量. 因为 $\hat{\eta}^{(k)} = -\boldsymbol{\lambda}^{(k)\top} f(\mathbf{x}^{(k)}) = \sum_{i=1}^m -\lambda_i^{(k)} f_i(\mathbf{x}^{(k)})$, 其每个分量 $-\lambda_i^{(k)} f_i(\mathbf{x}^{(k)})$ 都衡量了第 $i$ 个 complementary slackness condition 的 violation, 因此 $\hat{\eta}^{(k)}$ 就是所有 complementary slackness condition violation 的总和.
+
+### Primal-dual interior-point method
+
+下给出 primal-dual interior-point method 的算法. 
+
+> [!algorithm] Primal-dual interior-point method
+>
+> - **INPUT**: 给定初始点 $\mathbf{x}^{(0)}$ 满足 $f_i(\mathbf{x}^{(0)}) < 0, i = 1, \ldots, m$ (不对 $\mathbf{A} \mathbf{x}^{(0)} = \mathbf{b}$ 做要求). 给定 $\boldsymbol{\lambda}^{(0)} > 0$. 给定参数 $\mu >1$, $\varepsilon_{\text{feas}} > 0$, $\varepsilon_{\text{gap}} > 0$.
+> - **REPEAT**: 对于第 $k$ 次迭代, 当前点为 $\mathbf{y}^{(k)} = (\mathbf{x}^{(k)}, \boldsymbol{\lambda}^{(k)}, \boldsymbol{\nu}^{(k)})$.
+>     1. **Determine $t^{(k)}$**: 令 $t^{(k)} = \mu \frac{m}{\hat\eta^{(k)}}$.
+>     2. **Compute search direction**: 通过求解如下方程组来得到 search direction $\Delta \mathbf{y}_{\text{nt}}^{(k)}$:
+>         $$
+>         \begin{bmatrix}
+>         \nabla^2 f_0(\mathbf{x}^{(k)}) + \sum_{i=1}^m \lambda_i^{(k)} \nabla^2 f_i(\mathbf{x}^{(k)}) & Df(\mathbf{x}^{(k)})^\top & \mathbf{A}^\top \\
+>         -\text{diag}(\boldsymbol{\lambda}^{(k)}) Df(\mathbf{x}^{(k)}) & -\text{diag}(f(\mathbf{x}^{(k)})) & \mathbf{0} \\
+>         \mathbf{A} & \mathbf{0} & \mathbf{0}
+>         \end{bmatrix} \begin{bmatrix}\Delta \mathbf{x}_{\text{nt}}^{(k)} \\ \Delta \boldsymbol{\lambda}_{\text{nt}}^{(k)} \\ \Delta \boldsymbol{\nu}_{\text{nt}}^{(k)}\end{bmatrix} = -\begin{bmatrix}\mathbf{r}_{t, \text{dual}}(\mathbf{y}^{(k)}) \\ \mathbf{r}_{t, \text{cent}}(\mathbf{y}^{(k)}) \\ \mathbf{r}_{t, \text{primal}}(\mathbf{y}^{(k)})\end{bmatrix}
+>         $$
+>     3. **Line search and update**: 通过 line search 来确定 step      size $s^{(k)}$, 并且更新 $\mathbf{y}^{(k+1)} = \mathbf{y}^{(k)} + s^{(k)} \Delta \mathbf{y}_{\text{nt}}^{(k)}$.
+> - **UNTIL**: $\|\mathbf{r}_{t, \text{primal}}(\mathbf{y}^{(k)})\|_2 \leq \varepsilon_{\text{feas}}$, $\|\mathbf{r}_{t, \text{dual}}(\mathbf{y}^{(k)})\|_2 \leq \varepsilon_{\text{feas}}$, $\hat\eta^{(k)} \leq \varepsilon_{\text{gap}}$.
+
+对于这个算法的解读如下. 
+- 在 step 1 中, 如果当前点恰好在某个 central path 上, 则必有 $\hat\eta^{(k)} = m/t^{(k)}$, 因此 $t^{(k)} = \mu \frac{m}{\hat\eta^{(k)}}$ 就是 $t^{(k)} = \mu t^{(k)}$, 也就是说, $t$ 的值会在每次迭代中乘以 $\mu$. 因此, 这个 step 的作用就是让 $t$ 随着迭代的进行而逐渐增大, 从而使得 iterates 越来越接近于 central path.
+- step 3 中, 我们需要通过 line search 来给三个分量 $\Delta \mathbf{x}_{\text{nt}}^{(k)}, \Delta \boldsymbol{\lambda}_{\text{nt}}^{(k)}, \Delta \boldsymbol{\nu}_{\text{nt}}^{(k)}$ 来确定一个公共的可行步长 $s^{(k)}$. 其中, 步长的选取要考虑保持满足如下条件:
+  - $\boldsymbol{\lambda}^{(k)} + s^{(k)} \Delta \boldsymbol{\lambda}_{\text{nt}}^{(k)} > 0$, 因为 $\boldsymbol{\lambda}$ 需要保持非负. 因此最大的安全步长为 $s_{\text{max}}^{\boldsymbol{\lambda}} = \min_{i: \Delta \lambda_{\text{nt}, i}^{(k)} < 0} -\frac{\lambda_i^{(k)}}{\Delta \lambda_{\text{nt}, i}^{(k)}}$.
+  - $f_i(\mathbf{x}^{(k)} + s^{(k)} \Delta \mathbf{x}_{\text{nt}}^{(k)}) < 0, i = 1, \ldots, m$, 因为 $\mathbf{x}$ 需要保持 strictly feasible. 不过这个无法给出一个 closed-form 的表达式, 只能通过 backtracking line search 来确定一个合适的 $s^{(k)}$. 如果某一个 $s$ 不满足 $f_i(\mathbf{x}^{(k)} + s \Delta \mathbf{x}_{\text{nt}}^{(k)}) < 0$ 的条件, 则通过类似 $s \leftarrow \beta s, \beta \in (0, 1)$ 的方式来缩小 $s$ 的值, 直到满足条件为止.
+  - 此外, 还要求 residual 的 norm 有足够的 decrease, 例如满足 $\|\mathbf{r}_t(\mathbf{y}^{(k)} + s \Delta \mathbf{y}_{\text{nt}}^{(k)})\|_2 \leq (1 - \alpha s) \|\mathbf{r}_t(\mathbf{y}^{(k)})\|_2$, $\alpha \in (0, 1)$.
