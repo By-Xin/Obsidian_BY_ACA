@@ -4,53 +4,118 @@
 
 Poisson Process 是一个连续时间, 离散状态的随机过程, 用来描述在单位时间内发生某事件的次数, 或称为事件的计数过程. 
 
-对于连续时间 $t \geq 0$, 设 $N(t)$ 表示在时间 $[0, t]$ 内发生的事件数. 最基本地, 我们希望 $N(t)$ 满足以下两个性质:
+对于连续时间 $t \geq 0$, 设 $N(t)$ 表示在时间 $[0, t]$ 内发生的事件数. 最基本地, 我们希望 $N(t)$ 满足以下几个性质:
 1. **独立增量 (Independent Increments)**: 对于任意的 $0 \leq t_1 < t_2  \leq t_3 < t_4$, 增量 $N(t_2) - N(t_1)$ 和 $N(t_4) - N(t_3)$ 是相互独立的.
 2. **平稳增量 (Stationary Increments)**: 对于任意的 $s, t \geq 0$, 增量 $N(t+s) - N(s)$ 的分布仅依赖于跨度 $t$, 与具体时刻 $s$ 无关.
+3. **稀疏性 (Sparsity)**: 在这里, 我们定义稀疏性为:
+    $$
+    \lim_{\Delta t \to 0} \frac{\mathbb{P}(N(\Delta t) \geq 2)}{\mathbb{P}(N(\Delta t) = 1)} = 0
+    $$
+    即在短时间间隔内, 发生两个及以上事件的概率相对于发生一个事件的概率是一个高阶小量.
 
-下尝试定义一个满足上述性质的随机过程.
-- 首先引入 Moment Generating Function (MGF) 的概念. 对于一个随机变量 $X$, 其 MGF 定义为
+下面我们希望能够根据上述的定性描述来描述清楚 $N(t)$ 的统计分布规律. 
+- 引入随机变量 $X$ 的矩母函数 $G_X(z) = \mathbb{E}[z^{X}]$. 则计算 $N(t)$ 的矩母函数如下:
     $$
-    M_X(\theta) = \mathbb{E}[e^{\theta X}]
+    G_{N(t)}(z) = \mathbb{E}[z^{N(t)}] = \sum_{k=0}^{\infty} \mathbb{P}(N(t) = k) z^k
     $$
-- 下尝试使用 MGF 来定义 $N(t)$ 的分布并根据独立增量和平稳增量的性质来建立微分方程. 
-  - 首先考虑差分:
+- 构建增量在短时间隔内的矩母函数:
     $$
-    \begin{aligned}
-    \frac{1}{\Delta t} \left( M_{N(t+\Delta t)}(\theta) - M_{N(t)}(\theta) \right) &= \frac{1}{\Delta t} \left( \mathbb{E}[e^{\theta N(t+\Delta t)}] - \mathbb{E}[e^{\theta N(t)}] \right) \\
-    &= \frac{1}{\Delta t} \left( \mathbb{E}[e^{\theta (N(t) + (N(t+\Delta t) - N(t)))}] - \mathbb{E}[e^{\theta N(t)}] \right) \\
-    &= \frac{1}{\Delta t} \left( \mathbb{E}[e^{\theta N(t)}] \mathbb{E}[e^{\theta (N(t+\Delta t) - N(t))}] - \mathbb{E}[e^{\theta N(t)}] \right) \quad \text{\small(由独立增量)} \\
-    &= M_{N(t)}(\theta) \cdot \frac{1}{\Delta t} \left( M_{N(\Delta t)}(\theta) - 1 \right) \quad \text{\small(由平稳增量)} \\
-    \end{aligned}
+    \begin{align*}
+    G_{N(t+\Delta t)}(z) - G_{N(t)}(z) 
+    &= \mathbb{E}[z^{N(t)}(z^{N(t+\Delta t) - N(t)} - 1)]\\
+    &= \mathbb{E}[z^{N(t)}]\mathbb{E}[z^{N(t+\Delta t) - N(t)}- 1] \quad \text{\small(根据独立性)}\\
+    &= \mathbb{E}[z^{N(t)}]\left(\mathbb{E}[z^{N(\Delta t)}- 1] \right) \quad \text{\small (根据平稳增量性)}\\
+    &= \mathbb{E}[z^{N(t)}]\left(\sum_{k=0}^{\infty} \mathbb{P}(N(\Delta t) = k) z^k - 1\right)\\
+    &= \mathbb{E}[z^{N(t)}]\left(\mathbb{P}(N(\Delta t) = 0) z^0  + \mathbb{P}(N(\Delta t) = 1) z^1 + \sum_{k=2}^{\infty} \mathbb{P}(N(\Delta t) = k) z^k - 1\right)\\
+    \end{align*}
     $$
-  - 下仔细考虑 $M_{N(\Delta t)}(\theta) - 1$ 的行为.
+- 具体考察 $N(\Delta t)$ 的概率分布. 
     $$
-    \begin{aligned}
-    M_{N(\Delta t)}(\theta) - 1 &= \mathbb{E}[e^{\theta N(\Delta t)}] - 1 \\
-    &= \sum_{k=0}^{\infty} e^{\theta k} \cdot \mathbb{P}(N(\Delta t) = k) - 1 \\
-    &= \mathbb{P} (N(\Delta t) = 0) - 1  + e^{\theta} \mathbb{P}(N(\Delta t) = 1) + \sum_{k=2}^{\infty} e^{\theta k} \mathbb{P}(N(\Delta t) = k) 
-    \end{aligned}
+    \begin{align*}
+    \mathbb{P}(N(t) = 0) 
+    &= \mathbb{P}(N(s) = 0, N(t) - N(s) = 0) \quad (\forall s < t) \\
+    &= \mathbb{P}(N(s) = 0) \cdot \mathbb{P}(N(t) - N(s) = 0) \\
+    &= \mathbb{P}(N(s) = 0) \cdot \mathbb{P}(N(t-s) = 0) \\
+    \end{align*}
     $$
-    - 而其中, 对于 $s \in (0, \Delta t)$, $N(\Delta t) = 0$ 当且仅当 $N(s) = 0$ 且 $N(\Delta t) - N(s) = 0$. 因此,
+  - 形式上, 我们得到的概率关系为:
+      $$
+      P(t) = P(s) \cdot P(t-s) \iff P(t+s) = P(t) \cdot P(s), ~\forall s < t
+      $$
+      其中 $P(t) := \mathbb{P}(N(t) = 0)$. 即 $P$ 是满足线性性的. 而根据分析性质, 符合该关系的唯一函数为指数函数, 即存在参数 $\lambda > 0$, 使得:
+      $$
+      P(t) = \exp(-\lambda t) \implies \mathbb{P}(N(\Delta t) = 0) = \exp(-\lambda \Delta t)
+      $$
+
+- 进一步利用稀疏性, 对高阶项进行分析.
+    $$
+    \begin{align*}
+    \sum_{k=2}^{\infty} \mathbb{P}(N(\Delta t) = k) z^k 
+    &= \mathbb{P}(N(\Delta t) = 1) \sum_{k=2}^{\infty} z^k \frac{\mathbb{P}(N(\Delta t) = k)}{\mathbb{P}(N(\Delta t) = 1)} \to 0.
+    \end{align*}
+    $$
+    其中最后一个极限利用了 Z-Transform 的相关性质放缩得到.
+
+- 根据概率的归一化, 得到:
+    $$
+    1 - \mathbb{P}(N(\Delta t) = 0) = \mathbb{P}(N(\Delta t) = 1) + \mathbb{P}(N(\Delta t) = 1) \frac{\mathbb{P}(N(\Delta t) \geq 2)}{\mathbb{P}(N(\Delta t) = 1)} 
+    $$
+    即:
+    $$
+    \frac{1}{\Delta t} \left[1 - \exp(-\lambda \Delta t)\right] = \frac{1}{\Delta t} \mathbb{P}(N(\Delta t) = 1) + o(\Delta t)
+    $$
+    令 $\Delta t \to 0$, 得到:
+    $$
+    \lim_{\Delta t \to 0} \frac{1}{\Delta t} \mathbb{P}(N(\Delta t) = 1) = \lambda. 
+    $$
+    
+- 最终, 有:
+    $$
+    \frac{1}{\Delta t} \mathbb{E}[z^{N(\Delta t)} - 1] \to - \lambda + \lambda z
+    $$
+    即有 ODE 方程:
+    $$
+    \frac{\mathrm{d}}{\mathrm{d}t} G_{N(t)}(z) = G_{N(t)}(z) \lambda (z-1), \quad G_{N(0)}(z) = \mathbb{E}[z^{N(0)}] = 1.
+    $$
+    解得:
+    $$
+    G_{N(t)}(z) = \exp(\lambda (z-1) t), \quad G_{N(t)}(1) = \exp(\lambda t).
+    $$
+    即:
+    $$
+    \mathbb{P}(N(t) = k) = \frac{(\lambda t)^k}{k!} \exp(-\lambda t)
+    $$
+
+因此可以得到 Poisson Process 的正式定义. 
+
+***Definition* (Poisson Process):** 对于一个计数过程 $\{N(t), t \geq 0\}$, 若对于给定 $\lambda > 0$, 满足以下条件:
+1. $N(0) = 0$
+2. $\{N(t), t \geq 0\}$ 具有独立增量
+3. $\mathbb{P}(N(t+h) - N(t) = 1) = \lambda h + o(h)$
+4. $\mathbb{P}(N(t+h) - N(t) \geq 2) = o(h)$
+则称 $\{N(t), t \geq 0\}$ 为参数为 $\lambda$ 的 Poisson Process.
+
+
+立刻有如下结论:
+- $\mathbb{P}(N(t) = k) = \frac{(\lambda t)^k}{k!} \exp(-\lambda t)$
+- $\mathbb{P}(N(t) - N(s) = k) = \frac{(\lambda (t-s))^k}{k!} \exp(-\lambda (t-s))$
+- $\mathbb{E}[N(t)] = \lambda t \iff \lambda = \mathbb{E}[N(t)] / t$, 即单位时间间隔内事件发生的平均次数, 或事件发生的强度. 
+
+## Properties of Poisson Process
+
+1. **事件发生间隔服从指数分布:** 考虑第 $i$ 次事件发生的时间间隔 $T_i$. 对于第一次事件发生的时间 $T_1$, 有
+    $$
+    F_{T_1}(t) = \mathbb{P}(T_1 \leq t) = 1 - \mathbb{P}(T_1 > t) = 1 - \mathbb{P}(N(t) = 0) = 1 - \exp(-\lambda t)
+    $$
+    即 $T_1$ 服从参数为 $\lambda$ 的指数分布. **事实上, 所有间隔 $T_i$ 之间都是独立同分布的指数分布.** 
+    - 指数分布是无记忆性的:
         $$
-        \begin{aligned}
-        \mathbb{P}(N(\Delta t) = 0) &= \mathbb{P}(N(s) = 0, N(\Delta t) - N(s) = 0) \\
-        &= \mathbb{P}(N(s) = 0) \cdot \mathbb{P}(N(\Delta t) - N(s) = 0) \quad \text{\small(由独立增量)} \\
-        &= \mathbb{P}(N(s) = 0) \cdot \mathbb{P}(N(\Delta t - s) = 0) \quad \text{\small(由平稳增量)} \\
-        \end{aligned}
-        $$ 
-        上述分析表明, 若令 $f(t) = \mathbb{P}(N(t) = 0)$, 则 $f$ 满足:
+        \mathbb{P}(T_1 > t + s | T_1 > t) = \mathbb{P}(T_1 > s)
         $$
-        f(t+s) = f(t) \cdot f(s)
-        $$
-        可以证明, 满足上述函数方程的函数 $f$ 必然是指数函数. 因此, 存在 $\lambda > 0$, 使得
-        $$
-        f(t) = e^{-\lambda t}
-        $$
-        - *Proof*.  
-          - 首先说明 $f(t) > 0$. 根据构造, $f(t) = (f(\frac{t}{2}))^2$ 表明 $f(t) \geq 0$. 若存在 $t_0$ 使得 $f(t_0) = 0$, 则 $f(\frac{t_0}{2}) = 0$, 以此类推, 可得 $f(\frac{t_0}{2^n}) = 0$ 对任意 $n \in \mathbb{N}$ 成立. 因此, 由连续性可得 $\lim_{n \to \infty} f(\frac{t_0}{2^n}) = f(0) = 0$. 因此当且仅当 $f \equiv 0$ 时, $f(t)$ 才可能取到 $0$. 否则, $f(t) > 0$ 对任意 $t \geq 0$ 成立. 
-          - 接着说明 $f$ 是指数函数. 由于 $f(t) > 0$, 可定义 $g(t) = \ln f(t)$. 则 $g$ 满足
-            $$
-            g(t+s) = g(t) + g(s), \quad \forall t, s \in \mathbb{R}
-            $$
-            若 $t = 0$, 则 $g(0) = g(0) + g(0)$, 从而 $g(0) = 0$.  若 $t \in \mathbb{Z}_+$, 则 $g(t) = g(t-1) + g(1) = \cdots = t g(1)$. 这可以看作是以 $g(1)$ 为斜率的线性函数在正整数上的取值. 若 $t \in \mathbb{Z}_-$, 则 $g(t) = g(0) - g(-t) = 0 - (-t) g(1) = t g(1)$, 这也与上述形式一致. 若 $t \in \mathbb{Q}$, 令 $t = \frac{m}{n}$, 则 $g(1) = n g(\frac{1}{n})$ 从而 $g(1/n) = g(1)/n$. 因此, $g(t) = g(m/n) = m g(1/n) = m g(1)/n = t g(1)$. 若 $t \in \mathbb{R}$, 根据实数理论, 存在 $\{q_n\} \subset \mathbb{Q}$ 使得 $\lim_{n \to \infty} q_n = t$. 因此, $g(t) = g(\lim_{n \to \infty} q_n) = \lim_{n \to \infty} g(q_n) = \lim_{n \to \infty} q_n g(1) = t g(1)$ (其中由连续性保证了极限与函数值的交换).  
+
+2. **事件的发生时刻服从 Gamma 分布:** 考虑第 $k$ 次事件发生的时间 $S_k := \sum_{i=1}^{k} T_i$. 则有:
+    $$
+    f_{S_k}(t) = \frac{\lambda(\lambda t)^{k-1}}{(k-1)!} \exp(-\lambda t)
+    $$
+    即 $S_k$ 服从参数为 $\lambda$ 和 $k$ 的 Gamma 分布. 
+

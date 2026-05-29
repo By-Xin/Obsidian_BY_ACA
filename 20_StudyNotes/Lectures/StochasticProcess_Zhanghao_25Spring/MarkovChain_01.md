@@ -1,5 +1,5 @@
 
-# Markov Chain
+# Discrete Markov Chain
 
 ## 1. Introduction: Markov Assumption
 
