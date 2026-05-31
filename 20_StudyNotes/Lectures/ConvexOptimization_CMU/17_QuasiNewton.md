@@ -238,17 +238,26 @@ $$
 则通过上述的 BFGS 更新公式和 Wolfe 条件的线搜索, 迭代点 $\mathbf{x}^k$ 将全局收敛到 $f$ 的一个最优解. 
 
 
-*Analysis Sketch*: 
+*Proof Sketch*: 
 - 定理的假设主要想说明, 在算法的活动范围 $\mathcal{L}$ 内, 目标函数曲率有界, 既不会太平坦也不会过于陡峭. 并且由于 Wolfe line search 的设计, 可以保证函数值不断下降, 一直都在 $\mathcal{L}$ 内. 
 - 根据 Zoutendijk's condition, 可知 $\sum_{k=0}^\infty \cos^2 \theta_k \cdot \|\nabla f(\mathbf{x}^k)\|^2 < +\infty$. 因此, 只要能够保证 $\cos \theta_k$ 不会退化到 0, 就可以得出 $\|\nabla f(\mathbf{x}^k)\| \to 0$, 从而得出 $\mathbf{x}^k$ 收敛到一个 stationary point. 
 - 最后, 由于 $f$ 是凸的, 因此该 stationary point 就是一个全局最优解.
 
-*Proof*:
-- 首先定义 $m_k := \langle \mathbf{y}^k, \mathbf{s}^k \rangle / \|\mathbf{s}^k\|^2$ 和 $M_k := \|\mathbf{y}^k\|^2 / \langle \mathbf{y}^k, \mathbf{s}^k \rangle$. 由近似关系 $\mathbf{y}^k \approx \nabla^2 f(\mathbf{x}^k) \mathbf{s}^k$, 其同时求关于 $\mathbf{s}^k$ 的内积, 有: $\langle \mathbf{y}^k, \mathbf{s}^k \rangle \approx \mathbf{s}^{k\top} \nabla^2 f(\mathbf{x}^k) \mathbf{s}^k$. 故 $\nabla^2 f(\mathbf{x}^k) \approx (\langle \mathbf{y}^k, \mathbf{s}^k \rangle / \|\mathbf{s}^k\|^2) I = m_k I$. 
+***Theorem* (Superlinear Convergence of BFGS)**: 设 $f: \mathbb{R}^n \to \mathbb{R}$ 是一个二阶连续可微的函数, 在最优解 $\mathbf{x}^*$ 的某个邻域内, 其 Hessian $\nabla^2 f(\mathbf{x})$ 是 Lipschitz 连续的. 设 $\{\mathbf{x}^k\}$ 是通过上述的 BFGS 更新得到的点列, 满足:
+$$
+\sum_{k=0}^\infty \|\mathbf{x}^k - \mathbf{x}^*\| < +\infty.
+$$
+则 $\{\mathbf{x}^k\}$ 将以超线性的速度收敛到 $\mathbf{x}^*$, 即
+$$
+\lim_{k \to \infty} \frac{\|\mathbf{x}^{k+1} - \mathbf{x}^*\|}{\|\mathbf{x}^k - \mathbf{x}^*\|} = 0.
+$$
+
 
 ## 4. Limited-memory BFGS (L-BFGS)
 
 BFGS 方法虽然克服了牛顿法中 Hessian 计算的昂贵问题, 但是其在每次迭代中都需要存储和更新一个 $B^k \in \mathbb{R}^{n \times n}$ 的矩阵 (或 $H^k$), 这在高维问题中可能会导致巨大的内存开销. 为了解决这个问题, Limited-memory BFGS (L-BFGS) 方法被提出. L-BFGS 通过迭代展开的方式, 用一个较小的历史信息来近似 Hessian 矩阵, 从而大幅降低了内存需求.
+
+### L-BFGS 的完整推导
 
 首先为推导方便, 这里采用 $H^k$ 来近似 Hessian 的逆. 并且将迭代公式整理如下:
 $$
@@ -400,8 +409,8 @@ $$
   - 所有展开的过程完全相同, 最终的结果为:
       $$
       \begin{aligned}
-      H^k \mathbf{g}^k   &= V^{k-1\top} V^{k-2\top} \cdots V^{k-m+3 \top} V^{k-m+2\top} \mathbf{r}_{k-m+1} +\\
-      &\qquad  V^{k-1\top} V^{k-2\top} \cdots V^{k-m+3\top} \mathbf{s}^{k-m+1} \alpha_{k-m+2} +\\
+      H^k \mathbf{g}^k   &= V^{k-1\top} V^{k-2\top} \cdots V^{k-m+3 \top} V^{k-m+2\top} \mathbf{r}_{k-m+2} +\\
+      &\qquad  V^{k-1\top} V^{k-2\top} \cdots V^{k-m+3\top} \mathbf{s}^{k-m+2} \alpha_{k-m+2} +\\
       &\qquad \cdots +  V^{k-1\top} \mathbf{s}^{k-2} \alpha_{k-2} + \mathbf{s}^{k-1} \alpha_{k-1}.
       \end{aligned}
       $$
@@ -412,11 +421,11 @@ $$
       \beta_{k-m+1} &:= \rho_{k-m+1} (\mathbf{y}^{k-m+1})^\top \mathbf{r}_{k-m+1}.
       \end{aligned}  
       $$
-  - 以此类推, 最终可以得到在第 $j \in \{k-1, k-2, \cdots, k-m\}$ 步, 一般的迭代公式为
+  - 以此类推, 最终可以得到在第 $j \in \{k-m, k-m+1, \cdots, k-1\}$ 步, 一般的迭代公式为
       $$
       \begin{aligned}
-      H^k \mathbf{g}^k   &= V^{k-1\top} V^{k-2\top} \cdots V^{j+1 \top} V^{j\top} \mathbf{r}_{j+1} +\\
-      &\qquad  V^{k-1\top} V^{k-2\top} \cdots V^{j+1\top} \mathbf{s}^{j} \alpha_{j+1} +\\
+      H^k \mathbf{g}^k   &= V^{k-1\top} V^{k-2\top} \cdots V^{j+1 \top} V^{j\top} \mathbf{r}_{j} +\\
+      &\qquad  V^{k-1\top} V^{k-2\top} \cdots V^{j+1\top} \mathbf{s}^{j} \alpha_{j} +\\
       &\qquad \cdots +  V^{k-1\top} \mathbf{s}^{k-2} \alpha_{k-2} + \mathbf{s}^{k-1} \alpha_{k-1},
       \end{aligned}
       $$
@@ -428,12 +437,148 @@ $$
        \end{aligned}
         $$
 
-  - 最后, 在完成 $j = k-1$ 的迭代后, 就得到了最终的搜索方向 $\mathbf{d}^k = -H^k \mathbf{g}^k$ 的计算公式:
-      $$
-      \begin{aligned}
-      \mathbf{d}^k = -H^k \mathbf{g}^k   &= -\mathbf{r}_{k-1} - \mathbf{s}^{k-1} \alpha_{k-1} \\
-      &= -\mathbf{r}_{k-2} - \mathbf{s}^{k-2} \alpha_{k-2} - \mathbf{s}^{k-1} \alpha_{k-1} \\
-      &\qquad \cdots \\
-      &= -\mathbf{r}_{k-m} - \sum_{j=k-m}^{k-1} \mathbf{s}^{j} \alpha_j.
-      \end{aligned}
-      $$
+  - 最后, 在完成 $j = k-1$ 的迭代后得到的结果为:
+    $$
+    \begin{aligned}
+    H^k \mathbf{g}^k   &= V^{k-1\top} \mathbf{r}_{k-1} + \mathbf{s}^{k-1} \alpha_{k-1}, 
+    \end{aligned}
+    $$
+    故最后一轮迭代有:
+    $$
+    \begin{aligned}
+    H^k \mathbf{g}^k   &= V^{k-1\top} \mathbf{r}_{k-1} + \mathbf{s}^{k-1} \alpha_{k-1} \\
+    &= \left(I - \rho_{k-1} \mathbf{s}^{k-1} (\mathbf{y}^{k-1})^\top\right) \mathbf{r}_{k-1} + \mathbf{s}^{k-1} \alpha_{k-1} \\
+    &= \mathbf{r}_{k-1} + \mathbf{s}^{k-1} (\alpha_{k-1} - \rho_{k-1} (\mathbf{y}^{k-1})^\top \mathbf{r}_{k-1}) \\
+    \end{aligned}
+    $$
+    故定义 $beta_{k-1} := \rho_{k-1} (\mathbf{y}^{k-1})^\top \mathbf{r}_{k-1}$, 则最终的结果为
+    $$
+    \begin{aligned}
+    H^k \mathbf{g}^k   &= \mathbf{r}_{k-1} + \mathbf{s}^{k-1} (\alpha_{k-1} - \beta_{k-1}) = \mathbf{r}_k
+    \end{aligned}
+    $$
+
+- 因此, 最后通过迭代得到的 $\mathbb{r}_k$ 就是 $H^k \mathbf{g}^k$ 的值, 恰恰就是下一步的搜索方向 (之相反数) $\mathbf{d}^k = -H^k \mathbf{g}^k = -\mathbf{r}_k$.
+
+以上就构成了 L-BFGS 方法中计算搜索方向的核心算法. 其一共需要约 $4m$ 次乘法与 $2mn$ 次加法运算. 总的计算复杂度约为 $\mathcal{O}(mn)$. 
+
+### 实现细节与说明
+
+#### 关于初始值 $H^{k-m}$ 的估计
+
+上述的迭代过程事实上包含了一个假设: 不论具体双循环的方式如何, 我们本质上依然是在简化处理下列的迭代展开式:
+
+$$
+\begin{aligned}
+H^{k}
+&= (V^{k-1})^\top (V^{k-2})^\top \cdots (V^{k-m})^\top H^{k-m} V^{k-m} \cdots V^{k-2} V^{k-1} +\\
+&\quad  \rho_{k-m} \left(V^{k-m+1}V^{k-m+2} \cdots V^{k-1}\right)^\top \mathbf{s}^{k-m} (\mathbf{s}^{k-m})^\top \left(V^{k-m+1}V^{k-m+2} \cdots V^{k-1}\right) +\\
+&\quad  \rho_{k-m+1} \left(V^{k-m+2}V^{k-m+3} \cdots V^{k-1}\right)^\top \mathbf{s}^{k-m+1} (\mathbf{s}^{k-m+1})^\top \left(V^{k-m+2}V^{k-m+3} \cdots V^{k-1}\right) +\\
+&\quad \cdots + \\
+&\quad  \rho_{k-1} \mathbf{s}^{k-1} (\mathbf{s}^{k-1})^\top.
+\end{aligned}
+$$
+
+然而这个式子事实上是需要知道 $H^{k-m}$ 的值的. 该取值本身在第一阶段没有涉及, 但在第二阶段的初始迭代中, 边需要计算:
+$$
+\mathbf{r}_{k-m} = H^{k-m} \mathbf{q}_{k-m}.
+$$
+因此需要对 $H^{k-m}$ 的取值进行说明. 注意, 这个初始值的选取必须要简单, 否则又会回到 full BFGS 的内存问题.
+
+在实际的实现中, 对于其估计可以通过选取对角阵:
+$$
+\hat{H}_0^k = \gamma_k I, \quad \text{where } \quad \gamma_k = \frac{(\mathbf{y}^{k-1})^\top \mathbf{s}^{k-1}}{(\mathbf{y}^{k-1})^\top \mathbf{y}^{k-1}}.
+$$
+来近似 $H^{k-m}$ 的值. 这一选择本身也是合理的. 因为, $H^{k}$ 本身作为 inverse Hessian 的近似, 我们期望期能够满足关系:
+$$
+H^k \mathbf{y}^{k-1} \approx \mathbf{s}^{k-1}.
+$$
+而若我们只能拥有对角线阵的形式, 即 $H^k = \gamma_k I$, 则上式的近似关系就变成了 $\gamma_k \mathbf{y}^{k-1} \approx \mathbf{s}^{k-1}$, 从而通过求解:
+$$
+\min_{\gamma_k} \|\gamma_k \mathbf{y}^{k-1} - \mathbf{s}^{k-1}\|^2,
+$$
+从而得到上述的 $\gamma_k = \frac{(\mathbf{y}^{k-1})^\top \mathbf{s}^{k-1}}{(\mathbf{y}^{k-1})^\top \mathbf{y}^{k-1}}$ 的取值.
+
+#### L-BFGS 的矩阵表达
+
+事实上, 通过紧凑矩阵形式, 我们能够直接给出 L-BFGS 的矩阵表达. 
+
+再次首先回到 BFGS. 为讨论方便, 引入记号
+$$
+\begin{aligned}
+S_k = [\mathbf{s}^0, \mathbf{s}^1, \cdots, \mathbf{s}^{k-1}] \in \mathbb{R}^{n \times k} , \quad Y_k = [\mathbf{y}^0, \mathbf{y}^1, \cdots, \mathbf{y}^{k-1}] \in \mathbb{R}^{n \times k}, 
+\end{aligned}
+$$
+这时, 给定 BFGS 的初始对称正定矩阵 $H_0$, 且设 $\{(\mathbf{s}^j,\mathbf{y}^j)\}_{j=0}^{k-1}$ 为历史曲率信息满足 $\langle \mathbf{y}^j, \mathbf{s}^j \rangle > 0$, 则 BFGS 的迭代公式可以通过如下的矩阵表达来表示:
+$$
+H^k = H^0 + \begin{bmatrix} S_k & H^0 Y_k \end{bmatrix} \begin{bmatrix}
+  W_k & - (R_k^{-1})^{\top} \\
+  - (R_k)^{-1} & 0
+\end{bmatrix}
+\begin{bmatrix}
+  (S_k)^\top \\
+  (Y_k)^\top
+\end{bmatrix},
+$$
+其中
+$$
+\begin{aligned}
+W_k &= ((R_k)^{-1})^{\top} (D_k + Y_k^\top H^0 Y_k) (R_k)^{-1}, 
+\end{aligned}
+$$
+而 $R_k$ 为 $k \times k$ 的上三角矩阵, 其第 $i$ 行第 $j$ 列的元素为
+$$
+(R_k)_{ij} = \begin{cases}
+  \langle \mathbf{s}^{i-1}, \mathbf{y}^{j-1} \rangle, & i \leq j, \\
+  0, & i > j.
+\end{cases}
+$$
+且 $D_k$ 为 $k \times k$ 的对角矩阵, 
+$$
+D_k = \text{diag}(\langle \mathbf{y}^0, \mathbf{s}^0 \rangle, \langle \mathbf{y}^1, \mathbf{s}^1 \rangle, \cdots, \langle \mathbf{y}^{k-1}, \mathbf{s}^{k-1} \rangle).
+$$
+
+因此, 对应地, 只要将上述的 $S_k, Y_k$ 的定义中的 $k$ 替换为 $m$, 并且将 $H^0$ 替换为 $\hat{H}_0^{k-m}$, 就可以得到 L-BFGS 的矩阵表达.
+
+该定理证明比较烦琐. 它的重要意义在于可在给定 $H^0, S_k, Y_k$ 的条件下直接计算出 BFGS 迭代矩阵 $H^k$ 的值
+
+
+### 伪代码
+
+L-BFGS 本身的构造算法如下所示. 
+
+***算法：L-BFGS 双循环递推算法***
+
+**输入：** 当前梯度 $\mathbf{g}^k=\nabla f(\mathbf{x}^k)\in\mathbb{R}^n$；最近 $m$ 对历史曲率信息 $\{(\mathbf{s}^j,\mathbf{y}^j)\}_{j=k-m}^{k-1}$；标量 $\rho_j=\frac{1}{(\mathbf{y}^j)^\top\mathbf{s}^j}$；初始逆 Hessian 近似矩阵 $H_0^k$.
+
+**输出：** $\mathbf{r}_k$, 即 $H^k \mathbf{g}^k$ 的值.
+
+1. 初始化 $\mathbf{q} \leftarrow \nabla f(\mathbf{x}^k)$.
+2. 对 $j=k-1, k-2, \cdots, k-m$，依次执行：
+   - 计算并保存 $\alpha_j  \leftarrow \rho_j \langle \mathbf{s}^j, \mathbf{q} \rangle$.
+   - 更新 $\mathbf{q} \leftarrow \mathbf{q} - \alpha_j \mathbf{y}^j$.
+3. 初始化 $\mathbf{r} \leftarrow \hat{H}_0^{k-m} \mathbf{q}$. 其中 $\hat{H}_0^{k-m}$ 是对 $H^{k-m}$ 的近似, 可以选取 $\hat{H}_0^{k-m} = \gamma_{k-m} I$.
+4. 对 $j=k-m, k-m+1, \cdots, k-1$，依次执行：
+   - 计算 $\beta_j = \rho_j \langle \mathbf{y}^j, \mathbf{r} \rangle$.
+   - 更新 $\mathbf{r} \leftarrow \mathbf{r} + \mathbf{s}^j (\alpha_j - \beta_j)$.
+
+接着, 在给出了搜索方向 $\mathbf{d}^k$ 之后, 使用 L-BFGS 进行优化迭代的完整算法如下所示. 
+
+***算法：L-BFGS 优化算法***
+
+**输入：** 初始点 $\mathbf{x}^0\in\mathbb{R}^n$；历史曲率信息的记忆长度 $m$.
+
+**输出：** 最优解 $\mathbf{x}^*$.
+
+对 $k=0,1,2,\cdots$，依次执行：
+
+1. 选取近似矩阵 $\hat{H}_0^{k-m}$.
+2. 使用双循环递推算法计算搜索方向 $\mathbf{d}^k  \leftarrow  -H^k \nabla f(\mathbf{x}^k)$.
+3. 使用 Wolfe 条件进行线搜索, 得到步长 $\alpha_k$.
+4. 更新迭代点 $\mathbf{x}^{k+1}  \leftarrow  \mathbf{x}^k + \alpha_k \mathbf{d}^k$.
+5. 若 $k >= m$, 
+   - 丢弃最早的历史曲率信息 $(\mathbf{s}^{k-m}, \mathbf{y}^{k-m})$.
+6. 计算新的历史曲率信息 $(\mathbf{s}^k, \mathbf{y}^k)$, 并将其加入历史曲率信息集合中.
+7. 检查收敛条件, 若满足则退出循环.
+
+
