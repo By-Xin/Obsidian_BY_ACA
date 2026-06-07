@@ -62,7 +62,7 @@ $$
 
 下分析 generator matrix 与 transition probability matrix 之间的关系. 考虑短时间 $h$ 的转移情况. 根据 holding time $H_i$ 的性质
 $$
-    \mathbb{P}(H_i > h) = e^{-v_i h} = 1 - v_i h + O(h^2).
+    \mathbb{P}(H_i > h) = e^{-v_i h} = 1 - v_i h + O(h^2). 
 $$
 因此这说明, 在短时间 $h$ 内, 进行 $0$ 次 jump 的概率约为 $1 - O(h)$, 进行 $1$ 次 jump 的概率约为 $O(h)$, 进行至少 $2$ 次 jump 的概率约为 $O(h^2)$. 
 - 考虑 $p_{ii}(h)$. 这说明在 $h$ 时间内, 要么 CTMC 在状态 $i$ 上停留超过 $h$ 时间, 要么在 $h$ 时间内发生 jump 但又跳转回状态 $i$, 即至少发生 $2$ 次 jump. 因此
