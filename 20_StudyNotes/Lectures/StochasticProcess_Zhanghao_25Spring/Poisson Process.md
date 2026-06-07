@@ -132,8 +132,6 @@ Poisson Process 是一个连续时间, 离散状态的随机过程, 用来描述
           - **事实上, 可推广为在条件 $N(t) = n$ 下, 前 $s$ 分钟内到达车的数量服从参数为 $n$ 和 $s/t$ 的 Binomial 分布.**
       - 假定前 $20$ 分钟内已经到达了 $10$ 辆车, 在 $20\sim40$ 分钟内也到达了 $10$ 辆车, 在此条件下, 前 $15$ 分钟内到达车的数量的条件分布. 
           - 该条件分布与前一个条件分布相同. 
-      - 假定前 $20$ 分钟内已经到达了 $10$ 辆车, 在 $20\sim40$ 分钟内也到达了 $10$ 辆车, 在此条件下, 前 $30$ 分钟内到达车的数量的条件分布. 
-          - 该条件分布与前一个条件分布相同.
 
 2. **事件发生间隔服从指数分布:** 考虑第 $i$ 次事件发生的时间间隔 $T_i$. 对于第一次事件发生的时间 $T_1$, 有
     $$
@@ -151,3 +149,46 @@ Poisson Process 是一个连续时间, 离散状态的随机过程, 用来描述
     $$
     即 $S_k$ 服从参数为 $\lambda$ 和 $k$ 的 Gamma 分布. 
 
+4. **有限个独立 Poisson 过程的和仍然是一个 Poisson 过程, 且参数为各个 Poisson 过程参数的和:** 给定两个 Poisson Process, $\{N_1(t), t \geq 0\}$ 和 $\{N_2(t), t \geq 0\}$, 且它们相互独立. 则 $N(t) := N_1(t) + N_2(t)$ 也是一个 Poisson Process, 其参数为 $\lambda_1 + \lambda_2$.
+   - *Proof*. 设 $N_1(t)$ 和 $N_2(t)$ 的参数分别为 $\lambda_1$ 和 $\lambda_2$. 则 $N(t)$ 的矩母函数为:
+       $$
+       G_{N(t)}(z) = G_{N_1(t)}(z) \cdot G_{N_2(t)}(z) = \exp(\lambda_1 t (z-1)) \cdot \exp(\lambda_2 t (z-1)) = \exp((\lambda_1 + \lambda_2) t (z-1)).
+       $$
+   - 因此可以直接推广到有限个 Poisson Process 的叠加. 设 $\{N_i(t), t \geq 0\}$, $i = 1, \ldots, n$ 是 $n$ 个相互独立的 Poisson Process, 其参数分别为 $\lambda_i$. 则 $N(t) := \sum_{i=1}^{n} N_i(t)$ 也是一个 Poisson Process, 其参数为 $\sum_{i=1}^{n} \lambda_i$.
+
+
+## Compound Poisson Process
+
+***Definition* (Compound Poisson Process):** 设 $\{N(t), t \geq 0\}$ 是参数为 $\lambda$ 的 Poisson Process, $\{X_k, k \in \mathbb{N}\}$ 是一列独立同分布的随机变量, 且与 $N(t)$ 相互独立 (当 $X_k \equiv 1$ 时, Compound Poisson Process 退化为 Poisson Process). 则定义随机过程 $\{Y(t), t \geq 0\}$ 为:
+$$
+Y(t) := \sum_{k=1}^{N(t)} X_k.
+$$
+则称 $\{Y(t), t \geq 0\}$ 为参数为 $\lambda$ 的 Compound Poisson Process.
+
+- 下推导其分布. 同理, 考虑 $Y(t)$ 的矩母函数:
+    $$
+    \begin{align*}
+    G_{Y(t)}(z)
+    &= \mathbb{E}[z^{Y(t)}] = \mathbb{E}[z^{\sum_{k=1}^{N(t)} X_k}] = \mathbb{E}_{N(t)}\left[\mathbb{E}_{X \mid N(t)}\left[z^{\sum_{k=1}^{N(t)} X_k} | N(t)\right]\right] \\
+    &= \mathbb{E} \left[ \mathbb{E} \left[ \prod_{k=1}^{N(t)} z^{X_k} | N(t) = n\right] \right]  = \mathbb{E} \left[ \left(\mathbb{E}[z^{X_1}]\right)^{N(t)} \right] \\&= G_{N(t)}(G_{X_1}(z)) .
+    \end{align*}    
+    $$
+
+- 因此有推论, 若考虑 $X_t \sim \text{Bernoulli}(p)$, 则对应的 Compound Poisson Process $Y(t) = \sum_{k=1}^{N(t)} X_k$ 的矩母函数为
+    $$
+    G_{Y(t)}(z) = \exp(\lambda t (p z + 1 - p - 1)) = \exp(\lambda t p (z-1)),
+    $$
+    故 $Y(t)$ 服从参数为 $\lambda p$ 的 Poisson 分布.
+
+
+***Example***. 给定两个 Poisson Process $\{N_1(t), t \geq 0\}$ 和 $\{N_2(t), t \geq 0\}$, 若它们相互独立. 则在第一个 Poisson Process 的两次事件发生之间, 第二个 Poisson Process 的事件发生的数量服从参数为 $\lambda_2 / (\lambda_1 + \lambda_2)$ 的 Geometric 分布.
+   - *Proof*. 假设 $T \sim \text{Exp}(\lambda_1)$ 是第一个 Poisson Process 的两次事件发生之间的时间间隔, 故 $f_T(t) = \lambda_1 \exp(-\lambda_1 t)$.  此时第二个 Poisson Process 在时间 $T$ 内发生的事件数量 $N_2(T)$ 的概率分布为:
+       $$
+       \begin{align*}
+       \mathbb{P}(N_2(T) =k) &= \int_{0}^{\infty} \mathbb{P}(N_2(T) = k | T = t) f_T(t)\, \mathrm{d}t \\
+       &= \int_{0}^{\infty} \frac{(\lambda_2 t)^k}{k!} \exp(-\lambda_2 t) \lambda_1 \exp(-\lambda_1 t)\, \mathrm{d}t \\
+         &= \frac{\lambda_1 \lambda_2^k}{k!} \int_{0}^{\infty} t^k \exp(-(\lambda_1 + \lambda_2) t)\, \mathrm{d}t \\
+            &= \left(\frac{\lambda_1}{\lambda_1 + \lambda_2}\right) \left(\frac{\lambda_2}{\lambda_1 + \lambda_2}\right)^{k} 
+       \end{align*}
+       $$
+  - 这也可以看作是一个 Compound Poisson Process 的特例. 
