@@ -106,7 +106,7 @@ $$
 $$
 虽然形状和传统的预测模型 $\widehat{\mathbf{Y}}_s$ 一样, 但其并不追求最小化与真实未来 return matrix $\mathbf{Y}_s$ 的 prediction loss. 该预测值不会被直接被评价, 而是进入一个 multi-period portfolio optimization 的优化问题中 (即上述 $(\text{P})$), 从而得到一个关于权重路径 $\mathbf{z}_s$ 和预测 $\widetilde{\mathbf{Y}}_s$ 的目标函数 $\widetilde{F}(\mathbf{z}_s, \widetilde{\mathbf{Y}}_s)$, 得到对应输出:
 $$
-\mathbf{z}_s^*(\theta) = \arg\min_{\mathbf{z}_s \in \Omega} \widetilde{F}(\mathbf{z}_s, \widetilde{\mathbf{Y}}_s) = \arg\min_{\mathbf{z}_s \in \Omega} \widehat{F}(\mathbf{z}_s, \phi_\theta(\mathbf{X}_s)).
+\mathbf{z}_s^*(\theta) = \arg\min_{\mathbf{z}_s \in \Omega} \widetilde{F}(\mathbf{z}_s, \widetilde{\mathbf{Y}}_s) = \arg\min_{\mathbf{z}_s \in \Omega} \widetilde{F}(\mathbf{z}_s, \phi_\theta(\mathbf{X}_s)).
 $$
 在得到 $\mathbf{z}_s^*(\theta)$ 之后, 才会再用 $\mathbf{z}_s^*(\theta)$ 和真实的未来 return matrix $\mathbf{Y}_s$ 来计算一个 decision-focused learning 的 loss:
 $$
@@ -118,7 +118,129 @@ $$
 $$
 \begin{aligned}
 & \min_{\theta \in \Theta} \quad \frac{1}{T}     \sum_{s=t - T - H + 1}^{t-H} \ell_\text{d}(\mathbf{z}_s^*(\theta), \mathbf{Y}_s)  \\
-& \text{s.t.} \quad \mathbf{z}_s^*(\theta) = \arg\min_{\mathbf{z}_s \in \Omega} \widehat{F}(\mathbf{z}_s, \phi_\theta(\mathbf{X}_s)), \quad s = t - T - H + 1, \ldots, t-H.
+& \text{s.t.} \quad \mathbf{z}_s^*(\theta) = \arg\min_{\mathbf{z}_s \in \Omega} \widetilde{F}(\mathbf{z}_s, \phi_\theta(\mathbf{X}_s)), \quad s = t - T - H + 1, \ldots, t-H.
 \end{aligned} \tag{IPMO}
 $$
+或具体化为:
+$$\begin{aligned}
+\min_\theta\quad
+&
+\frac1T
+\sum_{s=t-T-H+1}^{t-H}
+\frac1H
+\sum_{k=s+1}^{s+H}
+\left[
+-
+\boldsymbol z_k^*(\theta)^\top y_k
++
+\frac{\delta}{2}
+\boldsymbol z_k^*(\theta)^\top
+V_k
+\boldsymbol z_k^*(\theta)
+\right]
+\\
+\text{s.t.}\quad
+&
+\mathbf z_s^*(\theta)
+=
+\arg\min_{\mathbf z_s\in\Omega}
+\sum_{k=s+1}^{s+H}
+\left[
+\frac{\delta}{2}
+\boldsymbol z_k^\top
+\widehat V_k
+\boldsymbol z_k
+-
+\widetilde y_k^\top
+\boldsymbol z_k
++
+\lambda
+\rho(\boldsymbol z_k-\boldsymbol z_{k-1})
+\right].
+\end{aligned}
+\tag{IPMO}
+$$
+
+
+本质上, 传统先预测后决策的方法求解的是
+$$
+\min_{\theta \in \Theta} \ell_p(\phi_\theta(\mathbf{X}_s), \mathbf{Y}_s),
+$$
+而 IPMO 则是直接求解
+$$
+\min_{\theta \in \Theta} \ell_\text{d} \left(\arg\min_{\mathbf{z}_s \in \Omega} \widetilde{F}(\mathbf{z}_s, \phi_\theta(\mathbf{X}_s)), \mathbf{Y}_s \right).
+$$
+
+### Bilevel Optimization Problem
+
+对于这样的双层优化问题, 其整体的数据流如下
+$$
+\mathbf{X}_s \xrightarrow{\phi_\theta}  \widetilde{\mathbf{Y}}_s \xrightarrow{\text{S}(\cdot)} \mathbf{z}_s^*(\theta) \xrightarrow{\ell_\text{d}(\cdot, \mathbf{Y}_s)} \mathcal{L}_\text{d}(\mathbf{z}_s^*(\theta), \mathbf{Y}_s).
+$$
+其中 $\text{S}(\cdot)$ 是求解 MPC 优化问题 $(\text{P})$ 的 solution mapping:
+$$
+\mathbf{z}_s^*(\theta) =
+\text{S}(\widetilde{\mathbf{Y}}_s) := \arg\min_{\mathbf{z}_s \in \Omega} \widetilde{F}(\mathbf{z}_s, \widetilde{\mathbf{Y}}_s).
+$$
+因此总的 loss function (forward pass) 可以写为
+$$
+\mathcal{L}(\theta) = \ell_\text{d}(\text{S}(\phi_\theta(\mathbf{X}_s)), \mathbf{Y}_s).
+$$
+
+对应的 backward pass 则为:
+$$
+\nabla_\theta \mathcal{L}(\theta) = \frac{\partial \ell_\text{d}(\mathbf{z}_s^*(\theta), \mathbf{Y}_s)}{\partial \mathbf{z}_s^*(\theta)} \cdot \frac{\partial \text{S}(\widetilde{\mathbf{Y}}_s)}{\partial \widetilde{\mathbf{Y}}_s} \cdot \frac{\partial \phi_\theta(\mathbf{X}_s)}{\partial \theta}.
+$$
+
+对于传统的 Bi-level 优化方法, 通常通过对 lower-level optimization problem 的 KKT condition 来求解 $\frac{\partial \text{S}(\widetilde{\mathbf{Y}}_s)}{\partial \widetilde{\mathbf{Y}}_s}$, 从而得到整个 loss function 的 gradient. 然而这对于一般的矩阵形式是非常复杂的. 
+
+### Mirror Descent 
+
+在本文的 framework 中, 由于需要求解 $\mathbb{z}_s^*(\theta) = \arg\min_{\mathbf{z}_s \in \Omega} \widetilde{F}(\mathbf{z}_s, \widetilde{\mathbf{Y}}_s)$, 其需要限制 $\mathbf{z}_s \in \Omega = \Omega_{t+1} \times \cdots \times \Omega_{t+H}$, 其中 $\Omega_{t+h} = \{\boldsymbol{z} \in \mathbb{R}^N: \sum_{i=1}^N z_i = 1, z_i \geq 0, i=1,2,\ldots,N\}$ 是 simplex. 
+
+故对于这样的有约束 optimization problem, 可以通过 mirror descent 来求解. 下简要对 MD 进行介绍. 这里暂时不考虑 MPC 的复杂优化函数, 而只单纯考虑一个 general 的含 simplex 约束的 optimization problem, 即
+$$
+\min_{\mathbf{z} \in \Omega} f(\mathbf{z}).
+$$
+
+回顾一般的 Gradient Descent $\mathbf{z}^{(k+1)} = \mathbf{z}^{(k)} - \eta \nabla f(\mathbf{z}^{(k)})$, 其事实上等价于
+$$
+\mathbf{z}^{(k+1)} = \arg\min_{\mathbf{w}} \left\{ \langle \nabla f(\mathbf{z}^{(k)}), \mathbf{w} - \mathbf{z}^{(k)} \rangle + \frac{1}{2\eta} \|\mathbf{w} - \mathbf{z}^{(k)}\|_2^2 \right\}.
+$$
+
+Mirror Descent 则是将上述的 $\ell_2$ distance 换成一个 general 的 Bregman divergence, 其更适合 simplex 这样的约束空间:
+$$
+D_\psi(\mathbf{w}, \mathbf{z}) = \psi(\mathbf{w}) - \psi(\mathbf{z}) - \langle \nabla \psi(\mathbf{z}), \mathbf{w} - \mathbf{z} \rangle,
+$$
+其中 $\psi$ 要求是 strictly convex, 其必须在可行域的相对内部可微. 并且希望整体的更新是 closed-form 的, 从而可以高效地求解. 这里定义为 negative entropy function, 即 $\psi(\mathbf{z}) = \sum_{i=1}^N z_i \log z_i$. 其对应的 Bregman divergence 就是 KL divergence, 即
+$$
+D_\psi(\mathbf{w}, \mathbf{z}) = \operatorname{KL}(\mathbf{w} \| \mathbf{z}) = \sum_{i=1}^N  w_i \log \frac{w_i}{z_i}.
+$$
+因此最终得到的 MD 的更新为
+$$
+\mathbf{z}^{(k+1)} = \arg\min_{\mathbf{w} \in \Omega} \left\{ \langle \nabla f(\mathbf{z}^{(k)}), \mathbf{w} - \mathbf{z}^{(k)} \rangle + \frac{1}{\eta} \sum_{i=1}^N w_i \log \frac{w_i}{z_i^{(k)}} \right\}.
+$$
+
+下进一步具体求解这个 MD 更新的 closed-form solution. 其等价于优化过程:
+$$
+\begin{aligned}
+\min_{\mathbf{w} \in \mathbb{R}^N} \quad & \langle \nabla f(\mathbf{z}^{(k)}), \mathbf{w} - \mathbf{z}^{(k)} \rangle + \frac{1}{\eta} \sum_{i=1}^N w_i \log \frac{w_i}{z_i^{(k)}}  \\
+\text{s.t.} \quad & \sum_{i=1}^N w_i = 1, \\
+& w_i \geq 0, \quad i=1,2,\ldots,N.
+\end{aligned}
+$$
+通过求解 Lagrange multiplier, 可以得到其 closed-form solution 为
+$$
+z_i^{(k+1)} = w_i = \frac{z_i^{(k)} \exp(-\eta \nabla f(\mathbf{z}^{(k)})_i)}{\sum_{j=1}^N z_j^{(k)} \exp(-\eta \nabla f(\mathbf{z}^{(k)})_j)}, \quad i=1,2,\ldots,N.
+$$
+这相当于进行一个含温度的 softmax 更新, 其中 $1/\eta$ 基本就是 softmax 的 temperature. 
+
+因此, 我们展示, 当我们要处理一个 simplex 约束的 optimization problem 时, 使用由 negative entropy 作为 mirror map 的 MD 方法, 可以得到一个 closed-form 的更新, 并且更新规则恰为一个 softmax 更新, 这样的更新将天然地满足 simplex 约束. 这对于我们求解 MPC 的 optimization problem 是非常有用的.
+
+**Theorem**: 设 $f$ 可微且 strongly convex, 则对 $f$ 的最优解 $\mathbf{z}^\star$ 是 Mirror Descent 的一个固定点, 即 $\mathbf{z}^\star = \arg\min_{\mathbf{w} \in \Omega} \left\{ \langle \nabla f(\mathbf{z}^\star), \mathbf{w} - \mathbf{z}^\star \rangle + \frac{1}{\eta} D_\psi(\mathbf{w}, \mathbf{z}^\star) \right\}$. 
+- 这个 FP 性质讲给后面的 implicit differentiation 的求解提供方便. 
+
+
+
+
 
