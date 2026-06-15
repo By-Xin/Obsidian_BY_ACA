@@ -165,6 +165,10 @@ $$
 
 ## Dual Decomposition
 
+### Distributed Optimization via Dual Decomposition
+
+***Dual Decomposition for Equality Constraints***
+
 上述的 Dual Gradient Ascent 方法还只是关于对偶的一个最基本的应用. 其更为核心的应用是将一个复杂问题进行分解, 从而实现并行分布式优化. 
 
 考虑如下 **目标得分, 约束耦合** 的优化问题:
@@ -199,7 +203,69 @@ $$
 \mathbf{u}^{(k)} &= \mathbf{u}^{(k-1)} + t_k \left(\sum_{i=1}^B \mathbf{A}_i \mathbf{x}_i^{(k)} - \mathbf{b}\right)
 \end{aligned}
 $$
-因此这是一个 synchronous 的分布式优化算法. 其每一次迭代中, 每一个 block $\mathbf{x}_i$ 都可以分发 (broadcast) 到不同的计算节点上独立求解, 从而实现并行化. 然而在进行梯度迭代时, 需要将所有 block 的结果进行聚合 (gather), 等到收集齐全的 block 结果后才能进行下一步的迭代. 若稍微再仔细讨论一下这种分布式的特性:
-- 问题: straggler effect. 由于每一个 block 的计算时间可能不一样, 因此在每一次迭代中, 若有节点的子问题特别困难或通行等出现问题, 那么其余的 worker 即使已经完成了计算, 也只能等着该节点完成后才能进行下一步的迭代. 因此 straggler effect 就会导致整体的效率降低.
+
+***Dual Decomposition for Inequality Constraints (Projected Subgradient Approach)***
+
+若进一步将上述等式约束改为不等式约束, 即
+$$
+\begin{aligned}
+\min_{\mathbf{x}} &\quad \sum_{i=1}^B f_i(\mathbf{x}_i) \\
+\text{s.t.} &\quad \sum_{i=1}^B \mathbf{A}_i \mathbf{x}_i \leq \mathbf{b}
+\end{aligned}
+$$
+
+则整个的 Dual Ascent 方法的框架仍然是一样的, 只是需要在每一次迭代中, 对更新后的 $\mathbf{u}^{(k)}$ 进行一个 projection, 即
+$$
+\begin{aligned}
+\mathbf{x}_i^{(k)} &= \arg\min_{\mathbf{x}_i \in \mathbb{R}^{n_i}} \left\{f_i(\mathbf{x}_i) + (\mathbf{A}_i^\top \mathbf{u}^{(k-1)})^\top \mathbf{x}_i\right\}, \quad i = 1, \ldots, B\\
+\mathbf{u}^{(k)} &= \Pi_{\mathbb{R}_+^m}\left(\mathbf{u}^{(k-1)} + t_k \left(\sum_{i=1}^B \mathbf{A}_i \mathbf{x}_i^{(k)} - \mathbf{b}\right)\right)
+\end{aligned}
+$$
+其中 $\Pi_{\mathbb{R}_+^m}(\cdot) = \max\{\cdot, \mathbf{0}\}$ 是一个逐元素的 projection operator, 将输入的每一个元素都投影到非负实数上.
+- 从算法角度看, 该方法是 projected subgradient method 的一个特例. 在每一次迭代中, 必须要保证对应的 Lagrangian multiplier $\mathbf{u}$ 是非负的, 因此需要在每一次迭代中进行 projection. 
+  
+
+***Distribution Optimization***
+
+
+这是一个 synchronous 的分布式优化算法. 其每一次迭代中, 每一个 block $\mathbf{x}_i$ 都可以分发 (broadcast) 到不同的计算节点上独立求解, 从而实现并行化. 然而在进行梯度迭代时, 需要将所有 block 的结果进行聚合 (gather), 等到收集齐全的 block 结果后才能进行下一步的迭代. 
+
+![](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/dual_decomposition_master_worker_topology.png)
+
+借此场景进一步讨论一下这种 synchronous 的分布式优化算法.
+- 在许多现实场景中, 事实上并不是数据被分发到不同的计算节点上, 而是数据本身本身就天然地分布在不同的计算节点上. 例如以现实场景为例. 一共有 $B$ 个单位, 每个单位 $i$ 都有自己的本地数据, 这些数据或因隐私政策, 或因数据规模等种种原因, 无法进行集中式的存储和处理. 然而与此同时, 整个系统又想在共享约束 (由于总资源 $b$ 的分配等原因, 导致约束耦合) 的条件下, 对各自 local objective $f_i$ 的加总进行优化, 其中 $\mathbf{x}_i$ 是第 $i$ 个单位的本地决策变量. 这时, Dual Decomposition 就提供了一个非常自然的解决方案. 
+- 这里梳理整个优化系统的各方角色. 
+  - Master (中心): 持有对偶变量 $\mathbf{u} \in \mathbb{R}^m$, 以及全局的约束 $\mathbf{b} \in \mathbb{R}^m$. 其不持有任何具体的 block $\mathbf{x}_i$ 或 local objective $f_i$. 其主要负责在每一次迭代中, 将当前的对偶变量 $\mathbf{u}$ 分发给各个 worker, 等待收集齐全的 block 结果后, 对 $\mathbf{u}$ 进行梯度更新. 
+    $$
+    \mathbf{u}^{(k)} = \mathbf{u}^{(k-1)} + t_k \left(\sum_{i=1}^B \boxed{\mathbf{A}_i \mathbf{x}_i^{(k)}} - \mathbf{b}\right)
+    $$
+    其中 $\mathbf{A}_i \mathbf{x}_i^{(k)}$ 是每一个 worker 计算得到的 block 结果, 需要被 master 收集后才能进行下一步的迭代. 并且对于 master 来说这是一个 $m$ 维的黑盒结果, 其并不知道具体的 $\mathbf{x}_i$ 或 $f_i$ 的任何信息.
+  - Worker (计算节点): 每一个 worker $i$ 持有一个 block $\mathbf{x}_i$ 和 local objective $f_i$. 其主要负责在每一次迭代中, 根据 master 分发的对偶变量 $\mathbf{u}$, 以及本地的 block $\mathbf{x}_i$ 和 local objective $f_i$, 来求解该 block 的最优化问题, 从而得到 block 结果 $\mathbf{A}_i \mathbf{x}_i^{(k)}$, 并将该结果上传给 master.
+      $$
+      \mathbf{x}_i^{(k)} = \arg\min_{\mathbf{x}_i \in \mathbb{R}^{n_i}} \left\{f_i(\mathbf{x}_i) + (\mathbf{A}_i^\top\underline{\mathbf{u}^{(k-1)}})^\top \mathbf{x}_i\right\}, \quad i = 1, \ldots, B
+      $$
+
+因此可以汇总该种方法的特性. 
+- 劣势:
+  -  **Stragger effect**. 由于每一个 block 的计算时间可能不一样, 因此在每一次迭代中, 若有节点的子问题特别困难或通行等出现问题, 那么其余的 worker 即使已经完成了计算, 也只能等着该节点完成后才能进行下一步的迭代. 因此 straggler effect 就会导致整体的效率降低.
 - 优势: 
-  - 通信量小: 每轮每个 worker 只需要上下传输一个 block 的结果. 并且事实上, 中心只需要给每个 worker 传入 $\mathbf{u} \in \mathbb{R}^m$ 该 $m$ 维 (即约束个数) 的大小, 而 worker 也只需要完整地将 $\mathbf{A}
+  - **通信量小**. 每轮每个 worker 只需要传输 $\mathbf{A}_i \mathbf{x}_i^{(k)}$ 和 $\mathbf{u}^{(k)}$ 两个 $m$ (即约束维度) 维的向量, 其往往远小于 block $\mathbf{x}_i$ 的维度 $n_i$. 因此通信量较小, 适合于通信受限的分布式系统.
+  - **隐私保护**. 每个 worker 只需要将 $\mathbf{A}_i \mathbf{x}_i^{(k)}$ 这样的 block 结果上传给 master, 而不需要上传具体的 $\mathbf{x}_i$ 或 local objective $f_i$ 的任何信息. 节点之间同样也不需要直接进行通信. 因此该方法适合于隐私受限的分布式系统.
+  - **可扩展**. 中心的计算复杂度不会因节点数的增加而增加. 
+
+***Price Coordination Interpretation** (Vandenberghe)*
+
+此外, 进一步沿用当前的现实例子进一步加深对于对偶问题的理解. 
+- 对于每个单位 $i$, 其可以自行决定自己的 local decision $\mathbf{x}_i$, 从而得到 local cost $f_i(\mathbf{x}_i)$. 但是由于整个系统的资源是有限的, 因此每个单位的决策都必须满足一个全局的约束 $\sum_{i=1}^B \mathbf{A}_i \mathbf{x}_i \leq \mathbf{b}$.  其中 $\mathbf{b}\in \mathbb{R}^m$ 中的每一行就代表了一个资源的总量 (例如电力, 总带宽, 总预算等). 
+- 对应的对偶变量 $\mathbf{u} \in \mathbb{R}^m_+$, 其就相当于每一项资源的单位价格. 回顾每个 worker 解决的子问题
+    $$
+    \min_{\mathbf{x}_i \in \mathbb{R}^{n_i}} \left\{f_i(\mathbf{x}_i) + \mathbf{u}^\top \mathbf{A}_i \mathbf{x}_i\right\}
+    $$
+    其第二项 $\sum_j u_j (\mathbf{A}_i \mathbf{x}_i)_j$ 就相当于每个单位 $i$ 需要为自己使用的各项资源的用量 $(\mathbf{A}_i \mathbf{x}_i)_j$, 以单价 $u_j$ 进行支付的成本. 因此, 每个单位 $i$ 在做决策时, 不仅要考虑自己的 local cost $f_i(\mathbf{x}_i)$, 还要考虑自己使用的资源所带来的成本 $\mathbf{u}^\top \mathbf{A}_i \mathbf{x}_i$. 
+
+
+- 而 master 的更新步骤
+    $$
+    \mathbf{u}^{(k)} = \Pi_{\mathbb{R}_+^m}\left(\mathbf{u}^{(k-1)} + t_k \left(\sum_{i=1}^B \mathbf{A}_i \mathbf{x}_i^{(k)} - \mathbf{b}\right)\right)
+    $$
+    可以理解为一个价格调整的过程. 定义 slack variable $\mathbf{s} =\mathbf{b} -  \sum_{i=1}^B \mathbf{A}_i \mathbf{x}_i$,  其中 $\mathbf{s} \in \mathbb{R}^m$ 中的每一项 $s_j$ 就代表了第 $j$ 个资源的剩余量. 当 $s_j < 0$, 就说明该项资源已经被过度使用了, 因此 master 会以 $t_k$ 的幅度增加该资源的价格 $u_j$, 从而在下一轮迭代中, 促使各个单位减少对该资源的使用. 反之亦然. 此外, 整个系统还会加上一个价格触底的保护机制, 即 $u_j$ 不会被调整到负数 (倒贴钱), 从而保证了价格的合理性.
