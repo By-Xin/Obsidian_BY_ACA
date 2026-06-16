@@ -134,12 +134,15 @@ $$
 \end{aligned}
 $$
 其中 $t_k$ 是 step size, 可以通过正常的 line search 等方法进行选择.
+- 第一步 primal update, 就是最小化在当前迭代下原问题 $\min_{\mathbf{x} \in \mathbb{R}^n} f(\mathbf{x})$ 的 Lagrangian (只相差了一个与优化变量 $\mathbf{x}$ 无关的常数项 $-\mathbf{u}^\top \mathbf{b}$). 通过该步, 就得到了当前迭代下的 dual function. 并且证明出, 最优点 $\mathbf{x}^{(k)}$ 对应的 $\mathbf{A}\mathbf{x}^{(k)} - \mathbf{b}$ 就是当前迭代下 dual function 的梯度.
+- 第二步 dual update, 就是根据第一步得到的梯度信息, 对 dual function 进行梯度上升, 使得 dual function 的值不断增加, 从而逐渐逼近其最优值.
 
 在 strong duality 被满足的条件下, 当求得 $\mathbf{u}^\star = \arg\max g(\mathbf{u})$ 时, 由此诱导的
 $$
 \mathbf{x}^\star(\mathbf{u}) = \arg\min_{\mathbf{x} \in \mathbb{R}^n} \left\{f(\mathbf{x}) + (\mathbf{A}^\top \mathbf{u}^\star)^\top \mathbf{x}\right\}
 $$
 将自动成为原问题的最优解. 
+
 
 
 ***Convergence Analysis***
@@ -269,3 +272,216 @@ $$
     \mathbf{u}^{(k)} = \Pi_{\mathbb{R}_+^m}\left(\mathbf{u}^{(k-1)} + t_k \left(\sum_{i=1}^B \mathbf{A}_i \mathbf{x}_i^{(k)} - \mathbf{b}\right)\right)
     $$
     可以理解为一个价格调整的过程. 定义 slack variable $\mathbf{s} =\mathbf{b} -  \sum_{i=1}^B \mathbf{A}_i \mathbf{x}_i$,  其中 $\mathbf{s} \in \mathbb{R}^m$ 中的每一项 $s_j$ 就代表了第 $j$ 个资源的剩余量. 当 $s_j < 0$, 就说明该项资源已经被过度使用了, 因此 master 会以 $t_k$ 的幅度增加该资源的价格 $u_j$, 从而在下一轮迭代中, 促使各个单位减少对该资源的使用. 反之亦然. 此外, 整个系统还会加上一个价格触底的保护机制, 即 $u_j$ 不会被调整到负数 (倒贴钱), 从而保证了价格的合理性.
+
+## Augmented Lagrangian Method (ALM) / Method of Multipliers
+
+ALM 是一类解决有约束问题的经典方法. 其既可以是在 Dual Ascent 的视角出发, 视作是其对 primal 的一种 regularization; 可以看作是对 penalty method 的一种改进, 通过引入对偶变量来避免 penalty method 中的数值不稳定问题. ALM 的细致分析将单独进行展开, 这里现只单纯在 dual decomposition 的基础上, 介绍一下 ALM 的基本思想.
+
+### Intuition of ALM
+
+回忆在前面的 Dual Ascent 中, 若对偶目标函数期望达到线性收敛, 则需要对偶目标函数光滑且强凸, 这对应着原函数需要同时满足强凸和光滑.  因此, 一种理解 ALM 的 motivation 的思路就是, 通过在 primal problem 中引入一个 quadratic penalty term 来增强原函数的强凸性, 从而放松对于原函数 $f$ 的要求.  
+
+对于原始问题
+$$
+\begin{aligned}
+\min_{\mathbf{x} \in \mathbb{R}^n} &\quad f(\mathbf{x}) \\
+\text{s.t.} &\quad \mathbf{A}\mathbf{x} = \mathbf{b}
+\end{aligned}
+$$
+其对应的 ALM 的 primal 为:
+$$
+\begin{aligned}
+\min_{\mathbf{x} \in \mathbb{R}^n} &\quad f(\mathbf{x}) + \frac{\rho}{2}\|\mathbf{A}\mathbf{x} - \mathbf{b}\|_2^2 \\
+\text{s.t.} &\quad \mathbf{A}\mathbf{x} = \mathbf{b}
+\end{aligned}
+$$
+其中 $\rho > 0$ 是一个 penalty parameter. 
+
+
+可以看到, 这两个问题在可行域上是完全等价的. 然而通过额外引入的二次项, 使得 ALM 的 primal objective function 具有更好的性质. 
+- 例如, 考虑其 Hessian:
+    $$
+    \nabla^2 f(\mathbf{x}) + \rho \mathbf{A}^\top \mathbf{A}
+    $$
+    其中 $\rho \mathbf{A}^\top \mathbf{A} \succ 0$ 只要 $\mathbf{A}$ 是 full column rank 的. 这也就使得 primal objective function 不论原函数 $f$ 的性质如何, 都具有强凸性. 
+
+### ALM as Dual Ascent of Augmented Primal Problem
+
+故对 Augmented primal problem 进行 dual decomposition, 则其 primal update 的步骤为:
+$$
+\begin{aligned}
+\mathbf{x}^{(k)} &= \arg\min_{\mathbf{x} \in \mathbb{R}^n} \left\{f(\mathbf{x}) + \frac{\rho}{2}\|\mathbf{A}\mathbf{x} - \mathbf{b}\|_2^2 + (\mathbf{A}^\top \mathbf{u}^{(k-1)})^\top \mathbf{x}\right\} \\
+\mathbf{u}^{(k)} &= \mathbf{u}^{(k-1)} + \rho \cdot(\mathbf{A}\mathbf{x}^{(k)} - \mathbf{b})
+\end{aligned}
+$$
+
+注意到, 这里的步长 $t_k$ 已经被固定为 $\rho$. 下将证明, 这样的选择会恰好让每次的 dual 迭代点满足原始问题的 Stationarity 最优条件:
+- 由于 $\mathbf{x}^{(k)}$ 是 primal update 的最优点, 则其满足该问题的 KKT 条件, 即
+    $$
+    \begin{aligned}
+    \mathbf{0} &\in \partial f(\mathbf{x}^{(k)}) + \rho \mathbf{A}^\top (\mathbf{A}\mathbf{x}^{(k)} - \mathbf{b}) + \mathbf{A}^\top \mathbf{u}^{(k-1)} \\
+    & = \partial f(\mathbf{x}^{(k)}) + \mathbf{A}^\top \underbrace{\left(\mathbf{u}^{(k-1)} + \rho (\mathbf{A}\mathbf{x}^{(k)} - \mathbf{b})\right)}_{\text{dual update}} \\
+    & = \partial f(\mathbf{x}^{(k)}) + \mathbf{A}^\top \mathbf{u}^{(k)}
+    \end{aligned}
+    $$
+- 由上式可见, 每一次迭代的 dual variable $\mathbf{u}^{(k)}$ 只要按照步长 $\rho$ 进行更新, 就能保证 primal variable $\mathbf{x}^{(k)}$ 满足原始问题的 stationarity 条件. 
+
+同时另一方面, dual update 也起到了对于 primal variable 的 feasibility 的促进作用. 当且仅当 primal variable $\mathbf{x}^{(k)}$ 满足可行性条件 $\mathbf{A}\mathbf{x}^{(k)} = \mathbf{b}$ 时, dual variable $\mathbf{u}^{(k)}$ 才会保持不变. 
+
+总的而言, 考虑原始问题 $\min f(\mathbf{x}) \text{ s.t. } \mathbf{A}\mathbf{x} = \mathbf{b}$ 的 KKT 条件:
+- Stationary: $\mathbf{0} \in \partial f(\mathbf{x}) + \mathbf{A}^\top \mathbf{u}$ 这在 ALM 中每一个 primal update 的步骤中都被满足了.
+- Feasibility: $\mathbf{A}\mathbf{x} = \mathbf{b}$ 这在 ALM 中通过 dual update 中 asymptotically 满足.
+
+因此通过 ALM 的 primal update 和 dual update 的交替迭代, 就能同时满足原始问题的 stationarity 和 feasibility 条件, 从而最终收敛到原始问题的最优解. 进而, 只要 $f$ 满足一些 mild conditions 等, 就可以满足 strong duality, 从而保证 ALM 的收敛性.  这相比于 Dual Ascent 来说, 其对于原函数 $f$ 的要求被大大放宽. 
+
+然而, ALM 的 primal update 中引入了一个 quadratic penalty term, 考虑前述的分块结构, 可以观察到
+$$
+\begin{aligned}
+\frac{\rho}{2}\|\mathbf{A}\mathbf{x} - \mathbf{b}\|_2^2 &= \frac{\rho}{2}\left\|\sum_{i=1}^B \mathbf{A}_i \mathbf{x}_i - \mathbf{b}\right\|_2^2 \\
+&= \frac{\rho}{2}\left[\sum_{i} \|\mathbf{A}_i \mathbf{x}_i\|_2^2 + 2\sum_{i < j} (\mathbf{A}_i \mathbf{x}_i)^\top (\mathbf{A}_j \mathbf{x}_j) - 2\sum_i (\mathbf{A}_i \mathbf{x}_i)^\top \mathbf{b} + \|\mathbf{b}\|_2^2\right]
+\end{aligned}
+$$
+而这里由于 $\sum_{i<j}\cdot$ 这一项的存在, 导致不同 block 之间的耦合, 从而无法进行分解. 因此 ALM 的代价是破坏了 decomposability, 从而无法进行分布式优化. 这也为后文的 ADMM 的设计提供了一个重要的启发.
+
+
+## Alternating Direction Method of Multipliers (ADMM)
+
+ADMM 同样也是在有约束优化领域的重要经典方法. 其主体内容也将详细的进行展开分析. 这里同样也只是站在上面提到的 ALM 的基础上, 尝试通过进一步的改进, 整合 ALM 和 Dual Decomposition 的优势.
+
+### Intuition of ADMM
+
+考虑一个两块分块的优化问题:
+$$
+\begin{aligned}
+\min_{\mathbf{x}, \mathbf{z}} &\quad f(\mathbf{x}) + g(\mathbf{z}) \\
+\text{s.t.} &\quad \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{z} = \mathbf{c}
+\end{aligned}
+$$
+
+这样的问题在很多现实场景中都非常常见, 例如:
+- 在 Lasso regression 等中, $f$ 是损失函数, $g$ 是正则项, 约束 $\mathbf{x} = \mathbf{z}$.
+- 在复合优化中, $f$ 是 smooth function, $g$ non-smooth 但 proximal-friendly.
+- 在分布式优化中, $f$ 是 local objective, $g$ 是 global objective, 约束 $\mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{z} = \mathbf{c}$ 则是耦合约束.
+
+沿用前面 ALM 的思路, 对其进行 Augmentation:
+$$
+\begin{aligned}
+\min_{\mathbf{x}, \mathbf{z}} &\quad f(\mathbf{x}) + g(\mathbf{z}) + \frac{\rho}{2}\|\mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{z} - \mathbf{c}\|_2^2 \\
+\text{s.t.} &\quad \mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{z} = \mathbf{c}
+\end{aligned}
+$$
+这个优化问题对应的 Lagrangian function 为:
+$$
+L_\rho(\mathbf{x}, \mathbf{z}, \mathbf{u}) = f(\mathbf{x}) + g(\mathbf{z}) + \frac{\rho}{2}\|\mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{z} - \mathbf{c}\|_2^2 + \mathbf{u}^\top (\mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{z} - \mathbf{c})
+$$
+
+回顾, 若沿用 ALM 的 primal update 的步骤, 则需要同时对 $\mathbf{x}$ 和 $\mathbf{z}$ 进行联合优化, 即
+$$
+\begin{aligned}
+(\mathbf{x}^{(k)}, \mathbf{z}^{(k)}) &= \arg\min_{\mathbf{x}, \mathbf{z}} L_\rho(\mathbf{x}, \mathbf{z}, \mathbf{u}^{(k-1)}) \\
+&= \arg\min_{\mathbf{x}, \mathbf{z}} \left\{f(\mathbf{x}) + g(\mathbf{z}) + \frac{\rho}{2}\|\mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{z} - \mathbf{c}\|_2^2 + (\mathbf{u}^{(k-1)})^\top (\mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{z} - \mathbf{c})\right\}
+\end{aligned}
+$$
+然而同样地, 由于 $\frac{\rho}{2}\|\mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{z} - \mathbf{c}\|_2^2$ 这一项的存在, 导致 $\mathbf{x}$ 和 $\mathbf{z}$ 之间的耦合, 从而无法进行分解.
+
+因此 ADMM 的核心思想就是, 不再联合求解 primal Lagrangian 的最小值, 而是通过 alternating optimization 的方式, 交替地对 $\mathbf{x}$ 和 $\mathbf{z}$ 进行优化. 具体而言, ADMM 的 primal update 的步骤为:
+$$
+\begin{aligned}
+\mathbf{x}^{(k)} &= \arg\min_{\mathbf{x}} L_\rho(\mathbf{x}, \mathbf{z}^{(k-1)}, \mathbf{u}^{(k-1)}), \\
+\mathbf{z}^{(k)} &= \arg\min_{\mathbf{z}} L_\rho(\mathbf{x}^{(k)}, \mathbf{z}, \mathbf{u}^{(k-1)}), \\
+\end{aligned}
+$$
+然后再进行 dual update:
+$$
+\mathbf{u}^{(k)} = \mathbf{u}^{(k-1)} + \rho \cdot (\mathbf{A}\mathbf{x}^{(k)} + \mathbf{B}\mathbf{z}^{(k)} - \mathbf{c}).
+$$
+
+> 注意, 这里的 decomposition 是通过交替更新实现的, 应当区分其与 Dual Decomposition 中的 parallel decomposition. 
+
+因此, ADMM 对于一般的温和条件
+- 不要求 $A, B$ 是 full column rank
+- 不要求 $f, g$ 是强凸或可微的
+-  只需要是正常凸, 约束有可行解等即可
+
+都能保证收敛到原始问题的最优解, 并且同时和步长 $\rho$ 无关, 其只会影响收敛的速度但不会影响收敛的结果. 并且一般有如下收敛保证:
+- Feasibility Convergence: $\mathbf{r}^{(k)} = \mathbf{A}\mathbf{x}^{(k)} + \mathbf{B}\mathbf{z}^{(k)} - \mathbf{c} \to \mathbf{0}$.
+- Objective Convergence: $f(\mathbf{x}^{(k)}) + g(\mathbf{z}^{(k)}) \to f^\star + g^\star$.
+  - 注意, 这里只保证了 objective value 的收敛, 并不保证 primal variable $\mathbf{x}^{(k)}, \mathbf{z}^{(k)}$ 的收敛. 例如, 在某些 degenerate 的问题中, 可能存在多个 primal optimal solution, 从而导致 primal variable 的震荡, 但其 objective value 却是收敛的. 
+- Dual Convergence: $\mathbf{u}^{(k)} \to \mathbf{u}^\star$.
+
+### Scaled Form of ADMM
+
+Scaled Form ADMM 和 ADMM 在本质上完全等价. 其事实上就是在对 $L_\rho(\mathbf{x}, \mathbf{z}, \mathbf{u})$ 进行适当的变量替换进行配方, 以得到一个更为简洁的形式.
+
+通常引入 scaled dual variable $\mathbf{w} := \mathbf{u}/\rho$. 则 Lagrangian 可以写为:
+$$
+L_\rho(\mathbf{x}, \mathbf{z}, \mathbf{w}) = f(\mathbf{x}) + g(\mathbf{z}) + \frac{\rho}{2}\|\mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{z} - \mathbf{c} + \mathbf{w}\|_2^2 - \frac{\rho}{2}\|\mathbf{w}\|_2^2
+$$
+因此 ADMM 的更新公式可以用 scaled dual variable 来表示, 从而得到更为简洁的形式:
+$$
+\begin{aligned}
+\mathbf{x}^{(k)} &= \arg\min_{\mathbf{x}} f(\mathbf{x}) + \frac{\rho}{2}\|\mathbf{A}\mathbf{x} + \mathbf{B}\mathbf{z}^{(k-1)} - \mathbf{c} + \mathbf{w}^{(k-1)}\|_2^2, \\
+\mathbf{z}^{(k)} &= \arg\min_{\mathbf{z}} g(\mathbf{z}) + \frac{\rho}{2}\|\mathbf{A}\mathbf{x}^{(k)} + \mathbf{B}\mathbf{z} - \mathbf{c} + \mathbf{w}^{(k-1)}\|_2^2, \\
+\mathbf{w}^{(k)} &= \mathbf{w}^{(k-1)} + (\mathbf{A}\mathbf{x}^{(k)} + \mathbf{B}\mathbf{z}^{(k)} - \mathbf{c})
+\end{aligned}
+$$
+
+不过确实在进行缩放之后, $\mathbf{w}$ 的起到了 running sum of residuals 的作用, 用来记录历史上所有约束违反的总和.
+
+### Example: Alternating Projections
+
+Alternating Projections 是一种经典的 ADMM 应用场景. 
+
+给定两个凸集 $C, D \subseteq \mathbb{R}^n$, 优化的目标是寻找两几个的交集中的点. 若引入 indicator function:
+$$
+I_\Omega(\boldsymbol{x}) = 
+\begin{cases}
+0, & \boldsymbol{x} \in \Omega \\
+\infty, & \boldsymbol{x} \notin \Omega
+\end{cases}
+$$
+则可以将寻找交集中的点的问题转化为如下优化问题:
+$$
+\min_{\boldsymbol{x}} I_C(\boldsymbol{x}) + I_D(\boldsymbol{x}).
+$$
+
+尝试使用 ADMM 解决该问题. 对应标准形式, 则有
+$$
+\min_{\boldsymbol{x}, \boldsymbol{y}} f(\boldsymbol{x}) + g(\boldsymbol{y}) \quad \text{s.t.} \quad \boldsymbol{x} = \boldsymbol{y}.
+$$
+其中 $f(\boldsymbol{x}) = I_C(\boldsymbol{x}), g(\boldsymbol{y}) = I_D(\boldsymbol{y})$.
+
+代入 ADMM 的更新公式, 则有
+$$
+\begin{aligned}
+\boldsymbol{x}^{(k)} &= \arg\min_{\boldsymbol{x}} I_C(\boldsymbol{x}) + \frac{\rho}{2}\|\boldsymbol{x} - \boldsymbol{y}^{(k-1)} + \boldsymbol{w}^{(k-1)}\|_2^2, \\
+\boldsymbol{y}^{(k)} &= \arg\min_{\boldsymbol{y}} I_D(\boldsymbol{y}) + \frac{\rho}{2}\|\boldsymbol{x}^{(k)} - \boldsymbol{y} + \boldsymbol{w}^{(k-1)}\|_2^2, \\
+\boldsymbol{w}^{(k)} &= \boldsymbol{w}^{(k-1)} + (\boldsymbol{x}^{(k)} - \boldsymbol{y}^{(k)}).
+\end{aligned}
+$$
+
+观察这里的更新公式, 可以发现
+$$
+\arg\min_{\boldsymbol{x}} I_C(\boldsymbol{x}) + \frac{\rho}{2}\|\boldsymbol{x} - \boldsymbol{y}^{(k-1)} + \boldsymbol{w}^{(k-1)}\|_2^2 
+\iff
+\arg\min_{\boldsymbol{x} \in C} \frac{\rho}{2}\|\boldsymbol{x} - \boldsymbol{y}^{(k-1)} + \boldsymbol{w}^{(k-1)}\|_2^2.
+$$
+而后者恰恰是将点 $\boldsymbol{y}^{(k-1)} - \boldsymbol{w}^{(k-1)}$ 投影到集合 $C$ 上的数学定义. 对于 $ \boldsymbol{y}^{(k)}$ 同理. 因此我们的更新公式可以写作:
+$$
+\begin{aligned}
+\boldsymbol{x}^{(k)} &= \mathcal{P}_C(\boldsymbol{y}^{(k-1)} - \boldsymbol{w}^{(k-1)}), \\
+\boldsymbol{y}^{(k)} &= \mathcal{P}_D(\boldsymbol{x}^{(k)} + \boldsymbol{w}^{(k-1)}), \\
+\boldsymbol{w}^{(k)} &= \boldsymbol{w}^{(k-1)} + (\boldsymbol{x}^{(k)} - \boldsymbol{y}^{(k)}).
+\end{aligned}
+$$
+
+综上, 这样的 ADMM 其实就相当于交替进行集合 $C$ 和集合 $D$ 上的投影, 而投影对许多集合都有简单的闭式解, 因此极大地简化了求解过程.
+
+若再对比对于该问题的经典 von Neumann 算法, 则其迭代公式为
+$$
+\boldsymbol{x}^{(k)} = \mathcal{P}_C(\boldsymbol{y}^{(k-1)}), \quad 
+\boldsymbol{y}^{(k)} = \mathcal{P}_D(\boldsymbol{x}^{(k)}).
+$$
+其唯一的区别在于 ADMM 引入了一个 dual variable $\boldsymbol{w}$ 作为当前位置的  offset, 这体现了通过历史偏差的累积这一信息, 对当前投影进行了修正.
+
+
