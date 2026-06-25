@@ -7,7 +7,7 @@
 GLinSAT 是一个可以将任意神经网络输出 $\mathbf{c} \in \mathbb{R}^{n'}$ 映射到满足线性约束的可行解 $\mathbf{x} \in \mathbb{R}^{n'}$ 的可微映射. 其核心是将原始的线性规划问题 (LP) 转化为一个对偶问题, 并使用 Nesterov 加速梯度下降法求解对偶问题, 从而得到原始问题的最优解.
 
 
-![](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260623200941.png)
+![](https://arxiv.org/html/2409.17500v2/x1.png)
 
 ## Methodology
 
@@ -474,3 +474,27 @@ $$
           - 这里 $\frac{(\mathbf{s}^{k+1})^\top \mathbf{s}^{k+1}}{(\mathbf{s}^k)^\top \mathbf{s}^k}$ 是 CG 方法中用于保证共轭方向的系数. 其可以通过 Gram-Schmidt 正交化的方式得到, 以保证 $\mathbf{p}^{k+1}$ 与 $\mathbf{p}^k$ 在 $\mathbf{H}$ 诱导的内积下正交.
     - 可以看到, 通过引入 CG 方法, 我们完全摒弃了矩阵求逆, 而是化成了一系列的矩阵乘法.而且中间的 $\mathbf{D}$ 还是对角矩阵, 其实质上进一步被简化为标量乘法. 计算量被大幅简化.           
 
+## Experiments
+
+### Portfolio Optimization
+
+对于 Portfolio Optimization 问题, 我们的目标是最大化投资组合的收益, 同时满足风险约束. 其总体的 pipeline 如下:
+
+$$
+\text{Market Data}
+\longrightarrow
+\text{NN}
+\longrightarrow
+\mathbf c
+\longrightarrow
+\text{GLinSAT}
+\longrightarrow
+\mathbf x
+\longrightarrow
+\text{Portfolio Performance}
+$$
+
+其中 $\mathbf{x} \in [0, 1]^n$ 是投资组合的权重向量, 并假定如下约束:
+- 资金全部投入, 即 $\sum_{j=1}^n x_j = 1$.
+- 给定偏好资产集合 $\mathcal{S} \subseteq \{1, 2, \ldots, n\}$, 以及配置权重下限 $q \in [0, 1]$, 要求偏好资产配置份额不低于 $q$, 即 $\sum_{j \in \mathcal{S}} x_j \geq q$. 文中取 $q = 0.5$.
+- 不允许做空或杠杆, 即 $0 \leq x_j \leq 1, \forall j$.
