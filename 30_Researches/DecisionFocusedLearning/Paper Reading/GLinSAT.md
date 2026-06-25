@@ -430,9 +430,10 @@ $$
     \frac{\partial l}{\partial\mathbf y}
     \right)^\top \iff \mathbf{H}\mathbf{v} = \mathbf{r}^\top
     $$
-    从上述线性系统中求解出 $\mathbf{v}$. 
+    从上述线性系统中求解出 $\mathbf{v}$. 其中为方便起见, 记 $\mathbf{H} = \frac{\partial\mathbf h}{\partial\mathbf y}$, $\mathbf{r} = \frac{\partial l}{\partial\mathbf x} \frac{\partial\mathbf x}{\partial\mathbf y} + \frac{\partial l}{\partial\mathbf y}$.
     - 由于 $h(\mathbf{y}) = \mathbf{A} \mathbf{x}(\mathbf{y}) - \mathbf{b}$, 故将具体的表达式代入整理, 则上述线性系统 LHS 的系数为
     $$
+    \mathbf{H} = 
     \frac{\partial\mathbf h}{\partial\mathbf y}
     =
     \mathbf A
@@ -440,11 +441,36 @@ $$
     \left(
     \theta\mathbf x\odot(\mathbf u-\mathbf x)
     \right)
-    \mathbf A^\top.
+    \mathbf A^\top := \mathbf{A} \mathbf{D} \mathbf{A}^\top.
     $$
-    - 且 $\frac{\partial\mathbf h}{\partial\mathbf y}$ 是对称半正定的. 若进一步 $\mathbf{A}$ 是行满秩, 则是对称正定的. 因此可以使用 CG 方法高效求解该线性系统, 以得到 $\mathbf{v}$. 这是因为, 上面我们展示了, $\mathbf{H} = \mathbf{A} \operatorname{Diag} \mathbf{A}^\top$ 是对称正定的, 因此求解 $\mathbf{H}\mathbf{v} = \mathbf{r}^\top$ 就等价于求解 QP
+    - 且 $\frac{\partial\mathbf h}{\partial\mathbf y}$ 是对称半正定的. 若进一步 $\mathbf{A}$ 是行满秩, 则是对称正定的. 因此可以使用 CG 方法高效求解该线性系统, 以得到 $\mathbf{v}$. 这是因为, 上面我们展示了, $\mathbf{H} = \mathbf{A} \mathbf{D} \mathbf{A}^\top$ 是对称正定的, 因此求解 $\mathbf{H}\mathbf{v} = \mathbf{r}^\top$ 就等价于求解 QP
         $$
         \min_{\mathbf{v}} \frac{1}{2} \mathbf{v}^\top \mathbf{H} \mathbf{v} - \mathbf{r}^\top \mathbf{v}
         $$
         而这样的方法就很适合使用 CG 方法.
+
+    - Conjugate Gradient (CG) 方法是求解对称正定线性系统的经典方法. 其基本思想就是沿着共轭方向去进行搜索迭代, 而共轭方向可以简单理解为由 $\mathbf{H}$ 诱导的正交方向. 其具体迭代过程如下:
+      - 初始化 $\mathbf{v}^0 = 0$, 初始化残差 $\mathbf{s}^0 = \mathbf{r} - \mathbf{H} \mathbf{v}^0 = \mathbf{r}$, 初始化搜索方向 $\mathbf{p}^0 = \mathbf{s}^0$. 即第一步沿着负梯度方向进行搜索.
+      - 在第 $k$ 步迭代中, 当前迭代点为 $\mathbf{v}^k$, 搜索方向为 $\mathbf{p}^k$, 步长为 $\gamma^k$, 我们希望沿着直线 $\mathbf{v}^{k+1} = \mathbf{v}^k + \gamma^k \mathbf{p}^k$ 进行搜索, 使得 $\mathbf{v}^{k+1}$ 最小化二次函数 $\min_\gamma Q(\mathbf{v}) = \frac{1}{2} \mathbf{v}^\top \mathbf{H} \mathbf{v} - \mathbf{r}^\top \mathbf{v}$. 故可以求得第 $k$ 步的步长为
+        $$
+        \gamma^k = \frac{(\mathbf{s}^k)^\top \mathbf{s}^k}{(\mathbf{p}^k)^\top \mathbf{H} \mathbf{p}^k}.
+        $$
+        进而以此更新迭代点
+        $$
+        \mathbf{v}^{k+1} = \mathbf{v}^k + \gamma^k \mathbf{p}^k.
+        $$
+        更新残差
+        $$
+        \mathbf{s}^{k+1} = \mathbf{s}^k - \gamma^k \mathbf{H} \mathbf{p}^k.
+        $$
+      - 检查迭代停止条件
+          $$
+          \frac{\|\mathbf{s}^{k+1}\|}{\|\mathbf{r}\|} \leq \epsilon
+          $$
+          若满足, 则停止迭代, 否则继续迭代, 更新搜索方向:
+          $$
+          \mathbf{p}^{k+1} = \mathbf{s}^{k+1} + \frac{(\mathbf{s}^{k+1})^\top \mathbf{s}^{k+1}}{(\mathbf{s}^k)^\top \mathbf{s}^k} \mathbf{p}^k.
+          $$
+          - 这里 $\frac{(\mathbf{s}^{k+1})^\top \mathbf{s}^{k+1}}{(\mathbf{s}^k)^\top \mathbf{s}^k}$ 是 CG 方法中用于保证共轭方向的系数. 其可以通过 Gram-Schmidt 正交化的方式得到, 以保证 $\mathbf{p}^{k+1}$ 与 $\mathbf{p}^k$ 在 $\mathbf{H}$ 诱导的内积下正交.
+    - 可以看到, 通过引入 CG 方法, 我们完全摒弃了矩阵求逆, 而是化成了一系列的矩阵乘法.而且中间的 $\mathbf{D}$ 还是对角矩阵, 其实质上进一步被简化为标量乘法. 计算量被大幅简化.           
 
