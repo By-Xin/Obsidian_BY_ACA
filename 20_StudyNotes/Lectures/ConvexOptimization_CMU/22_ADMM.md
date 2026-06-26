@@ -51,7 +51,7 @@ $$
 
 不过注意这里无法自动给出 primal iterate convergence, 也就是 $\mathbf{x}^{k} \to \mathbf{x}^\star$ 和 $\mathbf{z}^{k} \to \mathbf{z}^\star$, 这需要其他额外的例如强凸性等条件来保证.
 
-## Examples and Practicalities of ADMM
+## Discussions
 
 ### Connection to Proximal Operators
 
@@ -76,7 +76,12 @@ $$
 \end{aligned}
 $$
 
+### Practical Considerations
 
+在实践当中, ADMM 有时会遇到如下问题.
+1. ADMM 通常会快速收敛到一个还不错的解, 但是在追求高精度时会变慢;
+2. ADMM 的收敛速度对 $\rho$ 的选择非常敏感, 需要进行调参;
+3. 对同一个原问题采用不同的分解方式, 会得到不同的 ADMM 算法, 其收敛速度也会不同.
 
 ## Consensus  ADMM
 
