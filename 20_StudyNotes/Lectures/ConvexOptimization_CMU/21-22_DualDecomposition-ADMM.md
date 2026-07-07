@@ -428,7 +428,9 @@ $$
 
 不过确实在进行缩放之后, $\mathbf{w}$ 的起到了 running sum of residuals 的作用, 用来记录历史上所有约束违反的总和.
 
-### Example: Alternating Projections
+### Examples 
+
+#### Alternating Projections
 
 Alternating Projections 是一种经典的 ADMM 应用场景. 
 
@@ -485,3 +487,165 @@ $$
 其唯一的区别在于 ADMM 引入了一个 dual variable $\boldsymbol{w}$ 作为当前位置的  offset, 这体现了通过历史偏差的累积这一信息, 对当前投影进行了修正.
 
 
+#### Group Lasso
+
+给定 $\mathbf{y} \in \mathbb{R}^n, \mathbf{X} \in \mathbb{R}^{n\times p}$, 以及 $\boldsymbol{\beta} \in \mathbb{R}^p$, 其中 $\boldsymbol{\beta}$ 被分为 $G$ 个子向量 (groups), 记为 $\boldsymbol{\beta}_1, \boldsymbol{\beta}_2, \ldots, \boldsymbol{\beta}_G$, 其中 $\boldsymbol{\beta}_g \in \mathbb{R}^{p_g}$ 且 $\sum_{g=1}^{G} p_g = p$. Group Lasso 的优化问题可以写为:
+$$
+\min_{\boldsymbol{\beta}} \frac{1}{2} \|\mathbf{y} - \mathbf{X} \boldsymbol{\beta}\|_2^2 + \lambda \sum_{g=1}^{G} c_g\|\boldsymbol{\beta}_g\|_2
+$$
+
+直接对该问题进行求解可能会比较困难, 因为平方损失和不光滑的组范数正则化项混合在一起. 但是我们可以通过引入一个新的变量 $\boldsymbol{\alpha}$ 来将问题分解为两个部分:
+$$
+\begin{aligned}
+\min_{\boldsymbol{\beta}, \boldsymbol{\alpha}} & \quad \frac{1}{2} \|\mathbf{y} - \mathbf{X} \boldsymbol{\beta}\|_2^2 + \lambda \sum_{g=1}^{G} c_g\|\boldsymbol{\alpha}_g\|_2 \\
+\text{s.t.} & \quad \boldsymbol{\alpha} = \boldsymbol{\beta}
+\end{aligned}
+$$
+
+代入 ADMM 的迭代更新公式, 我们可以得到:
+1. $\boldsymbol{\beta}$-update:
+    $$
+    \boldsymbol{\beta}^{k} = \arg\min_{\boldsymbol{\beta}} \left\{ \frac{1}{2} \|\mathbf{y} - \mathbf{X} \boldsymbol{\beta}\|_2^2 + \frac{\rho}{2} \|\boldsymbol{\beta} - \boldsymbol{\alpha}^{k-1} + \mathbf{w}^{k-1}\|_2^2 \right\} = (\mathbf{X}^\top \mathbf{X} + \rho I)^{-1} (\mathbf{X}^\top \mathbf{y} + \rho (\boldsymbol{\alpha}^{k-1} - \mathbf{w}^{k-1}))
+    $$
+    这是 ridge regression 的闭式解.
+
+
+2. $\boldsymbol{\alpha}$-update:
+    $$
+    \boldsymbol{\alpha}_g^{k} = \arg\min_{\boldsymbol{\alpha}_g} \left\{ \lambda c_g \|\boldsymbol{\alpha}_g\|_2 + \frac{\rho}{2} \|\boldsymbol{\beta}_g^{k} - \boldsymbol{\alpha}_g + \mathbf{w}_g^{k-1}\|_2^2 \right\} = R_{\lambda c_g / \rho}(\boldsymbol{\beta}_g^{k} + \mathbf{w}_g^{k-1})
+    $$
+    其中
+    $$
+    R_t(\mathbf{v}) = \left(1 - \frac{t}{\|\mathbf{v}\|_2}\right)_+ \mathbf{v}
+    $$
+    是 $\ell_2$-norm 的 soft-thresholding proximal operator. 其作用是, 如果输入向量 $\mathbf{v}$ 的模长小于阈值 $t$, 则整组被置为零, 否则将其模长收缩 $t$.
+
+3. $\mathbf{w}$-update:
+    $$
+    \mathbf{w}^{k} = \mathbf{w}^{k-1} + (\boldsymbol{\beta}^{k} - \boldsymbol{\alpha}^{k})
+    $$
+
+
+说明:
+1. 在具体计算时, 可以对 $\mathbf{X}^\top \mathbf{X} + \rho I$ 进行一次 Cholesky 分解, 然后在每次迭代中使用该分解来高效地求解 $\boldsymbol{\beta}$-update.
+2. 只要某个范数的 prox 乘子是给定的, 都可以高效地进行推广计算. 
+
+#### Sparse + Low-Rank Matrix Decomposition
+
+给定矩阵 $\mathbf{M} \in \mathbb{R}^{m \times n}$ (如视频中每一帧拉直后堆叠成的矩阵), 我们希望将其分解为一个稀疏矩阵 $\mathbf{S}$ 和一个低秩矩阵 $\mathbf{L}$ 的和:
+$$
+\begin{aligned}
+\min_{\mathbf{S}, \mathbf{L}} & \quad \|\mathbf{L}\|_{\text{tr}} + \lambda \|\mathbf{S}\|_1 \\
+\text{s.t.} & \quad \mathbf{M} = \mathbf{L} + \mathbf{S}
+\end{aligned}
+$$
+- $\|\cdot\|_{\text{tr}}$ 是矩阵的 trace norm, 也称为 nuclear norm, 是矩阵奇异值的和, 用于鼓励低秩解. 在数据中, 对应相对稳定, 低维的背景或主结构部分. 
+- $\|\cdot\|_1$ 是矩阵的 entry-wise $\ell_1$ norm, 用于鼓励稀疏解, 用来吸收局部突出的异常或前景部分. 
+
+![](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/file-c695470927d8a348759926f21d4afff4.png)
+
+同样可以使用 ADMM 来求解该问题, 迭代过程如下:
+$$
+\begin{aligned}
+\mathbf{L}^{k} &= S^{\text{tr}}_{1/\rho}(\mathbf{M} - \mathbf{S}^{k-1} + \mathbf{W}^{k-1}) \\
+\mathbf{S}^{k} &= S^{\ell_1}_{\lambda/\rho}(\mathbf{M} - \mathbf{L}^{k} + \mathbf{W}^{k-1}) \\
+\mathbf{W}^{k} &= \mathbf{W}^{k-1} + (\mathbf{M} - \mathbf{L}^{k} - \mathbf{S}^{k})
+\end{aligned}
+$$
+其中 $S^{\text{tr}}_{t}(\cdot)$ 是 trace norm 的 proximal operator, 其先对矩阵进行 SVD 分解, 然后对奇异值进行 soft-thresholding, 最后再重构矩阵.
+
+
+### Disscussion
+
+
+这里限定为无约束的 ADMM 问题:
+$$
+\min_{\mathbf{x} \in \mathbb{R}^n, \mathbf{z} \in \mathbb{R}^m} f(\mathbf{x}) + g(\mathbf{z}) \quad \text{s.t.} \quad \mathbf{x} = \mathbf{z}.
+$$
+即标准形式中对应 $A = I, B = -I, \mathbf{c} = 0$. 
+
+回顾, proxy operator 的定义为:
+$$
+\operatorname{prox}_{f,t}(\mathbf{v}) = \arg\min_{\mathbf{x}} \left\{f(\mathbf{x}) + \frac{1}{2t}\|\mathbf{x} - \mathbf{v}\|_2^2\right\}
+$$
+
+因此, 若对照 scaled ADMM 的更新公式, 取 $t = 1/\rho$ , 则可以看出 ADMM 的更新步骤可以看作是对 $f$ 和 $g$ 的 proximal operator 的调用, 然后再对结果进行修正. 
+$$
+\begin{aligned}
+\mathbf{x}^{k} &= \operatorname{prox}_{f, 1/\rho}(\mathbf{z}^{k-1} - \mathbf{w}^{k-1}) = \arg\min_{\mathbf{x}} \left\{f(\mathbf{x}) + \frac{\rho}{2}\|\mathbf{x} - (\mathbf{z}^{k-1} - \mathbf{w}^{k-1})\|_2^2\right\}
+\\
+\mathbf{z}^{k} &= \operatorname{prox}_{g, 1/\rho}(\mathbf{x}^{k} + \mathbf{w}^{k-1}) = \arg\min_{\mathbf{z}} \left\{g(\mathbf{z}) + \frac{\rho}{2}\|\mathbf{z} - (\mathbf{x}^{k} + \mathbf{w}^{k-1})\|_2^2\right\} \\
+\mathbf{w}^{k} &= \mathbf{w}^{k-1} + (\mathbf{x}^{k} - \mathbf{z}^{k})
+\end{aligned}
+$$
+
+在实践当中, ADMM 有时会遇到如下问题.
+1. ADMM 通常会快速收敛到一个还不错的解, 但是在追求高精度时会变慢;
+2. ADMM 的收敛速度对 $\rho$ 的选择非常敏感, 需要进行调参;
+3. 对同一个原问题采用不同的分解方式, 会得到不同的 ADMM 算法, 其收敛速度也会不同.
+
+### Consensus ADMM
+
+前面的 dual decomposition 中曾经实现过分布式优化, 但在 vanilla 的 ADMM 中, 由于 $\mathbf{x}$ 和 $\mathbf{z}$ 的耦合, 使得其无法直接进行分布式优化. Consensus ADMM 是 ADMM 的一个重要变体, 其主要用于解决分布式优化问题. 
+
+
+假设共有 $B$ 个 worker, 每个 worker $i$ 有自己的 local data 以及对应的损失 $f_i(\cdot)$, 但所有 worker 都共享一组 global variable $\mathbf{z}$. 其优化问题可以写为:
+$$
+\min_{\mathbf{z}} \sum_{i=1}^B f_i(\mathbf{z})
+$$
+
+Consensus ADMM 的核心思想是, 给每个 $f_i$ 引入一个 local copy $\mathbf{x}_i$, 然后强制所有的 local copy 都等于 global variable $\mathbf{z}$ 以 "达成共识(consensus)". 于是问题可以改写为:
+$$
+\begin{aligned}
+\min_{\mathbf{x}_1, \ldots, \mathbf{x}_B, \mathbf{z}} &\quad \sum_{i=1}^B f_i(\mathbf{x}_i) \\
+\text{s.t.} &\quad \mathbf{x}_i = \mathbf{z}, \quad i = 1, \ldots, B
+\end{aligned}
+$$
+通过这种分解, 全局原本耦合的问题被拆分为 $B$ 个局部问题, 每个 worker 只需要处理自己的 local copy $\mathbf{x}_i$, 并且通过与 global variable $\mathbf{z}$ 的交互来达成共识. 这恰好变成了 ADMM 可以处理的标准形式问题:
+$$
+\begin{aligned}
+ \mathbf{x}^{(k)}_i &= \arg\min_{\mathbf{x}_i} f_i(\mathbf{x}_i) + \frac{\rho}{2}\|\mathbf{x}_i - \mathbf{z}^{(k-1)} + \mathbf{w}^{(k-1)}_i\|_2^2, \quad i = 1, \ldots, B \\
+ \mathbf{z}^{(k)} &= \frac{1}{B} \sum_{i=1}^B (\mathbf{x}^{(k)}_i + \mathbf{w}^{(k-1)}_i) := \bar{\mathbf{x}}^{(k)} + \bar{\mathbf{w}}^{(k-1)}
+ \\
+ \mathbf{w}^{(k)}_i &= \mathbf{w}^{(k-1)}_i + (\mathbf{x}^{(k)}_i - \mathbf{z}^{(k)}), \quad i = 1, \ldots, B   
+\end{aligned}
+$$
+
+进一步, 观察到 $\bar{\mathbf{w}}^{(k)} = \frac{1}{B} \sum_{i=1}^B \mathbf{w}^{(k)}_i = 0$, 因此 $\bar{\mathbf{w}}^{(k)}$ 可以被省略, 从而简化了 $\mathbf{z}$ 的更新公式:
+$$
+\begin{aligned}
+\mathbf{x}_i^{(k)} &= \arg\min_{\mathbf{x}_i}    f_i(\mathbf{x}_i) + \frac{\rho}{2} \|\mathbf{x}_i - \mathbf{z}^{(k-1)} + \mathbf{w}_i^{(k-1)}\|_2^2, \quad i=1,\dots,B \\
+\mathbf{z}^{(k)} &:= \bar{\mathbf{x}}^{(k)} = \frac{1}{B}\sum_{i=1}^B \mathbf{x}_i^{(k)} \\
+\mathbf{w}_i^{(k)} &= \mathbf{w}_i^{(k-1)} + \big(\mathbf{x}_i^{(k)} - \mathbf{z}^{(k)}\big), \quad i=1,\dots,B
+\end{aligned}
+$$
+因此, 这里各个 worker 的 $\mathbf{x}_i$-update 可以并行进行, 而 $\mathbf{z}$-update 则是一个简单的平均操作, 这使得 Consensus ADMM 非常适合分布式计算环境.
+
+若考虑更一般的 Consensus ADMM, 其优化问题可以写为:
+$$
+\min_{\mathbf{z}} \sum_{i=1}^B f_i(\mathbf{a}_i^\top \mathbf{z} + b_i) + g(\mathbf{z})
+$$
+- 每个 worker 独立地在自己的数据 $(\mathbf{a}_i, b_i)$ 上计算 local loss $f_i$, 而 $g$ 则是对全局变量 $\mathbf{z}$ 的约束或正则化. 
+
+同样引入 global copies, reparametrize:
+$$
+\begin{aligned}
+\min_{\mathbf{x}_1, \ldots, \mathbf{x}_B, \mathbf{z}} &\quad \sum_{i=1}^B f_i(\mathbf{a}_i^\top \mathbf{x}_i + b_i) + g(\mathbf{z}) \\
+\text{s.t.} &\quad \mathbf{x}_i = \mathbf{z}, \quad i = 1, \ldots, B
+\end{aligned}
+$$
+- 注意到, 这里的正则项是没有进行分解的, 其需要汇总到中心节点进行处理.
+
+则应用 ADMM, 其更新公式为:
+$$
+\begin{aligned}
+\mathbf{x}_i^{(k)} &= \arg\min_{\mathbf{x}_i} f_i(\mathbf{a}_i^\top \mathbf{x}_i + b_i) + \frac{\rho}{2} \|\mathbf{x}_i - \mathbf{z}^{(k-1)} + \mathbf{w}_i^{(k-1)}\|_2^2, \quad i=1,\dots,B \\
+\mathbf{z}^{(k)} &= \arg\min_{\mathbf{z}} \frac{B \rho}{2} \|\mathbf{z} - \bar{\mathbf{x}}^{(k)} - \bar{\mathbf{w}}^{(k-1)}\|_2^2 + g(\mathbf{z})
+\\
+\mathbf{w}_i^{(k)} &= \mathbf{w}_i^{(k-1)} + \big(\mathbf{x}_i^{(k)} - \mathbf{z}^{(k)}\big), \quad i=1,\dots,B
+\end{aligned}
+$$
+
+### Special Decomposition
+
+需要说明, 不同的 reparametrization 会导致不同的 ADMM, 不同的方式会极大的影响收敛速度. 这里给出粗略的讨论. ADMM 在形式上和 block coordinate descent 非常类似, 其每次迭代只更新一部分变量, 而其他变量保持不变. 因此, 在设计 ADMM 的拆分形式引入辅助变量时, 应当尽量保证不同块之间彼此正交, 从而减少耦合震荡, 以加快收敛速度.

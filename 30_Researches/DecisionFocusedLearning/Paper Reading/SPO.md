@@ -96,25 +96,118 @@ $$
 
 ### True SPO Loss
 
-首先是一个真正理想状态下, 不考虑优化实践的一个损失函数定义. 这里再次整理一下全流程, 方便我们来定义损失函数.
-- 首先, 训练数据 $\{(\mathbf{x}_i, \mathbf{c}_i)\}_{i=1}^n$ 是独立同分布的, 通过一个 prediction model $f$ 来预测 $\hat{\mathbf{c}} = f(\mathbf{x})$.
-- 预测 $\hat{\mathbf{c}}$ 之后, 再用 plug-in 到 optimization problem 中:
+考虑最本质的 SPO loss 的定义. 
+- 给定 feature 与 cost 的训练数据 $\{(\mathbf{x}_i, \mathbf{c}_i)\}_{i=1}^n$, 以及一个 prediction model $f_\theta: \mathcal{X} \to \mathcal{C}$, 首先可以训练出一个预测 $\hat{\mathbf{c}}_i = f_\theta(\mathbf{x}_i)$.
+- 然后根据预测出的 cost vector $\hat{\mathbf{c}}_i$, plug in 到下游优化问题中:
   $$
-  P(\hat{\mathbf{c}}): \quad z^\star(\hat{\mathbf{c}}) := \min_{\mathbf{w} \in \mathcal{S}} \hat{\mathbf{c}}^\top \mathbf{w},
+   z^\star({\mathbf{c}}) := \min_{\mathbf{w} \in \mathcal{S}} {\mathbf{c}}^\top \mathbf{w} \tag{P(c)}
   $$
-  得到一个最优决策 $\mathbf{w}^\star(\hat{\mathbf{c}}) = \arg\min_{\mathbf{w} \in \mathcal{S}} \hat{\mathbf{c}}^\top \mathbf{w}$.
-- 决策一旦做出, 就会在真实的 $\mathbf{c}$ 下产生一个 cost 
+  得到
   $$
-  \mathbf{c}^\top \mathbf{w}^\star(\hat{\mathbf{c}})
+  \mathbf{w}^\star(\hat{\mathbf{c}}) = \arg\min_{\mathbf{w} \in \mathcal{S}} \hat{\mathbf{c}}^\top \mathbf{w}
   $$
-- 同时在此时,我们在得到 $\mathbf{c}$ 之后, 也就可以确认 Oracle 的决策 $\mathbf{w}^\star(\mathbf{c})$ 和对应的 Oracle 的 cost $z^\star(\mathbf{c})$.
-- 因此, 额外多付出的 cost 就是 SPO loss, 即:
+
+- 因此 $\mathbf{w}^\star(\hat{\mathbf{c}})$ 是在预测的 cost vector $\hat{\mathbf{c}}$ 下的最优决策, 而 $\mathbf{c}$ 是要支付的真实 cost. 因此可以定义 SPO loss 为在真实成本下, 用户能够做出的最优决策与实际全局最优决策之间的差异, namely regret:
   $$
-  \ell_\text{SPO}(\hat{\mathbf{c}}, \mathbf{c}) := \mathbf{c}^\top \mathbf{w}^\star(\hat{\mathbf{c}}) - z^\star(\mathbf{c})
+  \ell^{w^*}_\text{SPO}(\hat{\mathbf{c}}, \mathbf{c}) := \mathbf{c}^\top \mathbf{w}^\star(\hat{\mathbf{c}}) - z^\star(\mathbf{c}) = \mathbf{c}^\top \mathbf{w}^\star(\hat{\mathbf{c}}) - \min_{\mathbf{w} \in \mathcal{S}} \mathbf{c}^\top \mathbf{w} \geq 0 .
   $$
-  - SPO 的 loss 一定是非负的. 因为 $\ell_\text{SPO} = \mathbf{c}^\top \mathbf{w}^\star(\hat{\mathbf{c}}) - \min_{\mathbf{w} \in \mathcal{S}} \mathbf{c}^\top \mathbf{w} = \mathbf{c}^\top [\mathbf{w}^\star(\hat{\mathbf{c}}) - \min_{\mathbf{w} \in \mathcal{S}} \mathbf{w}] \geq 0$. 即, 最后 SPO 是都是用真实的 cost $\mathbf{c}$ 来衡量的, 只不过一个是在 $\hat{\mathbf{c}}$ 下的经验最优解, 一个是在 $\mathbf{c}$ 下的 Oracle 最优解. 
+  - 然而这里的一个问题是, $\mathbf{w}^*(\hat{\mathbf{c}})$ 是 $\arg\min_{\mathbf{w} \in \mathcal{S}} \hat{\mathbf{c}}^\top \mathbf{w}$ 的一个解, 可能不是唯一的, 记这个最优解集为 $W^\star(\hat{\mathbf{c}})$. 这些解在 $\hat{\mathbf{c}}$ 下都是最优的, 但是在真实的 $\mathbf{c}$ 下却有可能是各不相同的. 
+
+    -  为避免歧义. 往往会考虑 worst-case 的情况, 此时定义 SPO loss 为:
+      $$
+      \ell_\text{SPO}(\hat{\mathbf{c}}, \mathbf{c}) := \max_{\mathbf{w} \in W^\star(\hat{\mathbf{c}})} \mathbf{c}^\top \mathbf{w} - z^\star(\mathbf{c}) .
+      $$
+     - 文中也指出, 这个多解问题 practically 通常只会在 degenerate 的情况下才会发生, 因此在实际中通常不会有太大影响.
+
 
 > **Figure 1**: 下图是 SPO 的一个示例. 
 > ![](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260409143223.png)
 > - 左图中, $\mathcal{S}$ 是一个多边形区域. 上方的 $\mathbf{c}$ 是真实的最优 cost 向量. 上方顶点即为真实 cost $\mathbf{c}$ 下的 Oracle 决策 $\mathbf{w}^\star(\mathbf{c})$. 阴影区域表示这个顶点的 norm cone, 即如果优化得到的 $\hat{\mathbf{c}}$ (的反向) 落在这个阴影区域内, 那么就可以保证 $\mathbf{w}^\star(\hat{\mathbf{c}}) = \mathbf{w}^\star(\mathbf{c})$, 从而保证 $\ell_\text{SPO}(\hat{\mathbf{c}}, \mathbf{c}) = 0$. 在这里, $\hat{\mathbf{c}}_A$ 即为一个符合要求的预测, 而 $\hat{\mathbf{c}}_B$ 则不符合要求. 此外, 观察到 $\hat{\mathbf{c}}_A, \hat{\mathbf{c}}_B$ 共圆, 且圆心为 $\mathbf{c}$, 这就说明在传统的 MSE loss 下, 二者距离 $\mathbf{c}$ 是一样的, 但是在 SPO loss 下, 二者的损失却是完全不同的.
 > - 右图中, $\mathcal{S}$ 是一个椭圆. 这也说明, SPO 的适用场景除了 LP, 也可以是在一些二次规划等场景下, 例如 Markowitz portfolio optimization 问题. 在椭圆可行域下, 发现之前的 norm cone 退化成了一条直线, 因此只有当 $\hat{\mathbf{c}}$ 落在这条直线上 (与 $\mathbf{c}$ 共线) 时, 才能保证 $\ell_\text{SPO}(\hat{\mathbf{c}}, \mathbf{c}) = 0$. 因此在这个场景下, 预测 $\hat{\mathbf{c}}$ 的方向比距离更重要. 并且变得更为敏感. 换言之, 问题可行域的几何结构, 会对 SPO loss 的敏感性产生重要影响.
+
+文中进一步说明, 事实上 $0-1$ 的 binary classification loss 可以看作是一个特殊的 SPO loss, 其对应下游优化问题的 feasible set $\mathcal{S} = [-1/2, 1/2]$, 且 $\mathbf{c} \in \{-1, 1\}$.
+
+
+按照 ERM 的做法, 我们要寻找一个最优的预测模型 $f_\theta$ 来最小化 empirical risk:
+$$
+\min_{f_\theta \in \mathcal{H}} \frac{1}{n} \sum_{i=1}^n \ell_\text{SPO}(f_\theta(\mathbf{x}_i), \mathbf{c}_i) = \min_{f_\theta \in \mathcal{H}} \frac{1}{n} \sum_{i=1}^n [\mathbf{c}_i^\top \mathbf{w}^\star(f_\theta(\mathbf{x}_i)) - z^\star(\mathbf{c}_i)].
+$$
+然而, 优化这样的 ERM 往往是非常困难的. 一个直观观察若给定成本 $\mathbf{c}$, 求解 $\mathbf{w}^*(\mathbf{c}) \in \arg\min_{\mathbf{w} \in \mathcal{S}} \mathbf{c}^\top \mathbf{w}$ 可能是不连续的. 这随着预测 $\hat{\mathbf{c}}$ 的变化可能会发生跳变 (类比分类问题). 事实上, 由于分类问题的 NP-hardness, 一般求解 SPO 也会是十分困难的.
+
+
+### SPO+ Surrogate
+
+由于前面 SPO loss
+$$
+\ell_\text{SPO}(\hat{\mathbf{c}}, \mathbf{c}) := \max_{\mathbf{w} \in W^\star(\hat{\mathbf{c}})} \mathbf{c}^\top \mathbf{w} - z^\star(\mathbf{c}), \quad W^\star(\hat{\mathbf{c}}) = \arg\min_{\mathbf{w} \in \mathcal{S}} \hat{\mathbf{c}}^\top \mathbf{w}
+$$
+的求解困难, 因此这里的目标是构建一个 SPO 的 surrogate. 
+
+
+- 首先进行一个等价改写. 对于任意 $\alpha \in \mathbb{R}$, 有
+  $$
+  \ell_{\text{SPO}}(\hat{\mathbf{c}}, \mathbf{c}) = \max_{\mathbf{w} \in W^\star(\hat{\mathbf{c}})} \{\mathbf{c}^\top \mathbf{w} ~\underline{-~ \alpha \hat{\mathbf{c}}^\top \mathbf{w}}~\} \underline{+ \alpha z^\star(\hat{\mathbf{c}})} - z^\star(\mathbf{c}) 
+  $$
+  - 其中, 根据定义, $z^\star(\hat{\mathbf{c}}) = \min_{\mathbf{w} \in \mathcal{S}} \hat{\mathbf{c}}^\top \mathbf{w}$, 而 $\mathbf{w} \in W^\star(\hat{\mathbf{c}})$, 因此 $\hat{\mathbf{c}}^\top \mathbf{w} = z^\star(\hat{\mathbf{c}})$. 因此上式中的下划线部分为 0.
+
+- 接着, 注意到
+  $$
+  W^\star(\hat{\mathbf{c}}) = \arg\min_{\mathbf{w} \in \mathcal{S}} \hat{\mathbf{c}}^\top \mathbf{w} \subseteq \mathcal{S}
+  $$
+  因此
+  $$
+  \ell_{\text{SPO}}(\hat{\mathbf{c}}, \mathbf{c}) =
+  \max_{\mathbf{w} \in W^\star(\hat{\mathbf{c}})} \{\mathbf{c}^\top \mathbf{w} - \alpha \hat{\mathbf{c}}^\top \mathbf{w}\} + \alpha z^\star(\hat{\mathbf{c}}) - z^\star(\mathbf{c}) \leq \max_{\mathbf{w} \in \mathcal{S}} \{\mathbf{c}^\top \mathbf{w} - \alpha \hat{\mathbf{c}}^\top \mathbf{w}\} + \alpha z^\star(\hat{\mathbf{c}}) - z^\star(\mathbf{c})
+  $$
+  再对上式 RHS 取关于 $\alpha$ 的 infimum, 则有
+  $$
+  \ell_{\text{SPO}}(\hat{\mathbf{c}}, \mathbf{c}) \leq \inf_{\alpha \in \mathbb{R}} \left\{ \max_{\mathbf{w} \in \mathcal{S}} \{\mathbf{c}^\top \mathbf{w} - \alpha \hat{\mathbf{c}}^\top \mathbf{w}\} + \alpha z^\star(\hat{\mathbf{c}}) \right\} - z^\star(\mathbf{c}) 
+  $$
+  
+下面我们就要对
+$$
+\inf_{\alpha \in \mathbb{R}} \left\{ \max_{\mathbf{w} \in \mathcal{S}} \{\mathbf{c}^\top \mathbf{w} - \alpha \hat{\mathbf{c}}^\top \mathbf{w}\} + \alpha z^\star(\hat{\mathbf{c}}) \right\} - z^\star(\mathbf{c}) 
+$$
+这个 upper bound 进行细致讨论. 
+
+***Proposition* 2** 当 $\alpha \to \infty$ 时, 该上界趋于 $\ell_\text{SPO}(\hat{\mathbf{c}}, \mathbf{c})$:
+$$
+\lim_{\alpha \to \infty} \left\{ \max_{\mathbf{w} \in \mathcal{S}} \{\mathbf{c}^\top \mathbf{w} - \alpha \hat{\mathbf{c}}^\top \mathbf{w}\} + \alpha z^\star(\hat{\mathbf{c}})\right\} - z^\star(\mathbf{c})  = \ell_\text{SPO}(\hat{\mathbf{c}}, \mathbf{c})
+$$
+
+
+在该 Proposition 2 的基础上, 用上述上界的极限形式来替代 $\ell_\text{SPO}$, 则有
+$$
+\begin{aligned}
+\min_{ f \in \mathcal{H}} \frac{1}{n} \sum_{i=1}^n \ell_\text{SPO}(f(\mathbf{x}_i), \mathbf{c}_i) &\stackrel{(1)}{=} \min_{f \in \mathcal{H}} \frac{1}{n} \sum_{i=1}^n \lim_{\alpha_i \to \infty} \left\{ \max_{\mathbf{w} \in \mathcal{S}} \{\mathbf{c}_i^\top \mathbf{w} - \alpha_i f(\mathbf{x}_i)^\top \mathbf{w}\} + \alpha_i z^\star(f(\mathbf{x}_i))\right\} - z^\star(\mathbf{c}_i) \\
+&\stackrel{\text{(2)}}{=} \min_{f \in \mathcal{H}} \frac{1}{n} \sum_{i=1}^n \lim_{\alpha_i \to \infty} \left\{ \max_{\mathbf{w} \in \mathcal{S}} \{\mathbf{c}_i^\top \mathbf{w} - \alpha_i f(\mathbf{x}_i)^\top \mathbf{w}\} + \alpha_i f(\mathbf{x}_i)^\top \mathbf{w}^*(\alpha_i f(\mathbf{x}_i))\right\} - z^\star(\mathbf{c}_i)  \\
+&\stackrel{(3)}{=} \min_{f \in \mathcal{H}} \frac{1}{n} \lim_{\alpha \to \infty} \left\{\sum_{i=1}^n \max_{\mathbf{w} \in \mathcal{S}} \{\mathbf{c}_i^\top \mathbf{w} - \alpha f(\mathbf{x}_i)^\top \mathbf{w}\} + \alpha f(\mathbf{x}_i)^\top \mathbf{w}^*(\alpha f(\mathbf{x}_i))\right\} - z^\star(\mathbf{c}_i) \\
+&\stackrel{\text{(4)}}{\leq} \min_{f \in \mathcal{H}} \frac{1}{n} \sum_{i=1}^n \max_{\mathbf{w} \in \mathcal{S}} \{\mathbf{c}_i^\top \mathbf{w} - 2 f(\mathbf{x}_i)^\top \mathbf{w}\} + 2 f(\mathbf{x}_i)^\top \mathbf{w}^*(2 f(\mathbf{x}_i)) - z^\star(\mathbf{c}_i) \\
+&\stackrel{\text{(5)}}{\leq} \min_{f \in \mathcal{H}} \frac{1}{n} \sum_{i=1}^n \max_{\mathbf{w} \in \mathcal{S}} \{\mathbf{c}_i^\top \mathbf{w} - 2 f(\mathbf{x}_i)^\top \mathbf{w}\} + 2 f(\mathbf{x}_i)^\top \mathbf{w}^*(\mathbf{c}_i) - z^\star(\mathbf{c}_i) + 0.
+\end{aligned}
+$$
+
+其中:
+- (1) 直接代入可得. 注意到 $f(\mathbf{x}_i) = \hat{\mathbf{c}}_i$.
+- (2) 的成立依赖于等式关系 $\alpha_i z^\star(f(\mathbf{x}_i)) = \alpha_i f(\mathbf{x}_i)^\top \mathbf{w}^*(\alpha_i f(\mathbf{x}_i))$ 或等价地 $\alpha_i z^\star(\hat{\mathbf{c}}_i) = \alpha_i \hat{\mathbf{c}}_i^\top \mathbf{w}^*(\alpha_i \hat{\mathbf{c}}_i)$. 分别回顾定义. $z^\star(\hat{\mathbf{c}}_i) = \min_{\mathbf{w} \in \mathcal{S}} \hat{\mathbf{c}}_i^\top \mathbf{w}$, 而 $\mathbf{w}^*(\alpha_i \hat{\mathbf{c}}_i) \in \arg\min_{\mathbf{w} \in \mathcal{S}} (\alpha_i \hat{\mathbf{c}}_i)^\top \mathbf{w}$. 因此显然左右二者相等. 
+- (3) 由于 $\alpha_i$ 是对每个 instance 都不同的但都趋于 $\infty$, 因此统一为一个整体的 $\alpha \to \infty$.
+- (4) 是由于上式求极限部分本身是关于 $\alpha$ 的单调递减函数, 故数学上成立. 之所以要进行这个放缩, 是因为 $\alpha \to \infty$ 的极限在实际中是无法实现的, 因此只能用一个有限的 $\alpha$ 来近似. 这里选择 $\alpha = 2$ 是为了方便后续 Bayes risk minimizer 分析上的简洁. 
+- (5) 本质上在说 $2f(\mathbf{x}_i)^\top \mathbf{w}^*(2f(\mathbf{x}_i)) = 2\hat{\mathbf{c}}_i^\top \mathbf{w}^*(2\hat{\mathbf{c}}_i) \leq 2 \hat{\mathbf{c}}_i^\top \mathbf{w}^*(\mathbf{c}_i)$. 这是由于, 根据定义, LHS 中 $\mathbf{w}^*(2\hat{\mathbf{c}}_i) \in \arg\min_{\mathbf{w} \in \mathcal{S}} (2\hat{\mathbf{c}}_i)^\top \mathbf{w}$, 故 $2\hat{\mathbf{c}}_i^\top \mathbf{w}^*(2\hat{\mathbf{c}}_i) \leq 2\hat{\mathbf{c}}_i^\top \mathbf{w}$ 对任意 $\mathbf{w} \in \mathcal{S}$ 都成立, 因此也对 $\mathbf{w}^*(\mathbf{c}_i) \in \mathcal{S}$ 成立. 这就得到了 (5) 的不等式.
+
+综上, 经过一系列的放缩, 我们得到了最终的 SPO+ surrogate loss:
+$$
+\begin{aligned}
+\ell_\text{SPO+}(\hat{\mathbf{c}}, \mathbf{c}) &:= \max_{\mathbf{w} \in \mathcal{S}} \{\mathbf{c}^\top \mathbf{w} - 2 \hat{\mathbf{c}}^\top \mathbf{w}\} + 2 \hat{\mathbf{c}}^\top \mathbf{w}^*(\mathbf{c}) - z^\star(\mathbf{c}) 
+\\ &= \max_{\mathbf{w} \in \mathcal{S}} \langle \mathbf{c} - 2 \hat{\mathbf{c}}, \mathbf{w} \rangle + 2 \hat{\mathbf{c}}^\top \mathbf{w}^*(\mathbf{c}) - z^\star(\mathbf{c})
+\end{aligned}
+$$
+- $\max_{\mathbf{w} \in \mathcal{S}} \langle \mathbf{c} - 2 \hat{\mathbf{c}}, \mathbf{w} \rangle$ 表示 optimization oracle, 其仍然是在考虑下游 feasible set $\mathcal{S}$ 的情况下, 考虑实际成本与预测成本的差异.
+- $2 \hat{\mathbf{c}}^\top \mathbf{w}^*(\mathbf{c})$ 表示真实成本下的最优决策, 但是在预测成本下的权重. 
+- $- z^\star(\mathbf{c})$ 表示真实成本下的最优值, 这是一个常数项, 因此在训练中可以忽略掉.
+
+回顾, 若引入 support function $\xi_\mathcal{S}(\cdot) = \max_{\mathbf{w} \in \mathcal{S}} \langle \cdot, \mathbf{w} \rangle$, 则可以将 SPO+ surrogate loss 改写为:
+$$
+\ell_\text{SPO+}(\hat{\mathbf{c}}, \mathbf{c}) = \xi_\mathcal{S}(\mathbf{c} - 2 \hat{\mathbf{c}}) + 2 \hat{\mathbf{c}}^\top \mathbf{w}^*(\mathbf{c}) - z^\star(\mathbf{c})
+$$
+这在后文的一些凸性的分析中会更方便. 
+
