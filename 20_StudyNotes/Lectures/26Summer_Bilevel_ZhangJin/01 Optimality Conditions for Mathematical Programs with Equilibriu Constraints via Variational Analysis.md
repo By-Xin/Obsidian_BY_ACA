@@ -572,6 +572,8 @@ $$
 
 在前面的所有讨论中, 都是在说从一些均衡问题出发, 能够自然的发现其互补的约束, 并通过引入乘子将其表示为 MPCC 的结构. 然而这样的引入处理并不一定是最方便的, 有时也可能会使的问题的求解更为复杂. 
 
+#### Mathematical Program with Equilibrium Constraints (MPEC)
+
 考虑如下 MPEC 问题:
 $$
 \begin{aligned}
@@ -583,5 +585,59 @@ $$
 
 MPEC 和 MPCC 的区别在于, 其约束条件不再是一个固定不变的集合 $C$, 而变成了一个随 $y$ 变化的 normal cone. 因此, MPEC 的一个研究核心就是当约束条件本身是变化的, 其最优性条件该如何刻画. 
 
+#### MPCC Reformulation of MPEC
 
+事实上, 通过 Change of Coordinates 的公式, 在一些正则条件(如 $g$ 是 affine 或 Slater 条件满足) 下, 同样有
+$$
+\mathcal{N}_{\Gamma}(y) = \nabla g(y)^\top \mathcal{N}_{\mathbb{R}^m_-}(g(y)),
+$$
+则展开约束 $0 \in \phi(x, y) + \mathcal{N}_\Gamma (y)$, 则有
+$$
+\min_{x, y} F(x, y), \quad \text{s.t. }~ 0 \in \phi(x, y) + \nabla g(y)^\top \mathcal{N}_{\mathbb{R}^m_-}(g(y)) 
+$$
+再进一步展开 normal cone 的定义, 则有
+$$
+\min_{x, y, \lambda} F(x, y), \quad \text{s.t. }~ 0 = \phi(x, y) + \nabla g(y)^\top \lambda, ~ g(y) \leq 0, ~ \lambda \geq 0, ~ \lambda^\top g(y) = 0.
+$$
 
+有如下观察: 若乘子 $\lambda$ 是唯一的, 则 MPEC 的约束条件就可以等价地 reform 为 MPCC 的形式. 若不然, 则二者的局部最优解不必然相等. 
+
+#### Some Analysis Tools
+
+注意到, 这里的约束 $\mathbf{0} \in \phi(x, y) + \mathcal{N}_\Gamma (y) =: \Phi(x, y)$ 是一个 set-valued mapping, 因此需要将前面的 variational analysis 的工具推广到 set-valued mapping 上. 
+
+关于 set-valued mapping, 也可以类似地定义 Lipschitz 性质. 
+
+***Definition* (Upper Pseudo-Lipschitz Continuity / Calmness)**: 对于一个 set-valued mapping $\mathcal{F}$, 称之为在 $(\bar{\mathbf{v}}, \bar{\mathbf{z}}) \in \text{gph} \mathcal{F} := \{(\mathbf{v}, \mathbf{z}): \mathbf{z} \in \mathcal{F}(\mathbf{v})\}$ 上是 upper pseudo-Lipschitz continuous (或称 calm), 若存在常数 $\mu > 0$, 存在关于 $\bar{\mathbf{z}}$ 的邻域 $\mathcal{U}(\bar{\mathbf{z}})$, 存在关于 $\bar{\mathbf{v}}$ 的邻域 $\mathcal{U}(\bar{\mathbf{v}})$, 使得
+$$
+\mathcal{F}(\mathbf{v}) \cap \mathcal{U}(\bar{\mathbf{z}}) \subseteq \mathcal{F}(\bar{\mathbf{v}}) + \mu \|\mathbf{v} - \bar{\mathbf{v}}\| \mathbb{B}, \quad \forall \mathbf{v} \in \mathcal{U}(\bar{\mathbf{v}}).
+$$
+其中 $\mathbb{B}:= \{\mathbf{x} \in \mathbb{R}^n: \|\mathbf{x}\| \leq 1\}$ 是单位球, 故 $\mu \|\mathbf{v} - \bar{\mathbf{v}}\| \mathbb{B}$ 是一个以 $\mathbf{0}$ 为中心, 半径为 $\mu \|\mathbf{v} - \bar{\mathbf{v}}\|$ 的球.
+
+- 该定义刻画了, 对于一个 set-valued mapping $\mathcal{F}$, 如果输入 $\mathbf{v}$ 有微小扰动(从 $0$ 变到一个小 $\epsilon$), 则其输出 $\mathcal{F}(\mathbf{v})$ 的变化也不会太大, 其变化的范围被 $\mu \|\mathbf{v} - \bar{\mathbf{v}}\| \mathbb{B}$ 所限制. 这类似于单值函数的 Lipschitz 连续性, 只是这里是 set-valued mapping
+
+#### M-stationary Condition for MPEC
+
+因此在有了 calmness 定义后, MPCC 中的 local error bound $\implies$ M-stationary 条件也可以推广到任意的 set-valued mapping 中. 
+
+考虑如下抽象问题:
+$$
+\min_{\mathbf{z} \in \mathbb{R}^n} f(\mathbf{z}), \quad \text{s.t. }~ \mathbf{0} \in \Phi(\mathbf{z}),
+$$
+其中 $\Phi: \mathbb{R}^n \rightrightarrows \mathbb{R}^m$ 是任意 set-valued mapping. 
+
+再定义 perturbed feasible map $\mathcal{F}(\mathbf{v}) := \{\mathbf{z} \in \mathbb{R}^n: \mathbf{v} \in \Phi(\mathbf{z})\}$, 则有如下命题.
+
+***Theorem* (M-Stationary Condition)**: 若 $\bar{\mathbf{z}}$ 是上述问题的局部最优解, 且 $\mathcal{F}$ 在 $(\mathbf{0}, \bar{\mathbf{z}})$ 上是 calm 的, 则 M-stationary condition 成立, 即存在乘子 $\boldsymbol{\eta}$, 使得
+$$
+\mathbf{0} \in \nabla f(\bar{\mathbf{z}}) + D^* \Phi(\bar{\mathbf{z}}, \mathbf{0})(\boldsymbol{\eta}),
+$$
+这里称 $D^* \Phi$ 为 coderivative, 定义为:
+$$
+\boldsymbol{\xi} \in D^* \Phi(\bar{\mathbf{z}}, \mathbf{0})(\boldsymbol{\eta}) \iff (\boldsymbol{\xi}, -\boldsymbol{\eta}) \in \mathcal{N}^{\text{M}}_{\text{gph} \Phi}(\bar{\mathbf{z}}, \mathbf{0}).
+$$
+
+具体到 MPEC 中, 设 $(\bar{\mathbf{x}}, \bar{\mathbf{y}})$ 是 MPEC 的解. 若 perturbed feasible map $\Sigma(\mathbf{v}) := \{(\mathbf{x}, \mathbf{y}): \mathbf{v} \in \phi(\mathbf{x}, \mathbf{y}) + \mathcal{N}_\Gamma(\mathbf{y})\}$ 在 $(\mathbf{0}, (\bar{\mathbf{x}}, \bar{\mathbf{y}}))$ 上是 calm 的, 则 M-stationary 成立: 存在乘子 $\boldsymbol{\eta}$, 使得
+$$
+\mathbf{0} \in \nabla F(\bar{\mathbf{x}}, \bar{\mathbf{y}}) + \nabla \phi(\bar{\mathbf{x}}, \bar{\mathbf{y}})^\top \boldsymbol{\eta} + \{0\} \times D^* \mathcal{N}_\Gamma(\bar{\mathbf{y}}, -\phi(\bar{\mathbf{x}}, \bar{\mathbf{y}}))(\boldsymbol{\eta}).
+$$
