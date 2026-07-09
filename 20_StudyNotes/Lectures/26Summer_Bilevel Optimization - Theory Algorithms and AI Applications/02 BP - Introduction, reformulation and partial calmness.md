@@ -386,3 +386,7 @@ $$
 $$
 
 可以证明, 这样的方法几乎处处成立, 即对于大多数的 BP 问题, 其 KKT 系统是非退化的. 
+
+> R. Ke, W. Yao, J. Ye and J. Zhang 2022, Generic property of the
+partial calmness condition for bilevel programming problems, SIOPT
+32, 604-634.
