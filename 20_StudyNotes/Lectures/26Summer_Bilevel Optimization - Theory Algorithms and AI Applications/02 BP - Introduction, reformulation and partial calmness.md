@@ -178,7 +178,7 @@ $$
 
 然而这样的 reformulation 也带来了一些新的问题:
 1. 尽管下层目标函数 $f(x, y)$ 本身是光滑的, 然而 $V(x) = \inf_y f(x, y)$ 并不一定是光滑的. 例如下图是 Mirrlees 问题中 $V(x)$ 的图像, 可以看到其存在着 kinks, 即不可微的点. 
-    <!-- ![20260708230728](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260708230728.png) -->
+    ![20260708230728](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260708230728.png)
 2. 即使 $V(x)$ 以及其余所有的函数都是光滑的, VP 问题对应的 MFCQ 要求仍然不被满足. 换言之, 这里的 KKT 乘子可能是退化的. 
    - 回顾 MFCQ 定义. 若其成立, 需要有一个方向 $d$ 使得 $\partial h_i(x, y)^\top d < 0$ 对于所有活跃约束 $i \in I(x, y)$ 都成立. 因此立刻得到 $\text{MFCQ Holdes} \iff (0,0) \notin \partial h(x, y)$.
    - 然而对于 VP 问题的任意可行解 $(\bar{x}, \bar{y})$, 其必满足 $h(\bar{x}, \bar{y}) = 0$ , 即 $(\bar{x}, \bar{y})$ 是下层问题的最优解. 因此 Clarke subgradient 必然有 $(0, 0) \in \partial h(\bar{x}, \bar{y})$, 因此 MFCQ 对于 VP 中任意可行点均不成立. 
