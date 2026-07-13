@@ -1,4 +1,4 @@
-# Lower complexity bounds of first-order methods for convex-concave bilinear saddle-point problems
+<!-- # Lower complexity bounds of first-order methods for convex-concave bilinear saddle-point problems
 
 ## 1. Introduction
 
@@ -497,4 +497,123 @@ $$
     $$
     \boxed{\mathbf{y}^\star = (\boldsymbol{\lambda}^{\star\top}, \boldsymbol{\pi}^{\star\top})^\top = \frac{2 L_f k}{L_A} \begin{bmatrix} \mathbf{0}_{k} \\ \mathbf{1}_{k} \\ \mathbf{0}_{m-2k} \end{bmatrix}}
     $$
+$\square$ -->
+
+#### Lower Complexity Bound 
+
+总结前文重要结论:
+- 最优解 $\mathbf{x}^\star = (1, 2, \ldots, 2k, 0, \ldots, 0)^\top$, 故 $\|\mathbf{x}^\star\|^2 = \sum_{i=1}^{2k} i^2 = \frac{k(2k+1)(4k+1)}{3}$.
+- 对偶最优解 $\mathbf{y}^\star = \frac{2 L_f k}{L_A} \begin{bmatrix} \mathbf{0}_{k} \\ \mathbf{1}_{k} \\ \mathbf{0}_{m-2k} \end{bmatrix}$, 故 $\|\mathbf{y}^\star\|^2= {4 L_f^2 k^3}/{L_A^2}$.
+- 对于任意 $\mathbf{x} \in \mathcal{K}_{k-1}$, 有 $f(\mathbf{x}) = 0$ 且 $\nabla f(\mathbf{x}) = \mathbf{0}$. 
+- 对应 Optimality gap, 有
+    $$
+    |f(\mathbf{x}) - f^\star| = |0 - f^\star| = \frac{L_f}{2} k^2.
+    $$
+- 对应 feasibility gap, 有
+    $$
+    \|\mathbf{A}\mathbf{x} - \mathbf{b}\|^2 \geq \frac{L_A^2}{4} k. 
+    $$
+    - *Proof*. 
+        $$
+        \begin{aligned}
+        \|\mathbf{A}\mathbf{x} - \mathbf{b}\|^2 &= \left\|\frac{L_A}{2} \boldsymbol{\Lambda}\mathbf{x} - \frac{L_A}{2}\mathbf{c}\right\|^2 \quad {\small (\text{by definition of } \mathbf{A} \text{ and } \mathbf{b})} \\
+        &= \frac{L_A^2}{4} \left\|\begin{bmatrix} \mathbf{B}_{2k} & \mathbf{O} \\ \mathbf{O} & \mathbf{G}     \end{bmatrix}\begin{bmatrix} \mathbf{0}_k \\ \mathbf{x}_{k+1:2k} \\ \mathbf{0}_{n-2k}     \end{bmatrix} - \begin{bmatrix} \mathbf{1}_{2k} \\ \mathbf{0}_{m-2k} \end{bmatrix}\right\|^2 \quad {\small (\text{since } \mathbf{x} \in \mathcal{K}_{k-1})} \\
+        \\ 
+        &=\frac{L_A^2}{4} \left\|\mathbf{B}_{2k}\begin{bmatrix} \mathbf{0}_k \\ \mathbf{x}_{k+1:2k} \end{bmatrix} - \mathbf{1}_{2k}\right\|^2
+        \\
+        &= \frac{L_A^2}{4} \left\| \underbrace{\sum_{j=1}^{k-1} \left(x_{2k-j+1} - x_{2k-j} - 1\right)^2 + (x_{k+1} - 1)^2}_{{\small\text{first } k \text{ row} \geq 0} } + \sum_{j=k+1}^{2k} (0 - 1)^2\right\|^2 \\
+        & \geq \frac{L_A^2}{4} \sum_{j=k+1}^{2k} 1^2 = \frac{L_A^2}{4} k.
+        \end{aligned}
+        $$
+    $\square$
+
+根据上述命题, 可以直接给出如下 Optimality gap 和 Feasibility gap 的下界结论.
+
+> ***Lemma 7* (Optimality gap 下界)**
+>
+> 对于 $L_A, L_f > 0$, 任意满足 Assumption 1 的一阶方法, 在前 $k$ 步迭代中, 有
+> $$
+> \min_{\mathbf{x} \in \mathcal{K}_{k-1}} |f(\mathbf{x}) - f^\star| = |f(\mathbf{0}) - f^\star| \geq \frac{3 L_f \|\mathbf{x}^\star\|^2}{32(k+1)} + \frac{\sqrt{6}}{32(k+1)} L_A \|\mathbf{x}^\star\| \cdot \|\mathbf{y}^\star\|,
+> $$
+> 以及
+> $$
+> \min_{\mathbf{x} \in \mathcal{K}_{k-1}} \|\mathbf{A}\mathbf{x} - \mathbf{b}\| \geq \frac{\sqrt{3} L_A \|\mathbf{x}^\star\|}{4\sqrt{2}(k+1)}.
+> $$
+
+*Proof*. 
+
+考虑 feasibility gap:
+$$
+\begin{aligned}
+\|\mathbf{A}\mathbf{x} - \mathbf{b}\|^2 &\geq \frac{L_A^2}{4} k 
+\\
+&= \frac{L_A^2}{4} \cdot \frac{3\|\mathbf{x}^\star\|^2}{(2k+1)(4k+1)} \quad {\small (\text{by } \|\mathbf{x}^\star\|^2 = {k(2k+1)(4k+1)}/{3})} \\
+&\geq \frac{3 L_A^2 \|\mathbf{x}^\star\|^2}{8(k+1)^2} \quad {\small (\text{since } (2k+1)(4k+1) \leq 8(k+1)^2)} \\
+\end{aligned}
+$$
+
+考虑 optimality gap:
+- 一方面
+    $$
+    \begin{aligned}
+        |f(\mathbf{x}) - f^\star|&= f^\star =  \frac{L_f}{2} k^2 \\
+        &= \frac{3 L_f k \|\mathbf{x}^\star\|^2}{2(2k+1)(4k+1)} \\&
+        \geq \frac{3 L_f \|\mathbf{x}^\star\|^2}{16(k+1)} \quad {\small (\text{since } \frac{k}{(2k+1)(4k+1)} \geq \frac{1}{16(k+1)})} \\
+    \end{aligned}
+    $$
+
+- 另一方面
+    $$
+    \begin{aligned}
+        |f(\mathbf{x}) - f^\star| &= \frac{L_f}{2} k^2 \\
+        &= \frac12 \cdot k^{1/2} \cdot L_f k^{3/2} \\
+        &= \frac12 \cdot  \left(
+            \frac{\sqrt{3} \|\mathbf{x}^\star\|}{\sqrt{(2k+1)(4k+1)}}
+        \right)
+        \left(\frac{L_A}{2} \cdot \|\mathbf{y}^\star\| \right)  \quad {\small (\text{by } \|\mathbf{x}^\star\|^2 = {\frac{k(2k+1)(4k+1)}{3}}, \|\mathbf{y}^\star\|^2 = {\frac{4 L_f^2 k^3}{L_A^2}})} \\
+        &= \frac{\sqrt{3}}{4} \cdot \frac{L_A \|\mathbf{x}^\star\| \cdot \|\mathbf{y}^\star\|}{\sqrt{(2k+1)(4k+1)}} \\
+        &\geq \frac{\sqrt{6}}{16(k+1)} L_A \|\mathbf{x}^\star\| \cdot \|\mathbf{y}^\star\| \quad {\small (\text{since } \frac{\sqrt{3}}{4\sqrt{(2k+1)(4k+1)}} \geq \frac{\sqrt{6}}{16(k+1)})}.
+    \end{aligned}
+    $$
+
+
+- 综上两项, 根据 $\max\{a,b\} \geq (a+b)/2$, 得
+    $$
+    f(\mathbf{x}) - f^\star \geq \frac{3 L_f \|\mathbf{x}^\star\|^2}{32(k+1)} + \frac{\sqrt{6}}{32(k+1)} L_A \|\mathbf{x}^\star\| \cdot \|\mathbf{y}^\star\|.
+    $$
+
+
 $\square$
+
+将上述结论整理成算法语言, 即得到如下定理. 
+
+> ***Theorem 3* (Lower Complexity Bound with Positive $L_A$)**
+>
+> 给定正系数 $L_f, L_A > 0$, 正整数维度 $m\leq n$. 对于任意迭代次数 $t < m/2$, 对于问题 $\min_{\mathbf{x} \in \mathcal{X}} f(\mathbf{x})$ s.t. $\mathbf{A}\mathbf{x} = \mathbf{b}$, 其中 $f$ 是 $L_f$-Lipschitz 光滑的, $\|\mathbf{A}\| = L_A$, 都存在一种 instance 的构造, 使得任意满足 Assumption 1 的一阶方法在前 $t$ 步迭代中, 其迭代点 $\mathbf{x}^{(t)}$ 与 primal-dual 最优解 $(\mathbf{x}^\star, \mathbf{y}^\star)$ 满足关系:
+>
+> $$
+> \begin{aligned}
+> &|f(\mathbf{x}^{(t)}) - f(\mathbf{x}^\star)| \geq \frac{3 L_f \|\mathbf{x}^\star\|^2}{32(t+1)} + \frac{\sqrt{6}}{32(t+1)} L_A \|\mathbf{x}^\star\| \cdot \|\mathbf{y}^\star\|, \\
+> &\|\mathbf{A}\mathbf{x}^{(t)} - \mathbf{b}\| \geq \frac{\sqrt{3} L_A \|\mathbf{x}^\star\|}{4\sqrt{2}(t+1)}.
+> \end{aligned}
+> $$
+>
+
+*Proof*. 由 Lemma 7, 取 $k = t < m/2$, 且由于对于任意迭代 $\mathbf{x}^{(t)} \in \mathcal{K}_{t-1}$, 故任意算法的表现不可能优于该空间内的 lower bound, 故证毕.
+
+$\square$
+
+对于该结论有如下说明:
+
+1. 误差下界的收敛率为 $\Omega (1/t)$, 等价于对应达到规定误差 $\epsilon$ 所需的迭代次数为 $\Omega (1/\epsilon)$.
+2. 注意到, 若使用 proximal gradient 算法, 能够达到的收敛率下界为 $\Omega(\sqrt{L_f/\epsilon})$, 快于这里的 $\Omega(L_f /\epsilon)$. 不过这并不矛盾, 因为 proximal gradient method 并不能归纳到当前的 oracle 类算法中. 
+   - 根据 proximal gradient 算法, 当前约束问题等价于引入 $0-\infty$ 示性函数 $\delta_{\{\mathbf{A}\mathbf{x} = \mathbf{b}\}}(\mathbf{x})$, 进而将原问题转化为 $\min_{\mathbf{x}} f(\mathbf{x}) + \delta_{\{\mathbf{A}\mathbf{x} = \mathbf{b}\}}(\mathbf{x})$. 从而得到迭代:
+        $$
+        \mathbf{x}^{(t+1)} = \text{Proj}_{\{\mathbf{A}\mathbf{x} = \mathbf{b}\}}\left(\mathbf{x}^{(t)} - \frac{1}{L_f} \nabla f(\mathbf{x}^{(t)})\right),
+        $$
+        而向仿射集 $\{\mathbf{A}\mathbf{x} = \mathbf{b}\}$ 的投影在 $\mathbf{A}$ 满秩的前提下有 closed-form solution: $\text{Proj}_{\{\mathbf{A}\mathbf{x} = \mathbf{b}\}}(\mathbf{z}) = \mathbf{z} - \mathbf{A}^\top (\mathbf{A}\mathbf{A}^\top)^{-1} (\mathbf{A}\mathbf{z} - \mathbf{b})$. 该迭代由于需要 $(\mathbf{A}\mathbf{A}^\top)^{-1}$ 的矩阵求逆, 因此相当于 $\mathbf{A}$ 无穷次的级数求和, 故并不属于当前的 oracle 类算法. 并且这样的投影也是十分昂贵的. 
+
+3. 之所以需要引入对偶变量 $\mathbf{y}$, 是因为在约束优化问题中, $f(\mathbf{x}) - f^\star \geq 0$ 只在可行域 $\{\mathbf{x} : \mathbf{A}\mathbf{x} = \mathbf{b}\}$ 内成立, 而在不可行域中, $f(\mathbf{x}) - f^\star$ 可能为负数. 但由于我们希望同时衡量 Optimality gap 和 feasiblity gap, 因此需要引入对偶变量 $\mathbf{y}$ 来将两者联系起来. 具体来说, 对于任意 $\mathbf{x} \in \mathbb{R}^n$, 设 $(\mathbf{x}^\star, \mathbf{y}^\star)$ 为 primal-dual 最优解, 则有
+    $$
+    f(\mathbf{x}) - f^\star \geq \langle \mathbf{y}^\star, \mathbf{A}\mathbf{x} - \mathbf{b} \rangle \geq -\|\mathbf{y}^\star\| \cdot \|\mathbf{A}\mathbf{x} - \mathbf{b}\|,
+    $$
