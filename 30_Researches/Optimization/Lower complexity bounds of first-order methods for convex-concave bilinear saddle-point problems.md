@@ -1,4 +1,4 @@
-<!-- # Lower complexity bounds of first-order methods for convex-concave bilinear saddle-point problems
+# Lower complexity bounds of first-order methods for convex-concave bilinear saddle-point problems
 
 ## 1. Introduction
 
@@ -497,7 +497,7 @@ $$
     $$
     \boxed{\mathbf{y}^\star = (\boldsymbol{\lambda}^{\star\top}, \boldsymbol{\pi}^{\star\top})^\top = \frac{2 L_f k}{L_A} \begin{bmatrix} \mathbf{0}_{k} \\ \mathbf{1}_{k} \\ \mathbf{0}_{m-2k} \end{bmatrix}}
     $$
-$\square$ -->
+$\square$
 
 #### Lower Complexity Bound 
 
