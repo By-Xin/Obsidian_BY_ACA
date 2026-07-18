@@ -90,18 +90,18 @@ $$
 - Deterministic 表明算法不涉及随机性, 给定相同的初始点和参数, 算法每次迭代都会产生相同的结果.
 - First-order method 可以理解为黑箱 Oracle 能够返回的信息仅限于函数值和梯度信息. 对于本文的 SPP, 其 Oracle 可以返回如下信息:
   $$
-  O(\mathbf{x}, \mathbf{y}) := (\nabla f(\mathbf{x}), \mathbf{A}\mathbf{x}, \mathbf{A}^\top \mathbf{y}).
+  \mathrm{O}(\mathbf{x}, \mathbf{y}) := (\nabla f(\mathbf{x}), \mathbf{A}\mathbf{x}, \mathbf{A}^\top \mathbf{y}).
   $$
   - 对 SPP 目标函数求关于 $\mathbf{x}$ 的梯度, 其结果为 $\nabla f(\mathbf{x}) + \mathbf{A}^\top \mathbf{y}$; 求关于 $\mathbf{y}$ 的梯度, 其结果为 $\mathbf{A}\mathbf{x} - \mathbf{b} - \nabla g(\mathbf{y})$. 当然其他的一些信息如 $\mathbf{b}$ 是已知的; 和 $g$ 有关的信息, 文中认为其是简单的, 因此同样不作为 Oracle 的返回信息.
   - 具体的黑箱计算过程如下:
     - 算法的迭代初始点为 $(\mathbf{x}^{(0)}, \mathbf{y}^{(0)}) \in \mathcal{X} \times \mathcal{Y}$, 迭代次数为 $t = 0, 1, 2, \ldots$.
     - 在第 $t$ 次迭代中, 算法会在当前迭代点的 inquiry point $(\mathbf{x}^{(t)}, \mathbf{y}^{(t)})$ 处调用 Oracle, 得到
       $$
-      O(\mathbf{x}^{(t)}, \mathbf{y}^{(t)}) = (\nabla f(\mathbf{x}^{(t)}), \mathbf{A}\mathbf{x}^{(t)}, \mathbf{A}^\top \mathbf{y}^{(t)}).
+      \mathrm{O}(\mathbf{x}^{(t)}, \mathbf{y}^{(t)}) = (\nabla f(\mathbf{x}^{(t)}), \mathbf{A}\mathbf{x}^{(t)}, \mathbf{A}^\top \mathbf{y}^{(t)}).
       $$
     - 然后算法根据当前迭代点和 Oracle 返回的信息, 计算出下一次迭代的 inquiry point $(\mathbf{x}^{(t+1)}, \mathbf{y}^{(t+1)})$ 和最终用来返回作为输出的点 $(\bar{\mathbf{x}}^{(t+1)}, \bar{\mathbf{y}}^{(t+1)})$. 迭代过程可以表示为:
       $$
-      (\mathbf{x}^{(t+1)}, \mathbf{y}^{(t+1)}, \bar{\mathbf{x}}^{(t+1)}, \bar{\mathbf{y}}^{(t+1)}) = \mathcal{I}_t\left( \boldsymbol{\vartheta}; O(\mathbf{x}^{(0)}, \mathbf{y}^{(0)}), \ldots, O(\mathbf{x}^{(t)}, \mathbf{y}^{(t)})\right), \quad \text{(1)}
+      (\mathbf{x}^{(t+1)}, \mathbf{y}^{(t+1)}, \bar{\mathbf{x}}^{(t+1)}, \bar{\mathbf{y}}^{(t+1)}) = \mathcal{I}_t\left( \boldsymbol{\vartheta}; \mathrm{O}(\mathbf{x}^{(0)}, \mathbf{y}^{(0)}), \ldots, \mathrm{O}(\mathbf{x}^{(t)}, \mathbf{y}^{(t)})\right), \quad \text{(1)}
       $$
       - 这里之所以区分 $(\mathbf{x}^{(t+1)}, \mathbf{y}^{(t+1)})$ 和 $(\bar{\mathbf{x}}^{(t+1)}, \bar{\mathbf{y}}^{(t+1)})$, 是因为有些算法 (例如 Nesterov's accelerated gradient method), 用来查询梯度信息和最终返回作为决策变量的点是不同的. 因此这样表达可以更为一般化.
       - $\boldsymbol{\vartheta}$ 是本身问题包含的所有静态信息, 例如 $\mathbf{A}$, $\mathbf{b}$, $L_f$, $\mathcal{X}$, $\mathcal{Y}$ 等等. 这些信息独立于迭代之外, 是随着问题的定义而固定的.
@@ -617,3 +617,375 @@ $\square$
     $$
     f(\mathbf{x}) - f^\star \geq \langle \mathbf{y}^\star, \mathbf{A}\mathbf{x} - \mathbf{b} \rangle \geq -\|\mathbf{y}^\star\| \cdot \|\mathbf{A}\mathbf{x} - \mathbf{b}\|,
     $$
+
+
+### 2.4 A Lower Complexity Bound with Nonnegative $L_A$
+
+回顾在上一个小节, 优化的目标函数为:
+$$
+f(\mathbf{x}) = L_f \left(\frac{1}{2} x_k^2 + \frac{1}{2} \sum_{i=2k+1}^{n} x_i^2\right), \quad \text{s.t. } \mathbf{A}\mathbf{x} = \mathbf{b},
+$$
+其中 $\mathbf{A}$ 是 $m \times n$ 的矩阵, 且 $\|\mathbf{A}\| = L_A > 0$.  然而该问题不能取 $L_A = 0$ 的退化场景. 
+
+在这个小节中, 仍然考虑如下优化问题:
+$$
+f^\star := \min_{\mathbf{x} \in \mathbb{R}^n} \left\{
+     f(\mathbf{x}) := 
+     \frac{1}{2} \mathbf{x}^\top \mathbf{H} \mathbf{x} - \mathbf{h}^\top \mathbf{x}
+ \right\}
+ \quad \text{s.t.} \quad \mathbf{A} \mathbf{x} = \mathbf{b},
+$$
+不过具体构造如下, 令
+$$
+\mathbf{H} = \frac{L_f}{4} \begin{bmatrix} 
+\mathbf{B}^\top \mathbf{B} & \mathbf{O} \\ 
+\mathbf{O} & \mathbf{I}_{n-2k}
+\end{bmatrix} \in \mathbb{R}^{n \times n}, \quad
+\mathbf{h} = \left(\frac{L_f}{4} + \frac{L_A}{4\sqrt{2}}\right) \mathbf{e}^{(2k)}_{n}, \\
+\,\\
+\mathbf{A} = \frac{L_A}{2} \boldsymbol{\Lambda} \in \mathbb{R}^{m \times n}, \quad
+\mathbf{b} = \frac{L_A}{2} \mathbf{c} \in \mathbb{R}^{m}.
+$$
+
+根据构造, 可知 $\mathbf{H} \succeq \mathbf{O}$, 故 $f$ 是 convex quadratic function, 且是 $L_f$-Lipschitz 光滑的. 
+- *Proof*. 光滑性: $\nabla f(\mathbf{x}) = \mathbf{H}\mathbf{x} - \mathbf{h}$, 且 $\|\nabla f(\mathbf{x}) - \nabla f(\mathbf{y})\| = \|\mathbf{H}(\mathbf{x}-\mathbf{y})\| \leq \|\mathbf{H}\| \cdot \|\mathbf{x}-\mathbf{y}\|$. 由于 $\mathbf{H}$ 是 block diagonal, 故 $\|\mathbf{H}\| = \frac{L_f}{4} \max\{\|\mathbf{B}^\top \mathbf{B}\|, 1\} \leq \frac{L_f}{4} \cdot 4 = L_f$ (由 Lemma 1 可知 $\|\mathbf{B}\| \leq 2$). 因此 $\nabla f$ 是 $L_f$-Lipschitz 的. 
+
+    $\square$
+
+
+> ***Lemma 8***
+>
+> 根据上述方法构造的 instance, 对任意满足 Assumption 1 的一阶方法, 有 $\mathbf{x}^{(t)} \in \mathcal{K}_{t-1}= \text{span}\{\mathbf{e}^{(2k-t+1)}_n, \ldots, \mathbf{e}^{(2k)}_n\}$, 即 $\mathbf{x}^{(t)}$ 的前 $2k-t$ 个坐标恒为零. 其中 $t = 1, \ldots, k$.
+
+*Proof*. 由前面的 Lemma 4, 证明该命题只需验证 $\mathbf{h} \in \mathcal{K}_0$ 且 $\mathbf{H}\mathcal{K}_{t-1} \subseteq \mathcal{K}_t$, $t = 1, \ldots, k$.
+- 由于 $\mathbf{h} = \left(\frac{L_f}{4} + \frac{L_A}{4\sqrt{2}}\right) \mathbf{e}^{(2k)}_{n}$, 根据定义, $\mathcal{K}_0 = \text{span}\{\mathbf{e}^{(2k)}_n\}$, 故 $\mathbf{h} \in \mathcal{K}_0$.
+- 由于 $\mathbf{H}$ 是 block diagonal, 对于 $\mathcal{K}_{t-1} = \text{span}\{\mathbf{e}^{(2k-t+1)}_n, \ldots, \mathbf{e}^{(2k)}_n\}$, 其非零的元素处在第 $2k-t+1, \ldots, 2k$ 个坐标上, 因此 $\mathbf{H}\mathcal{K}_{t-1}$  只会同 $\mathbf{H}$ 中核心的 block $\mathbf{B}^\top \mathbf{B} \in \mathbb{R}^{2 k\times 2k}$ 产生交互, 展开计算有:
+    $$
+    \mathbf{B}^\top \mathbf{B} = \begin{bmatrix}
+        2 & -1 & 0 & \cdots & 0 \\
+        -1 & 2 & -1 & \cdots & 0 \\
+        0 & -1 & 2 & \cdots & 0 \\
+        \vdots & \vdots & \vdots & \ddots & -1 \\
+        0 & 0 & 0 & -1 & 1
+    \end{bmatrix}.
+    $$
+    故对于中间区域的基向量 $\mathbf{e}^{(i)}_{2k}$, $1 < i < 2k$, 有 $\mathbf{B}^\top \mathbf{B} \mathbf{e}^{(i)}_{2k} = -\mathbf{e}^{(i-1)}_{2k} + 2\mathbf{e}^{(i)}_{2k} - \mathbf{e}^{(i+1)}_{2k}$, 而端点 $\mathbf{e}^{(2k)}_{2k}$ 有 $\mathbf{B}^\top \mathbf{B} \mathbf{e}^{(2k)}_{2k} = -\mathbf{e}^{(2k-1)}_{2k} + \mathbf{e}^{(2k)}_{2k}$. 因此核心洞察为: $\mathbf{B}^\top \mathbf{B}$ 作用在 $\mathbf{e}^{(i)}_{2k}$ 上, 只会涉及 $\mathbf{e}^{(i-1)}_{2k}, \mathbf{e}^{(i)}_{2k}, \mathbf{e}^{(i+1)}_{2k}$ 三个坐标, 因此 $\mathbf{H}\mathcal{K}_{t-1} \subseteq \mathcal{K}_t$.
+
+$\square$
+
+下求解最优值. 
+
+> ***Lemma 9* (Primal-Dual Solution)**
+>
+> 给定 $L_f, L_A > 0$, 上述 instance 有唯一最优解 $\mathbf{x}^\star = (1, 2, \ldots, 2k, 0, \ldots, 0)^\top$ 与唯一对应的对偶解 $\mathbf{y}^\star$:
+> $$
+> \mathbf{y}^\star = - \frac{1}{2\sqrt{2}} \begin{bmatrix} \mathbf{1}_{2k} \\ \mathbf{0}_{m-2k} \end{bmatrix} \implies \|\mathbf{y}^\star\| = \frac{\sqrt{k}}{2},
+> $$
+> 对应的最优值
+> $$
+> f^\star = - \left(\frac{L_f}{4} + \frac{L_A}{2\sqrt{2}}\right) k.
+> $$
+
+*Proof*. 对于原问题, 同样对 $\mathbf{x}$ 按照前 $2k$ 个坐标与后 $n-2k$ 个坐标分块, 记 $\mathbf{x} = (\mathbf{u}^\top, \mathbf{v}^\top)^\top$, 则原问题解耦为两个独立子问题:
+$$
+\begin{aligned}
+&\min_{\mathbf{u}} \frac{1}{2} \mathbf{u}^\top \mathbf{S} \mathbf{u} - \mathbf{s}^\top \mathbf{u} \quad &&\text{s.t. } \frac{L_A}{2} \mathbf{B}\mathbf{u} = \frac{L_A}{2}\mathbf{1}_{2k}, \qquad &&& (\text{a}) \\
+&\min_{\mathbf{v}} \frac{L_f}{8} \|\mathbf{v}\|^2 \quad &&\text{s.t. } \frac{L_A}{2} \mathbf{G}\mathbf{v} = \mathbf{0}. \qquad &&& (\text{b})
+\end{aligned}
+$$
+其中, 记 $\mathbf{S} = \frac{L_f}{4} \mathbf{B}^\top \mathbf{B}$, $\mathbf{s} = \left(\frac{L_f}{4} + \frac{L_A}{4\sqrt{2}}\right) \mathbf{e}^{(2k)}_{2k}$.
+
+- 对于问题 $\text{(b)}$, 显然 $\mathbf{v}^\star = \mathbf{0}$ 是唯一最优解, 最优值为 $0$, 对于任意 $L_A \geq 0$ 都成立. 
+- 对于问题 $\text{(a)}$, 
+  - 若 $L_A > 0$, 此时约束为 $\mathbf{B}\mathbf{u} = \mathbf{1}_{2k}$, 由于 $\mathbf{B}$ 是 full rank, 故唯一可行点为 $\mathbf{u}^\star = (1, 2, \ldots, 2k)^\top$, 代入目标函数得最优值为
+    $$
+    f^\star = \frac{1}{2} (\mathbf{u}^\star)^\top \mathbf{S} \mathbf{u}^\star - \mathbf{s}^\top \mathbf{u}^\star = - \left(\frac{L_f}{4} + \frac{L_A}{2\sqrt{2}}\right) k.
+    $$
+  - 若 $L_A = 0$, 此时约束为 $\mathbf{0} = \mathbf{0}$, 故 $\mathbf{u}$ 无约束. 由 $\mathbf{B}$ non-singular, 可知 $\mathbf{S} = \frac{L_f}{4} \mathbf{B}^\top \mathbf{B}$ 是正定的, 目标函数此时 strictly convex. 且最优点须满足 $\nabla_{\mathbf{u}} f(\mathbf{u}) = \mathbf{S}\mathbf{u} - \mathbf{s} = \mathbf{0}$. 只需检查 $\mathbf{u}^\star = (1, 2, \ldots, 2k)^\top$ 是否满足该条件:
+    $$
+    \mathbf{S}\mathbf{u}^\star - \mathbf{s} = \frac{L_f}{4} \mathbf{B}^\top \mathbf{B} \mathbf{u}^\star - \left(\frac{L_f}{4} + \frac{L_A}{4\sqrt{2}}\right) \mathbf{e}^{(2k)}_{2k}.
+    $$
+    由于 $\mathbf{B}\mathbf{u}^\star = \mathbf{1}_{2k}$, 故 $\mathbf{B}^\top \mathbf{B} \mathbf{u}^\star = \mathbf{B}^\top \mathbf{1}_{2k}$, 而 $\mathbf{B}^\top \mathbf{1}_{2k}$ 的最后一个分量为 $1$, 其他分量为 $0$. 因此
+    $$
+    \mathbf{S}\mathbf{u}^\star - \mathbf{s} = \frac{L_f}{4} \begin{bmatrix} 0 \\ 0 \\ \vdots \\ 0 \\ 1 \end{bmatrix} - \left(\frac{L_f}{4}\right) \begin{bmatrix} 0 \\ 0 \\ \vdots \\ 0 \\ 1 \end{bmatrix} = \mathbf{0}.
+    $$
+    因此 $\mathbf{u}^\star$ 确实是最优解, 且最优值为
+    $$
+    f^\star = -\frac{L_f}{4} k.
+    $$
+
+对于对偶问题, 同样分块 $\mathbf{y} = (\boldsymbol{\lambda}_{2k}^\top, \boldsymbol{\pi}_{m-2k}^\top)^\top$, 则对应写出上述 $\text{(a)}, \text{(b)}$ 两个子问题的 KKT stationarity 条件为
+$$
+\begin{aligned}
+&\text{(a)} \quad \mathbf{S}\mathbf{u}^\star - \mathbf{s} = \frac{L_A}{2} \mathbf{B}^\top \boldsymbol{\lambda}^\star, \\
+&\text{(b)} \quad \frac{L_f}{4} \mathbf{v}^\star = \frac{L_A}{2} \mathbf{G}^\top \boldsymbol{\pi}^\star \stackrel{\mathbf{v}^\star = \mathbf{0}}{\implies} \mathbf{G}^\top \boldsymbol{\pi}^\star = \mathbf{0}.
+\end{aligned}
+$$
+- 对于 $\text{(b)}$, 当 $L_A > 0$, 由于 $\mathbf{G}$ 是 full row rank, 因此 $\boldsymbol{\pi}^\star = \mathbf{0}$ 是唯一解. 当 $L_A = 0$, 则方程有无数解, 不妨取 $\boldsymbol{\pi}^\star = \mathbf{0}$.
+- 对于 $\text{(a)}$, LHS 经展开计算有
+    $$
+    \mathbf{S}\mathbf{u}^\star - \mathbf{s} = - \frac{L_A}{4\sqrt{2}} \mathbf{e}^{(2k)}_{2k} = \frac{L_A}{2} \mathbf{B}^\top \boldsymbol{\lambda}^\star
+    $$
+    - 当 $L_A > 0$, 由于 $\mathbf{B}$ 是 non-singular, 故唯一解为
+        $$
+        \boldsymbol{\lambda}^\star = - \frac{1}{2\sqrt{2}} (\mathbf{B}^\top)^{-1} \mathbf{e}^{(2k)}_{2k} = - \frac{1}{2\sqrt{2}} \mathbf{1}_{2k}.
+        $$
+    - 当 $L_A = 0$, 则 $\boldsymbol{\lambda}^\star$ 无约束, 不妨取 $\boldsymbol{\lambda}^\star = - \frac{1}{2\sqrt{2}} \mathbf{1}_{2k}$. 此时 $\text{(a)}$ 的 stationarity 条件仍然成立, 因为 $\mathbf{S}\mathbf{u}^\star - \mathbf{s} = \mathbf{0}$.
+
+$\square$
+
+整合上述结果, 得到 objective 和 feasibility gap 的收敛下界如下. 
+
+> ***Lemma 10* (Lower Complexity Bound with Nonnegative $L_A$)**
+>
+> 给定 $L_f > 0$ 与 $L_A \geq 0$, 且假设 $L_f \geq L_A$.  则对于任意满足 Assumption 1 的一阶方法, 在前 $k$ 步迭代中, 有
+> $$
+> \min_{\mathbf{x} \in \mathcal{K}_{k-1}} |f(\mathbf{x}) - f^\star| \geq \frac{3 L_f \|\mathbf{x}^\star\|^2}{128 (k+1)^2} + \frac{\sqrt{3} L_A \|\mathbf{x}^\star\| \cdot \|\mathbf{y}^\star\|}{8(k+1)}, 
+> $$
+> $$
+> \min_{\mathbf{x} \in \mathcal{K}_{k-1}} \|\mathbf{A}\mathbf{x} - \mathbf{b}\| \geq \frac{\sqrt{3} L_A \|\mathbf{x}^\star\|}{4\sqrt{2}(k+1)}.
+> $$
+>
+
+*Proof*. 由于本小节的约束条件 $\mathbf{A}\mathbf{x} = \mathbf{b}$ 与上一小节相同, 因此 feasibility gap 的下界与上一小节相同. 
+对于 objective gap,  由于 $\mathbf{x}^{(t)} \in \mathcal{K}_{t-1}$, 故不放记 $\mathbf{x}^{(t)} = (\mathbf{0}_k^\top, \mathbf{z}^\top, \mathbf{0}_{n-2k}^\top)^\top$, 其中非零部分为 $\mathbf{z} \in \mathbb{R}^{k}$, 且有对应关系 $x_{k+i} = z_i$, $i = 1, \ldots, k$. 
+代入 $f(\mathbf{x}) = \frac{1}{2} \mathbf{x}^\top \mathbf{H} \mathbf{x} - \mathbf{h}^\top \mathbf{x}$ 以及具体 $\mathbf{H}, \mathbf{h}$ 的构造, 得
+$$
+\begin{aligned}
+f(\mathbf{x})
+&= \frac{L_f}{8} \|\mathbf{\bar{B}}\mathbf{z}\|^2 - \left(\frac{L_f}{4} + \frac{L_A}{4\sqrt{2}}\right) z_k 
+\end{aligned}
+$$
+- 其中, $\mathbf{\bar{B}} \in \mathbb{R}^{k \times k}$ 是 $\mathbf{B} \in \mathbb{R}^{2k \times 2k}$ 的右下角 $k \times k$ 子矩阵, 根据
+    $$
+    \mathbf{x}^\top \mathbf{H} \mathbf{x} = \frac{L_f}{4} \left\| \begin{bmatrix} \mathbf{B}_{2k} & \mathbf{O} \\ \mathbf{O} & \mathbf{I}_{n-2k} \end{bmatrix} \begin{bmatrix} \mathbf{0}_k \\ \mathbf{z}_k \\ \mathbf{0}_{n-2k} \end{bmatrix}\right\|^2 = \frac{L_f}{4} \left\|\mathbf{B} \begin{bmatrix} \mathbf{0}_k \\ \mathbf{z}_k \end{bmatrix}\right\|^2 := \frac{L_f}{4} \|\mathbf{\bar{B}}\mathbf{z}\|^2.
+    $$
+    可得到其具体形式为:
+    $$
+    \mathbf{\bar{B}} = \begin{bmatrix}
+         &  &   & -1 & 1 \\
+         &  &   & \vdots & \vdots \\
+         & -1 & 1 &  &  \\
+        -1 & 1 &  &  &  \\
+        1 &  &  &  & 
+    \end{bmatrix} \in \mathbb{R}^{k \times k}.
+    $$ 
+
+故上述 $n$ 维空间中关于 $\mathbf{x}$ 的优化问题, 可以等价转化为 $k$ 维空间中关于 $\mathbf{z}$ 的无约束优化问题:
+$$
+\min_{\mathbf{x} \in \mathcal{K}_{k-1}} f(\mathbf{x}) = \min_{\mathbf{z} \in \mathbb{R}^{k}}  \left\{\frac{L_f}{8} \|\mathbf{\bar{B}}\mathbf{z}\|^2 - \left(\frac{L_f}{4} + \frac{L_A}{4\sqrt{2}}\right) z_k\right\}.
+$$
+该问题同样是 strictly convex 的, 经过求解, 得到最优解
+$$
+\mathbf{z}^\star = \frac{4}{L_f} \left(\frac{L_f}{4} + \frac{L_A}{4\sqrt{2}}\right) (1,2, \ldots, k)^\top
+$$
+代入计算其最小值有
+$$
+\min_{\mathbf{x} \in \mathcal{K}_{k-1}} f(\mathbf{x}) = - \frac{1}{8} \left(L_f +\sqrt{2} L_A + \frac{L_A^2}{2 L_f}\right) k.
+$$
+故代入上述求解的最优值 $f^\star = - \left(\frac{L_f}{4} + \frac{L_A}{2\sqrt{2}}\right) k$, 得到
+$$
+\min_{\mathbf{x} \in \mathcal{K}_{k-1}} f(\mathbf{x}) - f^\star = \frac{1}{8} \left(L_f +\sqrt{2} L_A - \frac{L_A^2}{2 L_f}\right) k  \stackrel{L_f \geq L_A}{\geq}
+\frac{1}{8} \left(\frac{L_f}{2} + \sqrt{2} L_A\right) k 
+$$
+
+最后, 利用 $\|\mathbf{x}^\star\|^2 = \frac{k(2k+1)(4k+1)}{3}$, $\|\mathbf{y}^\star\|^2 = \frac{k}{8}$, 并进行代数放缩, 得到
+$$
+\min_{\mathbf{x} \in \mathcal{K}_{k-1}} f(\mathbf{x}) - f^\star \geq \frac{3 L_f \|\mathbf{x}^\star\|^2}{128 (k+1)^2} + \frac{\sqrt{3} L_A \|\mathbf{x}^\star\| \cdot \|\mathbf{y}^\star\|}{8(k+1)}.
+$$
+
+$\square$
+
+综合上述各个结论, 得到如下定理.
+
+> ***Theorem 4* (Lower Complexity Bound with Nonnegative $L_A$)**
+>
+> 给定 $m \leq n, L_f > 0, L_A \geq 0, L_f \geq L_A$, 给定任意正整数 $t < m/2$, 存在上述形式的构造使得 $f$ 是 $L_f$-Lipschitz 光滑的, $\|\mathbf{A}\| = L_A$, 且对于任意满足 Assumption 1 的一阶方法, 在前 $t$ 步迭代中, 其迭代点 $\mathbf{x}^{(t)}$ 与 primal-dual 最优解 $(\mathbf{x}^\star, \mathbf{y}^\star)$ 满足关系:
+>
+> $$
+> \begin{aligned}
+> &|f(\mathbf{x}^{(t)}) - f(\mathbf{x}^\star)| \geq \frac{3 L_f \|\mathbf{x}^\star\|^2}{128 (t+1)^2} + \frac{\sqrt{3} L_A \|\mathbf{x}^\star\| \cdot \|\mathbf{y}^\star\|}{8(t+1)}, \\
+> &\|\mathbf{A}\mathbf{x}^{(t)} - \mathbf{b}\| \geq \frac{\sqrt{3} L_A \|\mathbf{x}^\star\|}{4\sqrt{2}(t+1)}.
+> \end{aligned}
+> $$
+
+
+上述定理基本可由 Lemma 10 直接得到, 只需注意到 $\mathbf{x}^{(t)} \in \mathcal{K}_{t-1}$, 故任意算法的表现不可能优于该空间内的 lower bound.
+
+对于该结论有如下说明:
+- 关于 optimality gap, 忽略常数, 其结构为
+    $$
+    f(\mathbf{x}^{(t)}) - f^\star \gtrsim \frac{L_f \|\mathbf{x}^\star\|^2}{(t+1)^2} + \frac{L_A \|\mathbf{x}^\star\| \cdot \|\mathbf{y}^\star\|}{(t+1)}.
+    $$
+    - 其中第一项是 smooth convex objective 本身带来的困难, 经过加速, 可以达到 $\Omega(1/t^2)$ 的收敛率. 这也是无约束凸优化的经典收敛率 lower bound.
+    - 第二项是约束条件带来的困难, 来自 affine constraint 或 primal-dual coupling, 其中 $L_A = \|\mathbf{A}\|$ 是约束条件的难度系数, $\|\mathbf{x}^\star\|$ 表示 primal solution 的规模, $\|\mathbf{y}^\star\|$ 表示 dual solution 的规模. 回顾在 saddle point 问题中, $\langle \mathbf{A}\mathbf{x}, \mathbf{y} \rangle$ 是 primal-dual coupling 的核心, 而其中的尺度自然就是 $\|\mathbf{A}\| \cdot \|\mathbf{x}^\star\| \cdot \|\mathbf{y}^\star\|$. 且这一项只能以 $1/t$ 的收敛率下降.
+    - 此外, 文中提出, 已有的 first-order method 的 upper bound 也具有
+        $$
+        \mathcal{O}\left(\frac{L_f \|\mathbf{x}^\star\|^2}{t^2} + \frac{L_A \|\mathbf{x}^\star\| \cdot \|\mathbf{y}^\star\|}{t}\right),
+        $$
+        的形式, 因此这个 rate 是 tight 的. 
+- 关于 feasibility gap, 其结构为
+    $$
+    \|\mathbf{A}\mathbf{x}^{(t)} - \mathbf{b}\| \gtrsim \frac{L_A \|\mathbf{x}^\star\|}{(t+1)}.
+    $$
+    - 同样也在说明, 由于约束的存在, 即使目标函数很快收敛, 也无法保证可行性, 其收敛率只能是 $\Omega(1/t)$.
+
+### 2.5 A Lower Complexity Bound for Strongly Convex Case
+
+上述的研究是在目标函数 $f$ 是 convex 的前提下给出的. 若进一步假设 $f$ 是 $\mu$-strongly convex:
+$$
+\langle \nabla f(\mathbf{x}) - \nabla f(\mathbf{y}), \mathbf{x} - \mathbf{y} \rangle \geq \mu \|\mathbf{x} - \mathbf{y}\|^2, \quad \forall \mathbf{x},\mathbf{y} \in \mathbb{R}^n,
+$$
+理论上对于普通 unconstrained 问题, 可以有 linear convergence, 即误差按照 $q^t, q \in (0,1)$ 的速率收敛. 然而若额外考虑 affine constraint $\mathbf{A}\mathbf{x} = \mathbf{b}$, 则文中指出, 往往 linear convergence 将无法得到保证. 
+
+考虑到强凸性保证原问题必有唯一解, 因此可以直接考虑迭代点 $\mathbf{x}^{(t)}$ 与最优解 $\mathbf{x}^\star$ 的距离 $\|\mathbf{x}^{(t)} - \mathbf{x}^\star\|^2$ 作为衡量指标. 
+
+> ***Theorem 5* (Lower Complexity Bound for Strongly Convex Case)**
+>
+> 给定 $m \leq n, \mu > 0, L_A \geq 0$, 以及任意 $t < m/2$, 可以构造一个 affinely constrained problem
+> $$
+> \min_{\mathbf{x} \in \mathbb{R}^n} f(\mathbf{x}), \quad \text{s.t. } \mathbf{A}\mathbf{x} = \mathbf{b},
+> $$
+> 其中 $f$ 是 $\mu$-strongly convex 的, $\|\mathbf{A}\| = L_A$, 且这个问题具有唯一的 primal-dual 最优解 $(\mathbf{x}^\star, \mathbf{y}^\star)$, 使得对于任意满足 Assumption 1 的一阶方法, 在前 $t$ 步迭代中, 其迭代点 $\mathbf{x}^{(t)}$ 与最优解 $\mathbf{x}^\star$ 满足关系:
+> $$
+> \|\mathbf{x}^{(t)} - \mathbf{x}^\star\|^2 \geq \frac{5 L_A^2 \|\mathbf{y}^\star\|^2}{256 \mu^2 (t+1)^2}.
+> $$
+
+*Proof*. 令 $k=t$, 考虑 quadratic problem:
+$$
+\min_{\mathbf{x} \in \mathbb{R}^n} \left\{ f(\mathbf{x}) :=  \frac{1}{2} \mathbf{x}^\top \mathbf{H} \mathbf{x} - \mathbf{h}^\top \mathbf{x}
+\right\}, \quad \text{s.t. } \mathbf{A}\mathbf{x} = \mathbf{b},
+$$
+并令 $\mathbf{H} = \mu \mathbf{I}_n$, $\mathbf{h} = \mathbf{0}$, $\mathbf{A} = \frac{L_A}{2} \boldsymbol{\Lambda}$, $\mathbf{b} = \frac{L_A}{2} \mathbf{c}$. 如此构造, 可知 $f$ 是 $\mu$-strongly convex 的, 且 $\|\mathbf{A}\| = L_A$. 
+
+显然如此构造的问题, 仍然满足 $\mathbf{h} \in \mathcal{K}_0$ 且 $\mathbf{H}\mathcal{K}_{k-1} = \mu \mathcal{K}_{k-1} \subseteq \mathcal{K}_k$, 因此 Lemma 4 仍然成立, 即 $\mathbf{x}^{(k)} \in \mathcal{K}_{k-1}$. 对 $\mathbf{x}$ 同样进行分块计算, 得到唯一最优解
+$$
+\mathbf{x}^\star = (1, 2, \ldots, 2k, 0, \ldots, 0)^\top
+$$
+以及对偶解
+$$
+y_i^\star = \begin{cases}
+\frac{\mu}{L_A} i(4k - i + 1), & i = 1, \ldots, 2k, \\
+0, & i = 2k+1, \ldots, m.
+\end{cases}
+$$
+故对于任意 $\mathbf{x} \in \mathcal{K}_{k-1}$, 有
+$$
+\|\mathbf{x} - \mathbf{x}^\star\|^2 = \sum_{i=1}^{2k} (x_i - x_i^\star)^2 + \sum_{i=2k+1}^{n} (0 - 0)^2 \geq \sum_{i=1}^{k} (0 - i)^2 = \frac{k(k+1)(2k+1)}{6}.
+$$
+
+另外, 注意到根据单纯计算整理
+$$
+\|\mathbf{y}^\star\|^2 = \frac{2k(2k+1)(4k+1)}{15L_A^2}(16k^2+8k+2)
+$$
+代入上述 $\|\mathbf{x} - \mathbf{x}^\star\|^2$ 的下界, 并进行代数放缩即证. 具体细节略.  
+
+## 3. Lower Complexity Bounds of General First-Order Methods for Affinely Constrained Problems
+
+在上一个 section 中, 无论具体 setting 如何, 其迭代点都依赖于如下 linear span 的一阶算法假设:
+$$
+\mathbf{x}^{(t)} \in \text{span}\{\nabla f(\mathbf{x}^{(0)}), \mathbf{A}^\top \mathbf{r}^{(0)}, \ldots, \nabla f(\mathbf{x}^{(t-1)}), \mathbf{A}^\top \mathbf{r}^{(t-1)}\}, \quad t = 1, 2, \ldots
+$$
+并且由此归纳证明了 $\mathbf{x}^{(t)} \in \mathcal{K}_{t-1}$. 
+本文则进一步考虑更 general 的 first-order methods, 认为 $\mathcal{I}_t$ 可以是任意 deterministic 的规则:
+$$
+(\mathbf{x}^{(t+1)}, \mathbf{y}^{(t+1)}, \mathbf{\bar{x}}^{(t+1)}, \mathbf{\bar{y}}^{(t+1)}) = \mathcal{I}_t(\boldsymbol{\theta}; \mathrm{O}(\mathbf{x}^{(0)}, \mathbf{y}^{(0)}), \ldots, \mathrm{O}(\mathbf{x}^{(t)}, \mathbf{y}^{(t)})), \quad t = 0, 1, 2, \ldots
+$$
+这将允许包括 projection 等在内的许多非线性操作. 文章将使用 Nemirovski 等提出的 **rotation variance** 技巧, 将任意 instance 转化回 Section 2 所定义的示例当中. 
+
+首先明确问题定义. 给定半正定矩阵 $\mathbf{H} \in \mathbb{S}_+^n$, $\mathbf{A} \in \mathbb{R}^{m \times n}$, 以及参数 $\boldsymbol{\theta} = (\mathbf{h}, \mathbf{b}, R_X, R_Y, \lambda)$, 其中
+- $\mathbf{h} \in \mathbb{R}^n$ 是目标函数的线性项,
+- $\mathbf{b} \in \mathbb{R}^m$ 是约束条件的右端项,
+- $R_X, R_Y  \in [0, \infty]$ 是 primal, dual 约束球的半径, 当取 $\infty$ 时表示无约束.
+- $\lambda \in [0, \infty)$ 是对偶目标中 $\|\mathbf{y}\|^2$ 的正则化系数.
+
+根据上述符号, 定义 instance $\mathrm{P}(\boldsymbol{\theta}; \mathbf{H}, \mathbf{A})$ 为如下的 affinely constrained problem:
+$$
+\phi^* = \min_{\|\mathbf{x}\| \leq R_X} \left\{
+\frac{1}{2} \mathbf{x}^\top \mathbf{H} \mathbf{x} - \mathbf{h}^\top \mathbf{x} + \max_{\|\mathbf{y}\| \leq R_Y} \left[\langle \mathbf{A}\mathbf{x} - \mathbf{b}, \mathbf{y}\rangle - \frac{\lambda}{2} \|\mathbf{y}\|^2\right]
+\right\}
+$$
+- 说明: 这样的定义是 general 的, 其包含了 Section 2 中的形式, 只需令 $R_X = R_Y = \infty, \lambda = 0$ 即可.
+
+$\diamond$
+
+下正式给出 rotation 的相关性质. 
+
+> ***Proposition 1* (Rotated Instance Properties)**
+>
+> 给定如下前提条件:
+> - 给定问题维度 $m \leq n$, Krylov 子空间维度 $k < m/2$, 迭代步数 $t \leq k/2 -1$.
+> - 给定 $f$ 的 Lipschitz 光滑常数 $L_f \geq 0$, 以及 $\mathbf{A}$ 的谱范数 $L_A \geq 0$.
+>
+> 考虑由上面定义的 original instance $\mathrm{P}(\boldsymbol{\theta}; \mathbf{H}, \mathbf{A})$, 且该 instance 须满足如下条件:
+> - $\|\mathbf{H}\| \leq L_f$: 其保证 $f$ 是 $L_f$-Lipschitz 光滑的.
+> - $\mathbf{A} = \frac{L_A}{2} \boldsymbol{\Lambda}$, $\mathbf{b} = \frac{L_A}{2} \mathbf{c}$, 其中 $\boldsymbol{\Lambda}, \mathbf{c}$ 的构造如 Section 2.1 所述. 这是要转化的 hard instance 目标. 
+> - $\mathbf{H} \in \mathbb{S}_+^n$, 且 $\mathbf{H} \mathcal{K}_{2s-1} \subseteq \mathcal{K}_{2s}$, $\forall s \leq k/2$: 这为了保证 Krylov 子空间的嵌套关系, 每次 $\mathbf{H}$ 的作用只会增加一个有效维度. 
+> - $\mathbf{h} \in \mathcal{K}_0$: 回忆 $\mathcal{K}_0 = \text{span}\{\mathbf{e}_{n}^{(2k)}\}$.
+>
+> 对于满足上述条件的 original instance, 在给定一个一阶方法 $\mathcal{M}$ 的前提下, 都能找到另一组旋转后的 instance $\mathrm{P}(\boldsymbol{\theta}; \mathbf{\tilde{H}}, \mathbf{\tilde{A}})$, 其中 $\mathbf{\tilde{H}} = \mathbf{U}^\top \mathbf{H} \mathbf{U}$, $\mathbf{\tilde{A}} = \mathbf{V}^\top \mathbf{A} \mathbf{V}$, 且 $\mathbf{U}, \mathbf{V}$ 是 orthogonal matrices, 其依赖于具体迭代 $t$, 并满足 $\mathbf{U} \mathbf{h} = \mathbf{h}$, $\mathbf{V}\mathbf{b} = \mathbf{b}$, 则有结论如下: 
+>
+> 1. 若原问题的 saddle point 为 $(\mathbf{x}^\star, \mathbf{y}^\star)$, 则旋转后的 instance 的 saddle point 为 $(\mathbf{\hat{x}}, \mathbf{\hat{y}}) = (\mathbf{U}^\top \mathbf{x}^\star, \mathbf{V}^\top \mathbf{y}^\star)$, 且 $\|\mathbf{\hat{x}}\| = \|\mathbf{x}^\star\|$, $\|\mathbf{\hat{y}}\| = \|\mathbf{y}^\star\|$.
+>
+> 2. 当使用 $\mathcal{M}$ 在 rotated instance  进行 $t$ 步迭代后得到的迭代点 $(\mathbf{\bar{x}}^{(t)}, \mathbf{\bar{y}}^{(t)})$, 在经过旋转变换映射回 original space 后, 仍然能落在 section 2 中分析的 $\mathcal{K}_{t-1}$ 中, 故有优化下界:
+>   $$
+>  \begin{aligned}
+> & \tilde{\phi}(\mathbf{\bar{x}}^{(t)}) - \tilde{\phi}^\star \geq \min_{\mathbf{x} \in \mathcal{K}_{t-1}} \phi(\mathbf{x}) - \phi^\star, \\
+> & \tilde{f}(\mathbf{\bar{x}}^{(t)}) - \tilde{f}(\mathbf{\hat{x}}) \geq \min_{\mathbf{x} \in \mathcal{K}_{t-1}} f(\mathbf{x}) - f(\mathbf{x}^\star),\\
+> &\|\mathbf{\tilde{A}}\mathbf{\bar{x}}^{(t)} - \mathbf{b}\| \geq \min_{\mathbf{x} \in \mathcal{K}_{t-1}} \|\mathbf{A}\mathbf{x} - \mathbf{b}\|,\\
+> & \|\mathbf{\tilde{x}}^{(t)} - \mathbf{\hat{x}}\|^2 \geq \min_{\mathbf{x} \in \mathcal{K}_{t-1}} \|\mathbf{x} - \mathbf{x}^\star\|^2.
+>  \end{aligned}
+> $$
+
+- 这个 proposition 将任意算法 $\mathcal{M}$ 的收敛情况都被 Section 2 中的 lower bound 所控制, 因此可以得到 general first-order methods 的 lower complexity bound.
+
+- 该 proposition 的证明较为繁杂. 
+
+### 3.1 Lower Complexity Bounds
+
+这里首先明确一下我们黑盒优化的世界观. 
+- 首先会给定一个确定但 arbitrary 的一阶方法 $\mathcal{M}$, 这个方法是固定的, 然而具体利用的信息是任意的(只要是一阶的).  这会导致一个特点: 尽管算法可能很强大, 然而只要在第 $s$ 步查询点 $\mathbf{x}^{(s)}, \mathbf{y}^{(s)}$ 是历史 oracle 回答的一个固定函数, 那么算法便无法区分具体的 instance 是什么. (换言之, 类似插值函数的比喻, 只要每次 instance 给出的查询点所需的信息是相同的, 我们可以任意的调整 instance 的构造, 使得算法无法区分, 从而构造一个困难的优化问题.)
+
+- 因此, 我们可以以博弈的方式针对 $\mathcal{M}$ 每个 iteration 时的查询去调整 instance, 构造出一条 instance 序列 $\mathrm{P}_0, \mathrm{P}_1, \ldots$, 只要保证在在第 $s$ 次迭代时, $\mathrm{P}_s$ 的历史轨迹和 $\mathrm{P}_{<s}$ 的历史轨迹是相同的, 这样的任意构造都是合理的. 
+
+
+> ***Theorem 6* (Lower Complexity Bound (I) of General First-Order Methods)**
+>
+> 考虑前提条件:
+> - $8 < m \leq n$ (保证 Krylov 子空间的维度 $k$ 足够大)
+> - $L_f > 0$, $L_A > 0$. 
+> 
+> 对于任意 $t < m/4 - 1$, 任意上述一阶方法 $\mathcal{M}$, 存在某种 instance 的构造 
+> $$
+> \tilde{f}^\star = \min_{\mathbf{x} \in \mathbb{R}^n} \left\{\tilde{f}(\mathbf{x}), ~ \text{s.t. } \mathbf{\tilde{A}}\mathbf{x} = \mathbf{b},\right\}
+> $$
+> 满足 $\tilde{f}$ 是 $L_f$-Lipschitz 光滑的, $\|\mathbf{\tilde{A}}\| = L_A$, 且该问题具有唯一的 primal-dual 最优解 $(\mathbf{\hat{x}}, \mathbf{\hat{y}})$,
+> 并且 $\mathcal{M}$ 在前 $t$ 步迭代中, 其迭代点 $\mathbf{\bar{x}}^{(t)}$ 满足
+>  $$
+>  \tilde{f}(\mathbf{\bar{x}}^{(t)}) - \tilde{f}^\star \geq \frac{3 L_f \|\mathbf{\hat{x}}\|^2}{64 (2t+5)^2} + \frac{\sqrt{3}}{16(2t+5)} L_A \|\mathbf{\hat{x}}\| \cdot \|\mathbf{\hat{y}}\|,
+> $$
+> 以及
+> $$
+> \|\mathbf{\tilde{A}}\mathbf{\bar{x}}^{(t)} - \mathbf{b}\| \geq \frac{\sqrt{3} L_A \|\mathbf{\hat{x}}\|}{4\sqrt{2}(2t+5)}.
+> $$
+> 其中 $(\mathbf{\hat{x}}, \mathbf{\hat{y}})$ 是 rotated instance 的 primal-dual 最优解.
+
+*Proof Sketch*.  
+- 设 $k = 2t + 2$ (以满足定理中的各种维度要求), 并 accordingly 可以确定 $\boldsymbol{\Lambda}, \mathbf{c}$ 的构造. 
+- 按照 Section 2 中 convex case 方法的形式构造 original instance:
+    $$
+    \mathbf{H} = \frac{L_f}{4} \begin{bmatrix} \mathbf{B}^\top \mathbf{B} & \mathbf{0} \\ \mathbf{0} & \mathbf{I}_{n-2k} \end{bmatrix} , \quad \mathbf{h} = \frac{L_f}{2} \mathbf{e}^{(2k)}_{n}, \quad \mathbf{A} = \frac{L_A}{2} \boldsymbol{\Lambda}, \quad \mathbf{b} = \frac{L_A}{2} \mathbf{c}.
+    $$
+- 可以验证其满足上述 proposition 中的所有条件.
+- 根据 Proposition 1, 可以得到 rotated instance $\mathrm{P}(\boldsymbol{\theta}; \mathbf{\tilde{H}}, \mathbf{\tilde{A}})$, 且 $\mathbf{\tilde{H}} = \mathbf{U}^\top \mathbf{H} \mathbf{U}$, $\mathbf{\tilde{A}} = \mathbf{V}^\top \mathbf{A} \mathbf{V}$, 其中 $\mathbf{U}, \mathbf{V}$ 是 orthogonal matrices, 且 $\mathbf{U}\mathbf{h} = \mathbf{h}$, $\mathbf{V}\mathbf{b} = \mathbf{b}$.
+- 根据 Proposition 1, 可以得到 rotated instance 的对应优化下界, 并代入 Section 2 的具体数值即证. 
+
+以及当 strongly convex 时, 也可以 accordingly 给出如下定理.
+
+> ***Theorem 7* (Lower Complexity Bound (II) of General First-Order Methods)**
+>
+> 令 $8 < m \leq n$, $\mu > 0$, $L_A \geq 0$. 对于任意 $t < m/4 - 1$, 任意上述一阶方法 $\mathcal{M}$, 存在相同的构造使得
+> $$
+> \|\mathbf{\bar{x}}^{(t)} - \mathbf{\hat{x}}\|^2 \geq \frac{5 L_A^2 \|\mathbf{\hat{y}}\|^2}{256 \mu^2 (2t+5)^2}.
+> $$
+
