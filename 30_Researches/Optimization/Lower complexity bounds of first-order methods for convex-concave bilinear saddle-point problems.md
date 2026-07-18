@@ -939,7 +939,7 @@ $\diamond$
 
 - 这个 proposition 将任意算法 $\mathcal{M}$ 的收敛情况都被 Section 2 中的 lower bound 所控制, 因此可以得到 general first-order methods 的 lower complexity bound.
 
-- 该 proposition 的证明较为繁杂. 
+- 该 proposition 的证明较为繁杂, 不妨先承认该定理的合法性, 其具体证明将单独给出在如下链接中. 
 
 ### 3.1 Lower Complexity Bounds
 
