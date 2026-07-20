@@ -1,0 +1,876 @@
+% Heaviside Composite Optimization Problems
+% Reconstructed with the user-provided SimplePlus Beamer theme.
+% Persistent project requirements: RECONSTRUCTION_RULES.md
+
+\documentclass[aspectratio=169,xcolor=dvipsnames]{beamer}
+\usetheme{SimplePlus}
+
+% Beamer routes math through Computer Modern Sans by default, which makes
+% \mathbf render as heavy bold sans.  Restore conventional serif math while
+% keeping the theme's sans-serif text.
+\usefonttheme[onlymath]{serif}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{dsfont}
+\usepackage{mathtools}
+
+% Computer Modern's italic f hooks to the right, so a following prime sits on
+% top of it.  \fp inserts a small kern to separate the two.
+\newcommand{\fp}{f\mkern2mu'}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% A calmer hierarchy than the template default: titles remain prominent
+% without overwhelming dense mathematical content.
+\setbeamerfont{frametitle}{size=\large,series=\bfseries,parent=structure}
+
+% A reusable visual language for material added beyond the photographed
+% lecture slides.  Original course content remains on the plain white canvas.
+\definecolor{SupplementAccent}{RGB}{90,119,126}
+\definecolor{SupplementTint}{RGB}{241,246,246}
+\setbeamercolor{supplementary note}{fg=MediumBlack,bg=SupplementTint}
+\newenvironment{supplementarycallout}[1]{%
+  \begingroup
+  \setbeamercolor{block title alerted}{fg=white,bg=SupplementAccent}%
+  \setbeamercolor{block body alerted}{fg=black,bg=SupplementTint}%
+  \begin{alertblock}{#1}%
+}{%
+  \end{alertblock}%
+  \endgroup
+}
+\newenvironment{supplementarynote}{%
+  \vspace{0.08cm}%
+  \begin{beamercolorbox}[
+    wd=\textwidth,sep=0.08cm,leftskip=0.08cm,rightskip=0.08cm
+  ]{supplementary note}%
+  \footnotesize
+  \textcolor{SupplementAccent}{\textbf{Supplementary note.}}\enspace
+}{%
+  \end{beamercolorbox}%
+}
+
+% The original title page was never photographed; the speaker details below
+% were supplied separately and verified against the USC Viterbi directory.
+\title{Heaviside Composite Optimization Problems}
+\subtitle{}
+\author{Jong-Shi Pang}
+\institute{Daniel J. Epstein Department of Industrial and Systems Engineering\\
+  University of Southern California}
+\date{Peking University, July 2026}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Chapter I: Introduction}
+
+\begin{frame}[plain]
+  \centering
+  \vfill
+  {\usebeamercolor[fg]{structure}\usebeamerfont{title}Chapter I\par}
+  \vspace{0.34cm}
+  {\usebeamercolor[fg]{structure}\usebeamerfont{subtitle}\mdseries\large
+    Introduction\par}
+  \vfill
+\end{frame}
+
+\begin{frame}{A bird's eye-view of post World-War-II optimization till now:}
+  \small
+  \begin{itemize}
+    \setlength{\itemsep}{0.08cm}
+    \item From linear programming to nonlinear and integer programming.
+    \item From nonlinear programming to stochastic programming and
+      modern-day convex programming.
+    \item From differentiability to nondifferentiability.
+    \item From nondifferentiability to semicontinuity.
+    \item From convexity to nonconvexity.
+  \end{itemize}
+
+  \vspace{0.02cm}
+  {\color{MediumBlue}\scriptsize
+    Y. Cui and J. S. Pang, \textit{Modern Nonconvex Nondifferentiable
+    Optimization}. SIAM, MOS--SIAM Series on Optimization
+    (December 2021).\par}
+
+  \vspace{0.12cm}
+  {\color{MediumBlue}\rule{0.54\textwidth}{0.45pt}\par}
+  \vspace{0.10cm}
+
+  {\color{MediumBlue}\small
+    Apart from further developments of the present, what is the future??\par}
+  \vspace{0.05cm}
+  {\small
+    From semicontinuity to lack thereof
+    $\Rightarrow$ discontinuous optimization.\par
+    \vspace{0.05cm}
+    From closedness of constraints to non-closedness.\par}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The General Heaviside Composite Optimization Problem\\[-1pt]
+    {\normalsize\mdseries (G-HSCOP)}}
+
+  \begingroup
+  \setlength{\fboxsep}{0.10cm}
+  \setlength{\fboxrule}{0.45pt}
+  \color{MediumBlack}
+  \noindent\fbox{%
+    \begin{minipage}{0.94\textwidth}
+      \color{MediumBlue}
+      \vspace{-0.05cm}
+      \noindent\makebox[\linewidth][c]{\(\displaystyle
+        \underset{\mathbf{x}\in P}{\operatorname{maximize}}\quad
+        \Phi(\mathbf{x})\triangleq c(\mathbf{x})
+        +\sum_{k=1}^{K_0}\psi_{0k}(\mathbf{x})
+        \underbrace{\mathds{1}_{[0,\infty)}\!\left(\phi_{0k}(\mathbf{x})\right)}_
+          {\text{composite indicator fnc.}}
+      \)}\par
+      \vspace{0.05cm}
+      \noindent\makebox[\linewidth][c]{\(\displaystyle
+        \operatorname{subject\ to}\quad
+        \mathbf{A}_{i\bullet}\mathbf{x}
+        +\sum_{k=1}^{K_i}\psi_{ik}(\mathbf{x})
+        \mathds{1}_{[0,\infty)}\!\left(\phi_{ik}(\mathbf{x})\right)
+        \geq \eta_i,\qquad i=1,\ldots,I.
+      \)}\par
+      \vspace{-0.05cm}
+    \end{minipage}%
+  }
+  \endgroup
+
+  \vspace{0.08cm}
+  \footnotesize
+  \begin{itemize}
+    \setlength{\itemsep}{0.02cm}
+    \item $P$ is a \textcolor{MediumRed}{friendly} set, $c$ is a
+      \textcolor{MediumRed}{friendly} function, e.g., affine or quadratic;
+      \textcolor{MediumRed}{friendly} $=$ amenable to well-known treatments,
+      and $\mathbf{A}_{i\bullet}$ is the $i$-th row of a matrix
+      $\mathbf{A}\in\mathbb{R}^{I\times n}$.
+    \item $\psi_{ik}$ and $\phi_{ik}$ are functions whose properties highlight
+      the challenges;
+    \item most importantly, $\mathds{1}_{[0,\infty)}$ is the ``closed''
+      Heaviside function given by
+  \end{itemize}
+
+  \vspace{-0.16cm}
+  {\color{MediumBlue}\small
+  \[
+    \mathds{1}_{[0,\infty)}(s)\triangleq
+    \begin{cases}
+      1, & \text{if }s\in[0,\infty),\\
+      0, & \text{otherwise},
+    \end{cases}
+    \qquad\text{(upper semi-continuous).}
+  \]
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{The General Heaviside Composite Optimization Problem\\[-1pt]
+    {\normalsize\mdseries (G-HSCOP)}}
+
+  \begin{supplementarycallout}{{\small Supplementary visualization: closed vs. open Heaviside thresholds}}
+  \small
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+  The Heaviside indicator turns a scalar condition into a binary switch. The
+  bracket at $s=0$ determines both activation at equality and the direction
+  of semicontinuity.
+
+  \vspace{0.02cm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+    {\color{MediumBlue}\bfseries Closed threshold: $[0,\infty)$\par}
+    {\scriptsize Upper, not lower, semicontinuous; favorable for $\max$.\par}
+    \[
+      H_{\mathrm{cl}}(s)\triangleq\mathds{1}_{[0,\infty)}(s)
+      =\begin{cases}
+        0, & s<0,\\
+        1, & s\geq 0.
+      \end{cases}
+    \]
+    \vspace{-0.20cm}
+    \centering
+    \begin{tikzpicture}
+      \begin{axis}[
+        width=0.96\linewidth,
+        height=2.31cm,
+        axis lines=middle,
+        xmin=-2.1,xmax=2.1,
+        ymin=-0.22,ymax=1.32,
+        xtick={-2,-1,0,1,2},
+        ytick={0,1},
+        xlabel={$s$},
+        ylabel={$H_{\mathrm{cl}}(s)$},
+        label style={font=\scriptsize},
+        tick label style={font=\scriptsize},
+        axis line style={MediumBlack},
+        every axis x label/.style={at={(ticklabel* cs:1)},anchor=west},
+        every axis y label/.style={at={(ticklabel* cs:1)},anchor=south},
+        clip=false
+      ]
+        \addplot[MediumBlue,very thick,domain=-2:0] {0};
+        \addplot[MediumBlue,very thick,domain=0:2] {1};
+        \addplot[MediumBlue,only marks,mark=o,mark size=2.4pt,
+          mark options={fill=SupplementTint,very thick}] coordinates {(0,0)};
+        \addplot[MediumBlue,only marks,mark=*,mark size=2.4pt]
+          coordinates {(0,1)};
+      \end{axis}
+    \end{tikzpicture}
+
+    \raggedright\footnotesize
+    $H_{\mathrm{cl}}(0)=1$; equality activates the term.
+
+    \column{0.48\textwidth}
+    {\color{SupplementAccent}\bfseries Open threshold: $(0,\infty)$\par}
+    {\scriptsize Lower, not upper, semicontinuous; favorable for $\min$.\par}
+    \[
+      H_{\mathrm{op}}(s)\triangleq\mathds{1}_{(0,\infty)}(s)
+      =\begin{cases}
+        0, & s\leq 0,\\
+        1, & s>0.
+      \end{cases}
+    \]
+    \vspace{-0.20cm}
+    \centering
+    \begin{tikzpicture}
+      \begin{axis}[
+        width=0.96\linewidth,
+        height=2.31cm,
+        axis lines=middle,
+        xmin=-2.1,xmax=2.1,
+        ymin=-0.22,ymax=1.32,
+        xtick={-2,-1,0,1,2},
+        ytick={0,1},
+        xlabel={$s$},
+        ylabel={$H_{\mathrm{op}}(s)$},
+        label style={font=\scriptsize},
+        tick label style={font=\scriptsize},
+        axis line style={MediumBlack},
+        every axis x label/.style={at={(ticklabel* cs:1)},anchor=west},
+        every axis y label/.style={at={(ticklabel* cs:1)},anchor=south},
+        clip=false
+      ]
+        \addplot[SupplementAccent,very thick,domain=-2:0] {0};
+        \addplot[SupplementAccent,very thick,domain=0:2] {1};
+        \addplot[SupplementAccent,only marks,mark=*,mark size=2.4pt]
+          coordinates {(0,0)};
+        \addplot[SupplementAccent,only marks,mark=o,mark size=2.4pt,
+          mark options={fill=SupplementTint,very thick}] coordinates {(0,1)};
+      \end{axis}
+    \end{tikzpicture}
+
+    \raggedright\footnotesize
+    $H_{\mathrm{op}}(0)=0$; strict inequality is required. In particular,
+    $|t|_0=H_{\mathrm{op}}(|t|)$.
+  \end{columns}
+
+  \vspace{-0.02cm}
+  {\color{MediumBlue}\footnotesize
+    Thus $\psi(\mathbf{x})H_{\mathrm{cl}}(\phi(\mathbf{x}))$ equals
+    $\psi(\mathbf{x})$ when $\phi(\mathbf{x})\geq0$, and equals $0$
+    otherwise.}
+  \end{supplementarycallout}
+\end{frame}
+
+\begin{frame}{Conditional Functions and Sparsity}
+  \small
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+  \setlength{\abovedisplayshortskip}{3pt}
+  \setlength{\belowdisplayshortskip}{3pt}
+  The product
+  $f(\mathbf{x})\mathds{1}_{[0,\infty)}\!\left(g(\mathbf{x})\right)$
+  is a conditional function; i.e., the primary function $f(\mathbf{x})$ is
+  activated only if the auxiliary condition $g(\mathbf{x})\geq 0$ holds.
+
+  \vspace{0.12cm}
+  {\color{MediumBlue}An immediate example: the sparsity (counting) function}
+  \vspace{-0.04cm}
+  \[
+    |t|_0\triangleq
+    \begin{cases}
+      1, & \text{if }t\neq 0,\\
+      0, & \text{if }t=0,
+    \end{cases}
+    =\mathds{1}_{(0,\infty)}(|t|)
+    =1-\mathds{1}_{[0,\infty)}(-|t|),
+  \]
+  \vspace{-0.08cm}
+
+  illustrates that the function inside the Heaviside function may not be
+  differentiable. This function extends to any step function with a finite
+  number of (discontinuous) jumps.
+
+  \vspace{0.14cm}
+  An \textcolor{MediumRed}{affine sparsity} constraint
+  \vspace{-0.05cm}
+  \[
+    \sum_{j=1}^{n}a_j|x_j|_0\leq b,
+    \qquad \text{with $a_j$ of mixed signs},
+  \]
+  \vspace{-0.08cm}
+
+  is a non-trivial extension of the cardinality constraint
+  $\sum_{j=1}^{n}|x_j|_0\leq K$, whose mixing coefficients are all positive.
+
+  \begin{supplementarynote}
+    Positive coefficients preserve lower semicontinuity. With mixed-sign
+    $a_j$, upward and downward jumps can coexist, so
+    $\sum_{j=1}^{n}a_j|x_j|_0$ may be neither lower nor upper
+    semicontinuous.
+  \end{supplementarynote}
+\end{frame}
+
+\begin{frame}{References}
+  \footnotesize
+  \setlength{\parskip}{0pt}
+
+  {\color{MediumRed}\bfseries Methodology}
+  \vspace{0.04cm}
+  \begin{itemize}
+    \setlength{\itemsep}{0.08cm}
+    \item Y.~\textsc{Cui}, J.~\textsc{Liu}, \textsc{and} J.S.~\textsc{Pang}.
+      On the minimization of piecewise functions: Pseudo stationarity.
+      \textit{Journal of Convex Analysis} 30(3): 793--834 (2023).
+    \item S.~\textsc{Han}, Y.~\textsc{Cui}, \textsc{and} J.S.~\textsc{Pang}.
+      Analysis of a class of minimization problems lacking lower
+      semicontinuity. \textit{Mathematics of Operations Research}
+      50(3): 2175--2198 (2025-8).
+    \item K.~\textsc{Zheng}, J.~\textsc{Liu}, R.~\textsc{Wang}, \textsc{and}
+      J.S.~\textsc{Pang}. Solving constrained affine Heaviside composite
+      optimization problems by a progressive IP approach.
+      Manuscript (April 2026).
+  \end{itemize}
+
+  \vspace{0.20cm}
+  {\color{MediumRed}\bfseries Applications}
+  \vspace{0.04cm}
+  \begin{itemize}
+    \setlength{\itemsep}{0.08cm}
+    \item Z.~\textsc{Qi}, Y.~\textsc{Cui}, Y.~\textsc{Liu}, \textsc{and}
+      J.S.~\textsc{Pang}. Estimation of individualized decision rules based on
+      optimized covariate-dependent equivalent of random outcomes.
+      \textit{SIAM Journal on Optimization} 29(3): 2337--2362 (2019).
+    \item Y.~\textsc{Fang}, J.~\textsc{Liu}, \textsc{and} J.S.~\textsc{Pang}.
+      Treatment learning with Gini constraints by Heaviside composite
+      optimization and a progressive method.
+      \textit{Computational Optimization and Applications}
+      92(2): 471--513 (2025-11).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Distinguished (and challenging) features:}
+  \small
+  \setlength{\parskip}{0pt}
+  \begin{itemize}
+    \setlength{\itemsep}{0.14cm}
+    \item \textcolor{MediumRed}{Discontinuity} of the Heaviside function and
+      \textcolor{MediumRed}{nondifferentiability} of the other functions:
+      \begin{itemize}
+        \setlength{\itemsep}{0.04cm}
+        \item[---] lack of semicontinuity in the objective function
+        \item[---] non-closedness of the feasible set
+        \item[---] does convexity/concavity have a role to play?
+      \end{itemize}
+
+    \item \textcolor{MediumRed}{Composition} of the highlighted features:
+      \begin{itemize}
+        \setlength{\itemsep}{0.04cm}
+        \item[---] what is a reasonable concept of a
+          \textcolor{MediumRed}{solution}?
+        \item[---] algorithmically, how to compute such a solution?
+      \end{itemize}
+
+    \item \textcolor{MediumRed}{Fusion} of continuous variables and functions
+      with discrete structure of the Heaviside function; thus natural to
+      consider
+      \begin{itemize}
+        \setlength{\itemsep}{0.04cm}
+        \item[---] a \textcolor{MediumRed}{marriage} between the continuous
+          and discrete world
+        \item[---] how to facilitate the marriage? will it be fruitful?
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section{Chapter II: Prerequisites, a second course in optimization}
+
+\begin{frame}[plain]
+  \centering
+  \vfill
+  {\usebeamercolor[fg]{structure}\usebeamerfont{title}Chapter II\par}
+  \vspace{0.34cm}
+  {\usebeamercolor[fg]{structure}\usebeamerfont{subtitle}\mdseries\large
+    Prerequisites, a second course in optimization\par}
+  \vfill
+\end{frame}
+
+% Original slide 11.  The rest of Chapter II (slides 10, 14--20) is still
+% awaiting photographs.
+\begin{frame}{Prerequisites, a second course in optimization}
+  \small
+  \setlength{\parskip}{0pt}
+  \begin{itemize}
+    \setlength{\itemsep}{0.16cm}
+    \item \textcolor{MediumRed}{A graduate course in linear, differentiable,
+      and integer programming}
+    \item \textbf{Bouligand differentiability}: broad and most basic for
+      nondifferentiable functions
+    \item \textbf{Stationarity conditions} of nondifferentiable programs
+    \item \textbf{Piecewise affine functions}: definition and properties
+    \item \textbf{Difference-of-convex programs}: criticality vs.\
+      stationarity; the difference-of-convex algorithm and its refinement
+    \item \textbf{Complementarity constraints}: modeling breadth and
+      connections to binary programming
+    \item \textbf{Fractional and composite programs}: Dinkelbach's algorithm
+      and its extension.
+  \end{itemize}
+
+  \begin{supplementarynote}
+    $0\leq a\perp b\geq0$ is an or-gate --- $a_i=0$ \emph{or} $b_i=0$ ---
+    i.e.\ if-then logic written in continuous variables.
+  \end{supplementarynote}
+\end{frame}
+
+% Original slide 12.
+\begin{frame}{Bouligand differentiability}
+  \small
+  \setlength{\abovedisplayskip}{5pt}
+  \setlength{\belowdisplayskip}{5pt}
+
+  A function $f:\mathcal{O}\subseteq\mathbb{R}^n\to\mathbb{R}$, where
+  $\mathcal{O}$ is an open set in $\mathbb{R}^n$ is
+  {\color{MediumBlue}Bouligand differentiable} at
+  $\bar{\mathbf{x}}\in\mathcal{O}$ if it is {\color{MediumBlue}locally
+  Lipschitz continuous} near $\bar{\mathbf{x}}$ and directionally
+  differentiable there with the (finite) directional derivative along the
+  direction $\mathbf{v}\in\mathbb{R}^n$ defined by:
+  \[
+    \fp (\bar{\mathbf{x}};\mathbf{v})\triangleq\lim_{\tau\downarrow0}
+    \frac{f(\bar{\mathbf{x}}+\tau\mathbf{v})-f(\bar{\mathbf{x}})}{\tau}.
+  \]
+
+  As a function of the direction, $\fp (\bar{\mathbf{x}};\bullet)$ is
+  positively homogeneous and globally Lipschitz continuous on $\mathbb{R}^n$
+  with the same Lipschitz modulus as that of $f$ near $\bar{\mathbf{x}}$.
+
+  \vspace{0.06cm}
+  Calculus rules hold for the directional derivative; these are the sum,
+  multiplication, division, and composition rules; in particular,
+  \[
+    (f\circ g)'(\bar{\mathbf{x}};\mathbf{v})
+    =\fp \bigl(g(\bar{\mathbf{x}});g'(\bar{\mathbf{x}};\mathbf{v})\bigr),
+  \]
+
+  \textbf{Remark:} the partial differentiation rule may fail;
+  \[
+    \fp (\bar{\mathbf{x}};\mathbf{v})\neq\sum_{i=1}^{n}
+    \fp (\bar{\mathbf{x}};v_i\mathbf{e}^i),\qquad
+    \text{where }\ \mathbf{e}^i=i\text{-th coordinate vector}
+  \]
+
+  \begin{supplementarynote}
+    Convex functions are directionally differentiable.
+  \end{supplementarynote}
+\end{frame}
+
+% Original slide 13.
+\begin{frame}{Piecewise affine functions}
+  \small
+  \setlength{\abovedisplayskip}{9pt}
+  \setlength{\belowdisplayskip}{9pt}
+
+  A {\color{MediumBlue}continuous} function $f:\mathbb{R}^n\to\mathbb{R}^m$
+  is {\color{MediumBlue}piecewise affine} if there exists a partition of
+  $\mathbb{R}^n$ into a finite number of polyhedra, on each of which, $f$ is
+  an affine function.
+
+  \vspace{0.12cm}
+  A piecewise affine function is Bouligand differentiable everywhere.
+  \textcolor{MediumRed}{Most interested in $m=1$.}
+
+  \vspace{0.12cm}
+  A \textcolor{MediumRed}{continuous} function
+  $f:\mathbb{R}^n\to\mathbb{R}^m$ is piecewise affine (PA) if and only if
+  \[
+    f(\mathbf{x})=\underbrace{\max_{1\leq k\leq K}
+      \bigl[(\mathbf{a}^k)^{\top}\mathbf{x}+\alpha_k\bigr]}_
+      {\text{convex in }\mathbf{x}}
+    -\underbrace{\max_{1\leq\ell\leq L}
+      \bigl[(\mathbf{b}^{\ell})^{\top}\mathbf{x}+\beta_{\ell}\bigr]}_
+      {\text{convex in }\mathbf{x}},\qquad\mathbf{x}\in\mathbb{R}^n
+  \]
+
+  for some constant vectors $\mathbf{a}^k$ and $\mathbf{b}^{\ell}$ and
+  scalars $\alpha_k$ and $\beta_{\ell}$. Hence, if $f$ is PA, then for every
+  $\bar{\mathbf{x}}\in\mathbb{R}^n$,
+  \[
+    f(\mathbf{x})=f(\bar{\mathbf{x}})
+    +\fp (\bar{\mathbf{x}};\mathbf{x}-\bar{\mathbf{x}}),\qquad
+    \forall\,\mathbf{x}\text{ sufficiently near }\bar{\mathbf{x}},
+  \]
+\end{frame}
+
+\section{Chapter III: Paradigm changes -- Sources of discontinuity}
+
+\begin{frame}[plain]
+  \centering
+  \vfill
+  {\usebeamercolor[fg]{structure}\usebeamerfont{title}Chapter III\par}
+  \vspace{0.34cm}
+  {\usebeamercolor[fg]{structure}\usebeamerfont{subtitle}\mdseries\large
+    Paradigm changes: Sources of discontinuity\par}
+  \vfill
+\end{frame}
+
+\begin{frame}
+  \frametitle{Modeling breadth
+    {\normalsize\mdseries (OR, statistics, ML, and policy learning)}}
+
+  \small
+  \setlength{\parskip}{0pt}
+  \begin{itemize}
+    \setlength{\itemsep}{0.13cm}
+    \item {\color{MediumBlue}Set-up costs}--- classical in operations research,
+      today's term is sparsity
+    \item {\color{MediumBlue}Structured variable/constraint selection};
+      on-off constraints
+    \item {\color{MediumBlue}Conditional stochastic functionals} ---
+      probabilities and expectations
+    \item {\color{MediumBlue}Statistical models} --- conformal regression;
+      change-point detection; robust trimming; and more
+    \item {\color{MediumBlue}Classification} --- score-based binary
+      classification; multiclass classification; advanced measures;
+      decision trees
+    \item {\color{MediumBlue}Clustering: refreshed and extended} ---
+      mixed-norm: extending traditional K-means and K-clustering;
+      bicriteria (errors versus similarities)
+    \item {\color{MediumBlue}Univariate and vector quantization}
+    \item {\color{MediumBlue}Policy learning and causal inference} ---
+      piecewise affine policy for stochastic optimization; causal inference
+      for individualized treatment learning; policy learning with optimal
+      weight clipping
+  \end{itemize}
+\end{frame}
+
+% A topic divider inside Chapter II -- deliberately not a \section, so it
+% sits one step below the chapter dividers in the visual hierarchy.
+\begin{frame}[plain]
+  \centering
+  \vfill
+  {\usebeamercolor[fg]{structure}\Large\bfseries A host of instances\par}
+  \vspace{0.26cm}
+  {\usebeamercolor[fg]{structure}\normalsize\mdseries
+    from classical to modern to future\par}
+  \vfill
+\end{frame}
+
+\begin{frame}{Hierarchical variable selection}
+  \small
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+  \setlength{\abovedisplayshortskip}{3pt}
+  \setlength{\belowdisplayshortskip}{3pt}
+
+  The statistical model with interaction terms: hypothesizing a bilinear
+  relation among the input features
+  $\boldsymbol{\xi}=(\xi_i)_{i=1}^{d}$
+  \[
+    m(\mathbf{x};\boldsymbol{\xi})
+    =\sum_{i=1}^{d}x_i^{(1)}\xi_i
+    +\sum_{1\leq i<j\leq d}x_{ij}^{(2)}\xi_i\xi_j,
+  \]
+  with the parameter $\mathbf{x}$ consisting of the unknown model
+  coefficients $x_i^{(1)}$ and $x_{ij}^{(2)}$ that obey
+
+  \begin{itemize}
+    \setlength{\itemsep}{0.08cm}
+    \item {\color{MediumBlue}strong hierarchy}: an interaction term can be
+      selected only if both of the linear terms are selected, i.e.,
+      \[
+        \bigl|x_{ij}^{(2)}\bigr|_0\leq
+        \min\bigl\{\bigl|x_i^{(1)}\bigr|_0,\bigl|x_j^{(1)}\bigr|_0\bigr\};
+      \]
+    \item {\color{MediumBlue}weak hierarchy}: an interaction term can be
+      selected only if at least one of the corresponding linear terms is
+      selected,
+      \[
+        \bigl|x_{ij}^{(2)}\bigr|_0\leq
+        \bigl|x_i^{(1)}\bigr|_0+\bigl|x_j^{(1)}\bigr|_0;
+      \]
+  \end{itemize}
+
+  both leading to \textcolor{MediumRed}{mixed-sign} combinations of
+  Heaviside functions.
+\end{frame}
+
+\begin{frame}{Conditional stochastic functionals}
+  \small
+  \setlength{\abovedisplayskip}{5pt}
+  \setlength{\belowdisplayskip}{5pt}
+  \setlength{\abovedisplayshortskip}{4pt}
+  \setlength{\belowdisplayshortskip}{4pt}
+
+  \begin{itemize}
+    \setlength{\itemsep}{0.12cm}
+    \item Expression of a probability function as an expectation:
+      \[
+        \mathbb{P}\bigl[f(\mathbf{x},\boldsymbol{\xi})\geq 0\bigr]
+        =\mathbb{E}\,\mathds{1}_{[0,\infty)}
+          \bigl(f(\mathbf{x},\boldsymbol{\xi})\bigr)
+        \xrightarrow[\text{approximation (SAA)}]{\text{sample average}}
+        \frac{1}{N}\sum_{s=1}^{N}\mathds{1}_{[0,\infty)}
+          \bigl(f(\mathbf{x},\boldsymbol{\xi}^s)\bigr);
+      \]
+    \item and by extension, expression of a
+      {\color{MediumBlue}decision-dependent conditional expectation
+      function}:
+      \[
+        \mathbb{E}\bigl[\psi(\mathbf{x},\boldsymbol{\xi})\bigm|
+          f(\mathbf{x},\boldsymbol{\xi})\geq 0\bigr]
+        \triangleq
+        \underbrace{\frac{\mathbb{E}\bigl[\psi(\mathbf{x},\boldsymbol{\xi})
+            \mathds{1}_{[0,\infty)}
+            (f(\mathbf{x},\boldsymbol{\xi}))\bigr]}
+          {\mathbb{P}\bigl[f(\mathbf{x},\boldsymbol{\xi})\geq 0\bigr]}}_
+          {\text{fractional Heaviside function}}.
+      \]
+  \end{itemize}
+
+  \vspace{0.10cm}
+  Note the product
+  \vspace{-0.02cm}
+  \[
+    \psi(\mathbf{x},\boldsymbol{\xi})\,
+    \mathds{1}_{[0,\infty)}\bigl(f(\mathbf{x},\boldsymbol{\xi})\bigr)
+  \]
+
+  raising the possibility of losing semicontinuity (in the decision variable
+  $\mathbf{x}$) if the sign of the multiplier function
+  $\psi(\bullet,\boldsymbol{\xi})$ is not consistent with the optimization.
+\end{frame}
+
+\begin{frame}{Mixed-sign combinations and piecewise inner functions}
+  \small
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+  \setlength{\abovedisplayshortskip}{3pt}
+  \setlength{\belowdisplayshortskip}{3pt}
+
+  \begin{itemize}
+    \setlength{\itemsep}{0.16cm}
+    \item First-order stochastic dominance:
+      \[
+        \mathbb{P}\bigl[f_1(\mathbf{x},\boldsymbol{\xi})\leq c_1\bigr]
+        \leq
+        \mathbb{P}\bigl[f_2(\mathbf{x},\boldsymbol{\xi})\leq c_2\bigr]
+      \]
+    \item Conjunctive probability constraint:
+      \begin{align*}
+        b\;&\geq\;\mathbb{P}\bigl[\psi_1(\mathbf{x},\boldsymbol{\xi})\geq 0
+          \ \text{ and }\ \psi_2(\mathbf{x},\boldsymbol{\xi})<0\bigr]\\
+        &=\;\mathbb{P}\bigl[\psi_1(\mathbf{x},\boldsymbol{\xi})\geq 0\bigr]
+          -\mathbb{P}\bigl[\min\bigl(\psi_1(\mathbf{x},\boldsymbol{\xi}),
+          \psi_2(\mathbf{x},\boldsymbol{\xi})\bigr)\geq 0\bigr]
+      \end{align*}
+    \item Conditional probability constraint:
+      \vspace{-0.06cm}
+      \[
+        b\geq\mathbb{P}\bigl[\psi_1(\mathbf{x},\boldsymbol{\xi})\geq 0
+          \bigm|\psi_2(\mathbf{x},\boldsymbol{\xi})\geq 0\bigr]
+      \]
+      \vspace{-0.42cm}
+      \[
+        \Updownarrow
+      \]
+      \vspace{-0.42cm}
+      \[
+        \mathbb{P}\bigl[\min\bigl(\psi_1(\mathbf{x},\boldsymbol{\xi}),
+          \psi_2(\mathbf{x},\boldsymbol{\xi})\bigr)\geq 0\bigr]
+        -b\,\mathbb{P}\bigl[\psi_2(\mathbf{x},\boldsymbol{\xi})\geq 0\bigr]
+        \leq 0.
+      \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Some statistical models
+    {\normalsize\mdseries (communicated by Dr.~Yao Xie)}}
+
+  \small
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  \begin{itemize}
+    \item \textbf{Change-point detection with sparsity.} Let
+      $\{\mathbf{x}_t\}_{t=1}^{T}$ be a sequence with
+      $\mathbf{x}_t\in\mathbb{R}^p$ and multiple unknown change point
+      $\{\tau_i\}_{i=1}^{I}$ with mean shifts
+      $\{\boldsymbol{\Delta}_i\}_{i=1}^{I}$ to be determined. Let
+      $\boldsymbol{\mu}\in\mathbb{R}^p$ be the baseline mean vector which is
+      unknown. This problem is formulated as follows:
+  \end{itemize}
+
+  \[
+    \begin{aligned}
+      \underset{\boldsymbol{\mu},\{\boldsymbol{\Delta}_i\},\{\tau_i\}}
+        {\operatorname{minimize}}\quad
+      &\sum_{t=1}^{T}\mathds{1}_{(0,\infty)}(\tau_1-t)
+        \bigl\|\mathbf{x}_t-\boldsymbol{\mu}\bigr\|_2^2
+        +\sum_{i=1}^{I}\bigl\|\boldsymbol{\Delta}_i\bigr\|_0\\[2pt]
+      &+\sum_{i=1}^{I}\sum_{t=1}^{T}
+        \boxed{\underbrace{\mathds{1}_{(0,\infty)}(t-\tau_i)\,
+          \mathds{1}_{[0,\infty)}(\tau_{i+1}-t)}_
+          {\text{expressing }\tau_i<t\leq\tau_{i+1}}}\;
+        \bigl\|\mathbf{x}_t-\boldsymbol{\mu}-\boldsymbol{\Delta}_i\bigr\|_2^2
+        \\[2pt]
+      \operatorname{subject\ to}\quad
+      &\tau_1\leq\tau_2\leq\cdots\leq\tau_I.
+    \end{aligned}
+  \]
+
+  \textcolor{MediumRed}{Note} the product of an open and a closed Heaviside
+  function.
+
+  \begin{supplementarynote}
+    Matched brackets let two factors collapse into one,
+    $\mathds{1}_{[0,\infty)}(a)\,\mathds{1}_{[0,\infty)}(b)
+     =\mathds{1}_{[0,\infty)}\bigl(\min(a,b)\bigr)$, and likewise for
+    $\mathds{1}_{(0,\infty)}$. The mixed pair above does not, since
+    $\{a>0,\,b\geq0\}$ is neither open nor closed. Under
+    $\tau_i\leq\tau_{i+1}$ it is instead the mixed-sign difference
+    $\mathds{1}_{[0,\infty)}(\tau_{i+1}-t)
+     -\mathds{1}_{[0,\infty)}(\tau_i-t)$, with affine inner functions.
+  \end{supplementarynote}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Some statistical models
+    {\normalsize\mdseries (cont.)}}
+
+  \small
+  \setlength{\abovedisplayskip}{6pt}
+  \setlength{\belowdisplayskip}{6pt}
+
+  \begin{itemize}
+    \item \textbf{Trimmed least-squares for robust statistical learning.}
+  \end{itemize}
+
+  \[
+    \begin{aligned}
+      \underset{f\in\mathcal{F};\,\gamma\geq0}{\operatorname{minimize}}\quad
+      &\sum_{i=1}^{n}\underbrace{\mathds{1}_{[0,\infty)}\bigl(
+         \underbrace{\gamma}_{\mathclap{\text{trimming threshold}}}
+         -\|\mathbf{y}_i-f(\mathbf{x}_i)\|\bigr)
+         \bigl\|\mathbf{y}_i-f(\mathbf{x}_i)\bigr\|_2^2}_
+         {\text{a conditional error}}\\[16pt]
+      \operatorname{subject\ to}\quad
+      &\underbrace{\frac{1}{n}\sum_{i=1}^{n}\mathds{1}_{[0,\infty)}\bigl(
+         \gamma-\|\mathbf{y}_i-f(\mathbf{x}_i)\|\bigr)\geq 1-\beta}_
+         {\text{bounding the trimming ratio}}.
+    \end{aligned}
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Clustering problems:
+    {\normalsize\mdseries Classical and extended.}}
+
+  \footnotesize
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+  \setlength{\abovedisplayshortskip}{2pt}
+  \setlength{\belowdisplayshortskip}{2pt}
+
+  Let $\Xi\triangleq\{\boldsymbol{\xi}^s\}_{s=1}^{N}$ be a given set of data
+  points in $\mathbb{R}^p$. Let
+  $\mathbf{c}\triangleq\{\mathbf{c}^k\}_{k=1}^{K}$ be an unknown set of
+  cluster centers in $\mathbb{R}^p$. The criterion for a data point
+  $\boldsymbol{\xi}^s$ to belong to cluster $k$, written as $s\in k$, is
+  \[
+    \begin{aligned}
+      &\bigl\|\boldsymbol{\xi}^s-\mathbf{c}^k\bigr\|\leq
+        \min_{k'\neq k}\bigl\|\boldsymbol{\xi}^s-\mathbf{c}^{k'}\bigr\|\\
+      \Leftrightarrow\ \ &h_s(\mathbf{c})\triangleq
+        \min_{k'\neq k}\bigl\|\boldsymbol{\xi}^s-\mathbf{c}^{k'}\bigr\|
+        -\bigl\|\boldsymbol{\xi}^s-\mathbf{c}^k\bigr\|\geq 0.
+    \end{aligned}
+  \]
+
+  Define the simple indicator
+  \[
+    z_{sk}\triangleq\mathds{1}(s\in k)\triangleq
+    \mathds{1}_{[0,\infty)}\bigl\{h_s(\mathbf{c})\bigr\}
+    =\begin{cases}
+      1 & \text{if }s\in k\\
+      0 & \text{if }s\notin k
+    \end{cases}
+  \]
+
+  \vspace{0.06cm}
+  {\color{MediumBlue}The classical K-means $(p=2)$ and K-medians $(p=1)$
+  problems:}
+  \[
+    \begin{aligned}
+      \underset{\mathbf{c};\,\mathbf{z}}{\operatorname{minimize}}\quad
+      &\frac{1}{N}\sum_{s=1}^{N}\Biggl[\,\sum_{k=1}^{K}z_{sk}
+        \bigl\|\boldsymbol{\xi}^s-\mathbf{c}^k\bigr\|_p^p\Biggr]\\
+      \operatorname{subject\ to}\quad
+      &\sum_{k=1}^{K}z_{sk}=1,\quad\forall\,s=1,\ldots,N
+        &&\begin{array}{@{}l@{}}
+            \text{\scriptsize every sample belongs to}\\[-2pt]
+            \text{\scriptsize at least one cluster}
+          \end{array}\\
+      \text{and}\quad
+      &z_{sk}\in\{0,1\},\quad\forall\,(s,k)\in[N]\times[K].
+    \end{aligned}
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Clustering problems:
+    {\normalsize\mdseries Classical and extended.} (cont.)}
+
+  \footnotesize
+  \setlength{\abovedisplayskip}{2pt}
+  \setlength{\belowdisplayskip}{2pt}
+
+  Unifying the above two problems is the mixed $\ell_{p,q}$-clustering
+  problem with arbitrary pairs of integers $p,q\geq 1$:
+  \vspace{-0.16cm}
+  \[
+    \begin{aligned}
+      \underset{\mathbf{c},\mathbf{z}}{\operatorname{minimize}}\quad
+      &\underbrace{\frac{1}{N}\sum_{s=1}^{N}\Biggl[\,\sum_{k=1}^{K}z_{sk}
+        \bigl\|\boldsymbol{\xi}^s-\mathbf{c}^k\bigr\|_p^p\Biggr]}_
+        {\text{bi-convex; denoted WCD}_p(\mathbf{c},\mathbf{z})}
+      &&{\color{MediumBlue}\ell_p\text{-norm in objective}}\\[1pt]
+      \operatorname{subject\ to}\quad
+      &\sum_{k=1}^{K}z_{sk}=1,\quad\forall\,s\in[N]\triangleq
+        \{1,\ldots,N\}\\
+      \text{and}\quad&\text{for all }(s,k)\in[N]\times[K]:\\
+      &\underbrace{z_{sk}\leq\mathds{1}_{[0,\infty)}\Bigl(
+        \min_{k'\neq k}\bigl\|\boldsymbol{\xi}^s-\mathbf{c}^{k'}\bigr\|_q
+        -\bigl\|\boldsymbol{\xi}^s-\mathbf{c}^{k}\bigr\|_q\Bigr)}_
+        {\textcolor{MediumRed}{\text{Heaviside constraint with }
+          \ell_q\text{-norm}}}\\[1pt]
+      &z_{sk}\in\{0,1\},\quad\text{(binary variables)}
+    \end{aligned}
+  \]
+
+  \textcolor{MediumRed}{Note:} The Heaviside constraint is not needed in the
+  classical K-means and K-medians problems where $p=q$.
+
+  \begin{supplementarynote}
+    When $p=q$ the objective alone decides membership. Writing the indicator
+    out separates the cost ($\ell_p$) from the rule ($\ell_q$), making the
+    rule a free modeling choice.
+  \end{supplementarynote}
+\end{frame}
+
+\end{document}

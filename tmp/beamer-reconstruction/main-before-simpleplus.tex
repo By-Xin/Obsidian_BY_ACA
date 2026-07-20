@@ -1,0 +1,160 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{ragged2e}
+\usepackage{dsfont}
+
+\setsansfont{Arial}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+\setbeamercolor{normal text}{fg=black,bg=white}
+\setbeamercolor{frametitle}{fg=black,bg=white}
+\definecolor{deckblue}{HTML}{234E9A}
+\definecolor{decknavy}{HTML}{162B4E}
+\definecolor{deckgray}{HTML}{68717F}
+
+\setbeamerfont{title}{series=\bfseries,size=\fontsize{28}{32}}
+\setbeamerfont{subtitle}{size=\fontsize{15}{19}}
+\setbeamerfont{section title}{series=\bfseries,size=\fontsize{27}{32}}
+\setbeamertemplate{itemize item}{\raise0.15ex\hbox{\large\textbullet}}
+\setlength{\leftmargini}{1.3em}
+\setlength{\leftmarginii}{1.1em}
+
+\title{Heaviside Composite\\Optimization Problems}
+\subtitle{}
+\author{}
+\date{}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[decknavy] (current page.south west) rectangle (current page.north east);
+    \fill[deckblue] (current page.south west) rectangle
+      ([xshift=0.18cm]current page.north west);
+  \end{tikzpicture}
+  \vspace{1.65cm}
+  {\color{white}\usebeamerfont{title}\inserttitle\par}
+  \vfill
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[deckblue] (current page.south west) rectangle
+      ([xshift=0.18cm]current page.north west);
+    \draw[deckgray!35,line width=0.5pt]
+      ([xshift=1.25cm,yshift=-0.4cm]current page.west) --
+      ([xshift=-1.25cm,yshift=-0.4cm]current page.east);
+  \end{tikzpicture}
+  \vfill
+  {\color{deckgray}\large SECTION 1\par}
+  \vspace{0.25cm}
+  {\color{decknavy}\usebeamerfont{section title}Introduction\par}
+  \vfill
+\end{frame}
+
+\begin{frame}[plain,t]
+  \vspace{0.02cm}
+  {\color{decknavy}\resizebox{\textwidth}{!}{%
+    A bird's eye-view of post World-War-II optimization till now:}\par}
+
+  \vspace{0.04cm}
+  \begin{itemize}
+    \setlength{\itemsep}{0.035cm}
+    \setlength{\parskip}{0pt}
+    \fontsize{13.0}{15.2}\selectfont
+    \item From linear programming to nonlinear and integer programming.
+    \item From nonlinear programming to stochastic programming and modern-day convex programming.
+    \item From differentiability to nondifferentiability.
+    \item From nondifferentiability to semicontinuity.
+    \item From convexity to nonconvexity.
+  \end{itemize}
+
+  \vspace{-0.02cm}
+  {\color{deckblue}\fontsize{10.8}{13.1}\selectfont
+    Y. Cui and J. S. Pang, \textit{Modern Nonconvex Nondifferentiable
+    Optimization}. SIAM, MOS--SIAM Series on Optimization
+    (December 2021).\par}
+
+  \vspace{0.10cm}
+  {\color{decknavy}\rule{0.48\textwidth}{0.45pt}\par}
+  \vspace{0.08cm}
+
+  {\color{deckblue}\fontsize{12.0}{14.4}\selectfont
+    Apart from further developments of the present, what is the future??\par}
+  \vspace{0.06cm}
+  {\color{decknavy}\fontsize{11.5}{13.8}\selectfont
+    From semicontinuity to lack thereof $\Rightarrow$ discontinuous optimization.\par
+    \vspace{0.08cm}
+    From closedness of constraints to non-closedness.\par}
+\end{frame}
+
+\begin{frame}[plain,t]
+  \vspace{0.02cm}
+  {\color{decknavy}\bfseries\resizebox{\textwidth}{!}{%
+    The General Heaviside Composite Optimization Problem}\par}
+  {\color{decknavy}\fontsize{14.6}{17.0}\selectfont (G-HSCOP)\par}
+
+  \vspace{0.10cm}
+  \begingroup
+  \setlength{\fboxsep}{0.20cm}
+  \setlength{\fboxrule}{0.45pt}
+  \color{deckgray}
+  \noindent\fbox{%
+    \begin{minipage}{0.94\textwidth}
+      \color{decknavy}
+      \fontsize{11.2}{13.3}\selectfont
+      \vspace{-0.08cm}
+      \noindent\resizebox{0.93\linewidth}{!}{$\displaystyle
+        \underset{x\in P}{\operatorname{maximize}}\quad
+        \Phi(x)\triangleq c(x)+\sum_{k=1}^{K_0}\psi_{0k}(x)
+        \underbrace{\mathds{1}_{[0,\infty)}\!\left(\phi_{0k}(x)\right)}_
+          {\text{composite indicator fnc.}}
+      $}\par
+      \vspace{0.08cm}
+      \noindent\resizebox{0.96\linewidth}{!}{$\displaystyle
+        \operatorname{subject\ to}\quad
+        A_{i\bullet}x+\sum_{k=1}^{K_i}\psi_{ik}(x)
+        \mathds{1}_{[0,\infty)}\!\left(\phi_{ik}(x)\right)
+        \geq \eta_i,\qquad i=1,\ldots,I.
+      $}\par
+      \vspace{-0.06cm}
+    \end{minipage}%
+  }
+  \endgroup
+
+  \vspace{0.10cm}
+  \begin{itemize}
+    \setlength{\itemsep}{0.08cm}
+    \setlength{\parskip}{0pt}
+    \fontsize{10.25}{12.1}\selectfont
+    \item $P$ is a \textcolor{red!72!black}{friendly} set, $c$ is a
+      \textcolor{red!72!black}{friendly} function, e.g., affine or quadratic;
+      \textcolor{red!72!black}{friendly} $=$ amenable to well-known treatments,
+      and $A_{i\bullet}$ is the $i$-th row of a matrix
+      $A\in\mathbb{R}^{I\times n}$.
+    \item $\psi_{ik}$ and $\phi_{ik}$ are functions whose properties highlight
+      the challenges;
+    \item most importantly, $\mathds{1}_{[0,\infty)}$ is the ``closed''
+      Heaviside function given by
+  \end{itemize}
+
+  \vspace{-0.17cm}
+  {\color{decknavy}\fontsize{10.5}{12.3}\selectfont
+  \[
+    \mathds{1}_{[0,\infty)}(s)\triangleq
+    \begin{cases}
+      1, & \text{if }s\in[0,\infty),\\
+      0, & \text{otherwise},
+    \end{cases}
+    \qquad\text{(upper semi-continuous).}
+  \]
+  }
+\end{frame}
+
+\end{document}

@@ -1,0 +1,17 @@
+# XeLaTeX / latexmk build artifacts -- regenerate with
+#   latexmk -xelatex -interaction=nonstopmode -halt-on-error main.tex
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.xdv
+missfont.log
+
+# Page renders used for proofreading -- regenerate with
+#   gs -q -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 \
+#      -dFirstPage=N -dLastPage=N -sOutputFile=page-N.png main.pdf
+*.png
