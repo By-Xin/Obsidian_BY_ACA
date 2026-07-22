@@ -65,6 +65,103 @@
   \titlepage
 \end{frame}
 
+% PDF page 2 -- take-away lessons (front matter, before Chapter I).
+\begin{frame}{Take-away lessons from course:}
+  \small
+  \begin{itemize}
+    \setlength{\itemsep}{0.30cm}
+    \item \textcolor{MediumRed}{Heaviside optimization} is a novel paradigm in
+      optimization, bridging the continuous and discrete domains.
+    \item The subject is very rich in applications, its rigorous treatment
+      demands advanced optimization background and its efficient solution
+      requires a fusion of continuous and discrete optimization methods.
+    \item Many classical and modern problems in operations research,
+      computational statistics, machine learning, health treatments, and policy
+      learning can be modeled by this framework, with significant benefits and
+      advancements.
+    \item There remain many challenges in theory and algorithms, awaiting to be
+      developed and resolved by the junior talents.
+  \end{itemize}
+\end{frame}
+
+% PDF page 3 -- the 10-chapter monograph in progress (front matter).
+\begin{frame}
+  {\large\textcolor{MediumRed}{\textbf{10 chapters from a monograph in progress}}}
+
+  \vspace{0.10cm}
+  {\small\textcolor{MediumBlue}{\textsc{J.~Liu and J.S.~Pang.}}\ \,
+    \textit{Heaviside Composite Optimization Problem: Applications, Theory,
+    Algorithms, and Numerics.}}
+
+  \vspace{0.16cm}
+  \small
+  \begin{flushleft}
+    \textbf{Chapter I:} Introduction\\[3pt]
+    \textbf{Chapter II:} Paradigm Changes: Sources of Discontinuity\\[3pt]
+    \textbf{Chapter III:} Some Prerequisites\\[3pt]
+    \textbf{Chapter IV:} Solution Analysis: The Nonlinear Programming Approach\\[3pt]
+    \textbf{Chapter V:} Affine Heaviside Composite Problems\\[3pt]
+    \textbf{Chapter VI:} Integer Programming Based Algorithms\\[3pt]
+    \textbf{Chapter VII:} Extended Problems\\[3pt]
+    \textbf{Chapter VIII:} Fractional and Doubly Composite Problems\\[3pt]
+    \textbf{Chapter IX:} Numerical Implementation and Results
+      \textcolor{MediumBlue}{(Junyi Liu)}\\[3pt]
+    \textbf{Chapter X:} Case Studies \textcolor{MediumBlue}{(Junyi Liu)}
+  \end{flushleft}
+\end{frame}
+
+% Supplementary (not from a classroom photo): further-reading pointers for the
+% monograph in progress and the core published papers.  References verified
+% against arXiv / journal listings (2026-07-22).  NOTE: the verified monograph
+% title -- "Heaviside Composite Optimization: Theory, Algorithms, Applications,
+% and Numerics" -- differs in word order (and drops "Problem") from the wording
+% on the reconstructed page-3 slide; the slide is kept faithful to the photo.
+\begin{frame}
+  \begin{supplementarycallout}{{\small Supplementary further reading --- the
+    monograph in progress and its theoretical foundations}}
+  \footnotesize
+  \setlength{\parskip}{0.14cm}
+
+  \textbf{Monograph (in progress).}\ \,
+  J.~Liu and J.-S.~Pang.\ \textit{Heaviside Composite Optimization: Theory,
+  Algorithms, Applications, and Numerics.}\ 2025.
+
+  \textbf{Theory --- pseudo- and epi-stationarity.}\ \,
+  Y.~Cui, J.~Liu, J.-S.~Pang.\ \textit{The Minimization of Piecewise Functions:
+  Pseudo Stationarity.}\ arXiv:2305.14798 (2023); J.~Convex Anal.\
+  30(3):793--834.
+
+  S.~Han, Y.~Cui, J.-S.~Pang.\ \textit{Analysis of a Class of Minimization
+  Problems Lacking Lower Semicontinuity.}\ Math.\ Oper.\ Res.\
+  50(3):2175--2198 (2025).
+  \end{supplementarycallout}
+\end{frame}
+
+\begin{frame}
+  \begin{supplementarycallout}{{\small Supplementary further reading ---
+    progressive-IP algorithms, applications, and an overview talk}}
+  \footnotesize
+  \setlength{\parskip}{0.14cm}
+
+  \textbf{Progressive (M)IP algorithms \& applications.}\ \,
+  Y.~Fang, J.~Liu, J.-S.~Pang.\ \textit{Classification and Treatment Learning
+  with Constraints via Composite Heaviside Optimization: a Progressive MIP
+  Method.}\ arXiv:2401.01565 (2024).
+
+  K.~Zheng, J.~Liu, Y.~Wang, J.-S.~Pang.\ \textit{Solving Constrained Affine
+  Heaviside Composite Optimization Problems by a Progressive IP Approach.}\
+  arXiv:2605.06020 (2026).
+
+  Jingren~Liu, H.~Qin, Junyi~Liu, M.~C.~Chou, J.-S.~Pang.\ \textit{Offline
+  Policy Learning with Weight Clipping and Heaviside Composite Optimization.}\
+  arXiv:2601.12117 (2026).
+
+  \textbf{Overview talk.}\ \,
+  J.-S.~Pang.\ \textit{Heaviside Composite Optimization: A New Paradigm in
+  Optimization.}
+  \end{supplementarycallout}
+\end{frame}
+
 \section{Chapter I: Introduction}
 
 \begin{frame}[plain]
@@ -122,7 +219,7 @@
       \color{MediumBlue}
       \vspace{-0.05cm}
       \noindent\makebox[\linewidth][c]{\(\displaystyle
-        \underset{\mathbf{x}\in P}{\operatorname{maximize}}\quad
+        \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\quad
         \Phi(\mathbf{x})\triangleq c(\mathbf{x})
         +\sum_{k=1}^{K_0}\psi_{0k}(\mathbf{x})
         \underbrace{\mathds{1}_{[0,\infty)}\!\left(\phi_{0k}(\mathbf{x})\right)}_
@@ -130,7 +227,7 @@
       \)}\par
       \vspace{0.05cm}
       \noindent\makebox[\linewidth][c]{\(\displaystyle
-        \operatorname{subject\ to}\quad
+        \operatorname*{\textbf{subject to}}\quad
         \mathbf{A}_{i\bullet}\mathbf{x}
         +\sum_{k=1}^{K_i}\psi_{ik}(\mathbf{x})
         \mathds{1}_{[0,\infty)}\!\left(\phi_{ik}(\mathbf{x})\right)
@@ -516,6 +613,174 @@
   \]
 \end{frame}
 
+% Original slide 14.
+\begin{frame}{Stationarity conditions}
+  \small
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+
+  Consider an abstract optimization problem
+  \[
+    \operatorname*{\textbf{minimize}}_{\mathbf{x}\in X}\ f(\mathbf{x}),
+    \qquad f\text{ is Bouligand differentiable.}
+  \]
+
+  A feasible solution $\bar{\mathbf{x}}\in X$ is a
+  {\color{MediumBlue}Bouligand stationary solution} if
+  \[
+    \boxed{\,\fp (\bar{\mathbf{x}};\mathbf{v})\geq 0\ \text{ for all
+      {\color{MediumBlue}tangent vectors} }
+      \mathbf{v}\in\mathcal{T}(X;\bar{\mathbf{x}})\,},\quad\text{where}
+  \]
+
+  \vspace{-0.06cm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.60\textwidth}
+    {\color{MediumBlue}$\mathcal{T}(X;\bar{\mathbf{x}})\triangleq$} tangent
+    cone of $X$ at $\bar{\mathbf{x}}$
+    \[
+      \left\{\mathbf{v}\in\mathbb{R}^n\ \middle|\
+      \begin{array}{l}
+        \mathbf{v}=\displaystyle\lim_{k\to\infty}
+          \frac{\mathbf{x}^k-\bar{\mathbf{x}}}{\tau_k}
+          \text{ for some}\\[6pt]
+        \text{sequences }\{\mathbf{x}^k\}\subset X\text{ converging}\\[2pt]
+        \text{to }\bar{\mathbf{x}}\text{ and }\{\tau_k\}\downarrow 0
+      \end{array}\right\}
+    \]
+    \column{0.38\textwidth}
+    \textcolor{MediumRed}{\textbf{Two questions:}} How to describe the
+    tangent vectors? What if $f$ is not directionally differentiable?
+  \end{columns}
+
+  \vspace{0.04cm}
+  A feasible solution $\bar{\mathbf{x}}\in X$ is an
+  {\color{MediumBlue}epi-stationary solution} if the pair
+  $(\bar{t},\bar{\mathbf{x}})$, where $\bar{t}\triangleq f(\bar{\mathbf{x}})$,
+  is a Bouligand stationary solution of the lifted problem:
+  \[
+    \operatorname*{\textbf{minimize}}_{(t,\mathbf{x})\in\mathbb{R}\times X}\
+    t\quad\operatorname*{\textbf{subject to}}\ t\geq f(\mathbf{x}).
+  \]
+
+  \textcolor{MediumRed}{Note:} if $f$ is Bouligand differentiable, then
+  Bouligand stationarity $\Leftrightarrow$ epi-stationarity.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Stationarity conditions}
+
+  \begin{supplementarycallout}{{\small Supplementary visualization: the
+    tangent cone as a limit of secant directions}}
+  \small
+  \begin{columns}[c,onlytextwidth]
+    \column{0.53\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=1.32,>=stealth,line join=round]
+      % --- tangent cone: wedge of all limiting directions (teal) ---
+      \fill[SupplementAccent!14]
+        (0,0) -- (16:3.2) arc[start angle=16,end angle=74,radius=3.2] -- cycle;
+      \draw[SupplementAccent,thick] (0,0) -- (16:3.45);
+      \draw[SupplementAccent,thick] (0,0) -- (74:3.45);
+      \node[SupplementAccent,anchor=west] at (12:3.15)
+        {\scriptsize$\mathcal{T}(X;\bar{\mathbf{x}})$};
+      % --- feasible set X (light grey; near the apex it equals the cone) ---
+      \fill[black!8]
+        (0,0) -- (16:2.15) .. controls (34:2.35) and (56:2.35) ..
+        (74:2.15) -- cycle;
+      \draw[black!45]
+        (16:2.15) .. controls (34:2.35) and (56:2.35) .. (74:2.15);
+      \node[black!55] at (24:1.35) {\scriptsize$X$};
+      % --- sequence x^k -> xbar along a curved path, secants from xbar ---
+      \foreach \r/\a in {1.70/65.4, 1.05/57.6, 0.62/52.4, 0.36/49.3}{
+        \draw[SupplementAccent!70,thin,densely dashed] (0,0) -- (\a:\r);
+        \fill[MediumBlack] (\a:\r) circle (1.4pt);
+      }
+      \node[MediumBlack,font=\scriptsize,anchor=south west]
+        at (65.4:1.74) {$\mathbf{x}^1$};
+      \node[MediumBlack,font=\scriptsize,anchor=east]
+        at (52.4:0.62) {$\mathbf{x}^k\!$};
+      % --- limiting tangent direction v ---
+      \draw[->,very thick,SupplementAccent] (0,0) -- (45:2.55)
+        node[anchor=south west]{$\mathbf{v}$};
+      % --- xbar ---
+      \fill[MediumBlue] (0,0) circle (1.7pt);
+      \node[MediumBlue,anchor=north east] at (-0.02,0) {$\bar{\mathbf{x}}$};
+    \end{tikzpicture}
+
+    \column{0.44\textwidth}
+    Each feasible $\mathbf{x}^k\in X$ near $\bar{\mathbf{x}}$ gives a secant
+    direction $(\mathbf{x}^k-\bar{\mathbf{x}})/\tau_k$. As
+    $\mathbf{x}^k\to\bar{\mathbf{x}}$ the secant slopes converge to a tangent
+    vector $\mathbf{v}$.
+
+    \vspace{0.14cm}
+    The tangent cone $\mathcal{T}(X;\bar{\mathbf{x}})$ (shaded) collects
+    \emph{all} such limiting directions.
+  \end{columns}
+
+  \begin{supplementarynote}
+    If $\bar{\mathbf{x}}$ is a local minimizer, it must be Bouligand
+    stationary. The condition is necessary, not sufficient --- it only
+    identifies $\bar{\mathbf{x}}$ as a candidate solution.
+  \end{supplementarynote}
+  \end{supplementarycallout}
+\end{frame}
+
+% Original slide 15.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+  \setlength{\abovedisplayshortskip}{3pt}
+  \setlength{\belowdisplayshortskip}{3pt}
+
+  \textbf{Two set-theoretic properties:} A set $X\subseteq\mathbb{R}^n$ is
+  said to be
+  \begin{itemize}
+    \setlength{\itemsep}{0.06cm}
+    \item {\color{MediumBlue}locally convex-like} near
+      $\bar{\mathbf{x}}\in X$ if there exists a neighborhood $\mathcal{N}$ of
+      $\bar{\mathbf{x}}$ such that
+      $X\cap\mathcal{N}\subseteq\bar{\mathbf{x}}
+      +\mathcal{T}(\bar{\mathbf{x}};X)$;
+    \item {\color{MediumBlue}locally star-shaped} near
+      $\bar{\mathbf{x}}\in X$ if for any $\mathbf{x}\in X$ sufficiently close
+      to $\bar{\mathbf{x}}$, there exists a scalar $\bar{\tau}>0$ (dependent
+      on $\mathbf{x}$) such that
+      $\bar{\mathbf{x}}+\tau(\mathbf{x}-\bar{\mathbf{x}})\in X$ for all
+      $\tau\in[0,\bar{\tau}]$.
+  \end{itemize}
+
+  \vspace{0.04cm}
+  Clearly, convex $\Rightarrow$ locally star-shaped $\Rightarrow$ locally
+  convex-like.
+
+  \vspace{0.06cm}
+  \begin{itemize}
+    \setlength{\itemsep}{0.10cm}
+    \item Importantly, if $f$ is Bouligand differentiable and satisfies
+      \[
+        f(\mathbf{x})\geq f(\bar{\mathbf{x}})
+        +\fp (\bar{\mathbf{x}};\mathbf{x}-\bar{\mathbf{x}}),\qquad
+        \forall\,\mathbf{x}\text{ sufficiently near }\bar{\mathbf{x}},
+        \tag{1}
+      \]
+      then $\bar{\mathbf{x}}$ is {\color{MediumBlue}Bouligand stationary} on
+      a locally convex-like set $X$ if and only if $\bar{\mathbf{x}}$ is a
+      \textcolor{MediumRed}{local minimizer} of $f$ on $X$.
+    \item Appropriate compositions of convex and PA functions satisfy (1):
+      \[
+        f=\varphi\circ\Theta\circ\psi,\qquad
+        \Theta\triangleq(\theta_{\ell})_{\ell=1}^{L},
+      \]
+      where $\varphi:\mathbb{R}^L\to\mathbb{R}$ is PA and
+      \textcolor{MediumRed}{isotone}, $\theta_{\ell}:\mathbb{R}^m\to\mathbb{R}$
+      for $\ell=1,\ldots,L$ is convex, and $\psi:\mathbb{R}^n\to\mathbb{R}^m$
+      is PA.
+  \end{itemize}
+\end{frame}
+
 \section{Chapter III: Paradigm changes -- Sources of discontinuity}
 
 \begin{frame}[plain]
@@ -718,8 +983,7 @@
 
   \[
     \begin{aligned}
-      \underset{\boldsymbol{\mu},\{\boldsymbol{\Delta}_i\},\{\tau_i\}}
-        {\operatorname{minimize}}\quad
+      \operatorname*{\textbf{minimize}}_{\boldsymbol{\mu},\{\boldsymbol{\Delta}_i\},\{\tau_i\}}\quad
       &\sum_{t=1}^{T}\mathds{1}_{(0,\infty)}(\tau_1-t)
         \bigl\|\mathbf{x}_t-\boldsymbol{\mu}\bigr\|_2^2
         +\sum_{i=1}^{I}\bigl\|\boldsymbol{\Delta}_i\bigr\|_0\\[2pt]
@@ -729,7 +993,7 @@
           {\text{expressing }\tau_i<t\leq\tau_{i+1}}}\;
         \bigl\|\mathbf{x}_t-\boldsymbol{\mu}-\boldsymbol{\Delta}_i\bigr\|_2^2
         \\[2pt]
-      \operatorname{subject\ to}\quad
+      \operatorname*{\textbf{subject to}}\quad
       &\tau_1\leq\tau_2\leq\cdots\leq\tau_I.
     \end{aligned}
   \]
@@ -763,13 +1027,13 @@
 
   \[
     \begin{aligned}
-      \underset{f\in\mathcal{F};\,\gamma\geq0}{\operatorname{minimize}}\quad
+      \operatorname*{\textbf{minimize}}_{f\in\mathcal{F};\,\gamma\geq0}\quad
       &\sum_{i=1}^{n}\underbrace{\mathds{1}_{[0,\infty)}\bigl(
          \underbrace{\gamma}_{\mathclap{\text{trimming threshold}}}
          -\|\mathbf{y}_i-f(\mathbf{x}_i)\|\bigr)
          \bigl\|\mathbf{y}_i-f(\mathbf{x}_i)\bigr\|_2^2}_
          {\text{a conditional error}}\\[16pt]
-      \operatorname{subject\ to}\quad
+      \operatorname*{\textbf{subject to}}\quad
       &\underbrace{\frac{1}{n}\sum_{i=1}^{n}\mathds{1}_{[0,\infty)}\bigl(
          \gamma-\|\mathbf{y}_i-f(\mathbf{x}_i)\|\bigr)\geq 1-\beta}_
          {\text{bounding the trimming ratio}}.
@@ -817,10 +1081,10 @@
   problems:}
   \[
     \begin{aligned}
-      \underset{\mathbf{c};\,\mathbf{z}}{\operatorname{minimize}}\quad
+      \operatorname*{\textbf{minimize}}_{\mathbf{c};\,\mathbf{z}}\quad
       &\frac{1}{N}\sum_{s=1}^{N}\Biggl[\,\sum_{k=1}^{K}z_{sk}
         \bigl\|\boldsymbol{\xi}^s-\mathbf{c}^k\bigr\|_p^p\Biggr]\\
-      \operatorname{subject\ to}\quad
+      \operatorname*{\textbf{subject to}}\quad
       &\sum_{k=1}^{K}z_{sk}=1,\quad\forall\,s=1,\ldots,N
         &&\begin{array}{@{}l@{}}
             \text{\scriptsize every sample belongs to}\\[-2pt]
@@ -842,15 +1106,15 @@
 
   Unifying the above two problems is the mixed $\ell_{p,q}$-clustering
   problem with arbitrary pairs of integers $p,q\geq 1$:
-  \vspace{-0.16cm}
+  \vspace{-0.22cm}
   \[
     \begin{aligned}
-      \underset{\mathbf{c},\mathbf{z}}{\operatorname{minimize}}\quad
+      \operatorname*{\textbf{minimize}}_{\mathbf{c},\mathbf{z}}\quad
       &\underbrace{\frac{1}{N}\sum_{s=1}^{N}\Biggl[\,\sum_{k=1}^{K}z_{sk}
         \bigl\|\boldsymbol{\xi}^s-\mathbf{c}^k\bigr\|_p^p\Biggr]}_
         {\text{bi-convex; denoted WCD}_p(\mathbf{c},\mathbf{z})}
       &&{\color{MediumBlue}\ell_p\text{-norm in objective}}\\[1pt]
-      \operatorname{subject\ to}\quad
+      \operatorname*{\textbf{subject to}}\quad
       &\sum_{k=1}^{K}z_{sk}=1,\quad\forall\,s\in[N]\triangleq
         \{1,\ldots,N\}\\
       \text{and}\quad&\text{for all }(s,k)\in[N]\times[K]:\\
@@ -871,6 +1135,2031 @@
     out separates the cost ($\ell_p$) from the rule ($\ell_q$), making the
     rule a free modeling choice.
   \end{supplementarynote}
+\end{frame}
+
+\section{Chapter IV: Solution analysis}
+
+\begin{frame}[plain]
+  \centering
+  \vfill
+  {\usebeamercolor[fg]{structure}\usebeamerfont{title}Chapter IV\par}
+  \vspace{0.34cm}
+  {\usebeamercolor[fg]{structure}\usebeamerfont{subtitle}\mdseries\large
+    Solution analysis\par}
+  \vfill
+\end{frame}
+
+% Original slide 49.
+\begin{frame}
+  \small
+  \setlength{\abovedisplayskip}{5pt}
+  \setlength{\belowdisplayskip}{5pt}
+
+  \textcolor{MediumRed}{Recall:} \textbf{The G-HSCOP with feasible set denoted
+  $X_{\mathrm{GHS}}$:}
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\quad
+      &\theta_{\mathrm{GHS}}(\mathbf{x})\triangleq c(\mathbf{x})
+        +\sum_{j=1}^{J_0}\psi_{0j}(\mathbf{x})
+        \mathds{1}_{[0,\infty)}\bigl(\phi_{0j}(\mathbf{x})\bigr)\\[2pt]
+      \operatorname*{\textbf{subject to}}\quad
+      &\mathbf{A}_{i\bullet}\mathbf{x}
+        +\sum_{j=1}^{J_i}\psi_{ij}(\mathbf{x})
+        \mathds{1}_{[0,\infty)}\bigl(\phi_{ij}(\mathbf{x})\bigr)\geq\eta_i,
+        \quad i=1,\ldots,I.
+    \end{aligned}
+  \]
+
+  \vspace{0.06cm}
+  \textbf{Non-attainment of optimal solution.} The problem
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{minimize}}_{x_1,x_2}\quad
+      &x_1^2+2(1-x_2)^2+|x_1|_0+\tfrac{1}{2}|x_2|_0\\[2pt]
+      \operatorname*{\textbf{subject to}}\quad
+      &|x_1|_0\geq|x_2|_0\ \text{ and }\ -1\leq x_1,x_2\leq 1.
+    \end{aligned}
+  \]
+
+  has an infimum achieved by the sequence
+  $\{(\epsilon,1)\}_{\epsilon\downarrow 0}$ whose limit is the infeasible
+  pair $(0,1)$.
+
+  \vspace{0.10cm}
+  \textbf{What is missing?}
+\end{frame}
+
+\begin{frame}
+  \begin{supplementarycallout}{{\small Supplementary visualization:
+    non-attainment and the non-closed feasible set}}
+  \small
+  \begin{columns}[c,onlytextwidth]
+    \column{0.57\textwidth}
+    \centering
+    % 3D objective surface; regenerate with assets/make_nonattain3d.py
+    \includegraphics[width=\linewidth]{assets/nonattain3d}
+
+    \column{0.40\textwidth}
+    On the feasible region the objective is the paraboloid
+    $x_1^2+2(1-x_2)^2+1.5$, whose valley floor is the line $x_1=0$.
+
+    \vspace{0.10cm}
+    That floor is the \emph{infeasible slit}
+    $\{x_1=0,\,x_2\neq0\}$ --- cut out of the surface.
+
+    \vspace{0.10cm}
+    The sequence $(\epsilon,1)$ slides down to the rim value $1.5$, but its
+    limit $(0,1)$ falls in the slit. The infimum $1.5$ is \emph{not attained}:
+    the feasible set is not closed.
+  \end{columns}
+  \end{supplementarycallout}
+\end{frame}
+
+% Original slide 50.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+  \setlength{\abovedisplayshortskip}{3pt}
+  \setlength{\belowdisplayshortskip}{3pt}
+
+  \textbf{Upper semicontinuity.} Let each
+  $\phi_{ij}:\mathbb{R}^n\to\mathbb{R}$ and
+  $\psi_{ij}:\mathbb{R}^n\to\mathbb{R}$ be continuous functions for
+  $j=1,\ldots,J_i$ and $i=0,\ldots,I$. Given a point
+  $\bar{\mathbf{x}}\in\mathbb{R}^n$, if $\exists$ a neighborhood
+  $\mathcal{N}$ of $\bar{\mathbf{x}}$ such that for every
+  \[
+    (i,j)\in\mathcal{J}_0\triangleq\bigl\{(i,j)\mid
+      \phi_{ij}(\bar{\mathbf{x}})=0\geq\psi_{ij}(\bar{\mathbf{x}}),\
+      i\in[I],\ j\in[J_i]\bigr\},
+  \]
+  either of the following two conditions hold:
+  \begin{itemize}
+    \setlength{\itemsep}{0.03cm}
+    \item[(A)] for all $\mathbf{x}\in\mathcal{N}$, $\phi_{ij}(\mathbf{x})$ is
+      nonnegative if $\psi_{ij}(\bar{\mathbf{x}})<0$,
+    \item[(B)] $\psi_{ij}(\mathbf{x})$ is nonnegative for all
+      $\mathbf{x}\in\mathcal{N}$;
+  \end{itemize}
+  then the functions
+  \[
+    \mathbf{x}\mapsto\sum_{j=1}^{J_i}\psi_{ij}(\mathbf{x})
+      \mathds{1}_{[0,\infty)}\bigl(\phi_{ij}(\mathbf{x})\bigr)
+  \]
+  are upper semicontinuous at $\bar{\mathbf{x}}$ for all $i=0,1,\ldots,I$.
+\end{frame}
+
+% Original slide 51.
+\begin{frame}
+  \frametitle{Existence of a global minimizer}
+  \small
+  \setlength{\abovedisplayskip}{5pt}
+  \setlength{\belowdisplayskip}{5pt}
+
+  Suppose that $c$ is continuous and its negative is coercive on the nonempty
+  set $X_{\mathrm{GHS}}$ (which is not necessarily closed). Let
+  $\{\mathbf{x}^\nu\}$ be a feasible sequence (which must exist) such that
+  \[
+    \lim_{\nu\to\infty}\theta_{\mathrm{GHS}}(\mathbf{x}^\nu)
+    =\sup_{\mathbf{x}\in X_{\mathrm{GHS}}}\theta_{\mathrm{GHS}}(\mathbf{x})
+    \in(-\infty,\infty). \tag{4}
+  \]
+
+  \vspace{0.06cm}
+  Any accumulation point $\mathbf{x}^\infty$ of $\{\mathbf{x}^\nu\}$ (at least
+  one of which must exist) satisfying condition (A) or (B) in Lemma must be a
+  global maximizer of $\theta_{\mathrm{GHS}}$ on $X_{\mathrm{GHS}}$.
+\end{frame}
+
+% Original slide 52.
+\begin{frame}
+  \small
+  \textbf{Some remarks}
+  \begin{itemize}
+    \setlength{\itemsep}{0.10cm}
+    \item Stationary conditions are necessary for a local minimizer;
+      interested in {\color{MediumBlue}sharp} stationary solutions.
+    \item Stationary solutions are more realistic computational targets for
+      nonconvex problems.
+    \item \textcolor{MediumRed}{Stationarity sufficiency:} sufficient
+      conditions for a stationary solution to be locally minimizing.
+  \end{itemize}
+
+  \vspace{0.12cm}
+  {\color{MediumBlack}\rule{\linewidth}{0.4pt}}
+  \vspace{0.10cm}
+
+  \textbf{Two stationarity concepts}
+  \begin{itemize}
+    \setlength{\itemsep}{0.10cm}
+    \item {\color{MediumBlue}Pseudo Bouligand stationarity:} based on a
+      \textcolor{MediumRed}{pull-out} idea leading to a
+      \textcolor{MediumRed}{fixed-point definition}.
+    \item {\color{MediumBlue}Epi-stationarity:} based on an epigraphical
+      formulation by lifting the problem.
+  \end{itemize}
+\end{frame}
+
+% Original slide 53.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+  \setlength{\abovedisplayshortskip}{3pt}
+  \setlength{\belowdisplayshortskip}{3pt}
+
+  Given a feasible $\bar{\mathbf{x}}\in X$, define 4 index sets
+  \[
+    \begin{aligned}
+      &\mathcal{J}_{i>}(\bar{\mathbf{x}})\triangleq
+        \{j\in[J_i]\mid\phi_{ij}(\bar{\mathbf{x}})>0\};\quad
+       \mathcal{J}_{i=}(\bar{\mathbf{x}})\triangleq
+        \{j\in[J_i]\mid\phi_{ij}(\bar{\mathbf{x}})=0\}\\
+      &\mathcal{J}_{i<}(\bar{\mathbf{x}})\triangleq
+        \{j\in[J_i]\mid\phi_{ij}(\bar{\mathbf{x}})<0\};\quad
+       \mathcal{J}_{i\geq}(\bar{\mathbf{x}})\triangleq
+        \{j\in[J_i]\mid\phi_{ij}(\bar{\mathbf{x}})\geq0\}
+    \end{aligned}
+  \]
+
+  and the {\color{MediumBlue}pulled-out} problem (a standard NLP):
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\quad
+      &\theta(\mathbf{x};\bar{\mathbf{x}})\triangleq c(\mathbf{x})
+        +\sum_{j\in\mathcal{J}_{0\geq}(\bar{\mathbf{x}})}\psi_{0j}(\mathbf{x})\\
+      \operatorname*{\textbf{subject to}}\quad
+      &\left\{
+        \begin{array}{l}
+          \text{for all }i=1,\ldots,I\\[4pt]
+          \mathbf{A}_{i\bullet}\mathbf{x}
+            +\displaystyle\sum_{j\in\mathcal{J}_{i\geq}(\bar{\mathbf{x}})}
+            \psi_{ij}(\mathbf{x})\geq\eta_i
+        \end{array}\right.\\[2pt]
+      \textbf{and}\quad
+      &\left\{
+        \begin{array}{l}
+          \text{for all }i=0,1,\ldots,I:\\[4pt]
+          \phi_{ij}(\mathbf{x})\geq 0\quad
+            \forall\,j\in\mathcal{J}_{i\geq}(\bar{\mathbf{x}})\\[3pt]
+          \phi_{ij}(\mathbf{x})\leq 0\quad
+            \forall\,j\in\mathcal{J}_{i<}(\bar{\mathbf{x}})
+        \end{array}\right.
+    \end{aligned}
+  \]
+\end{frame}
+
+% Original slide 54.
+\begin{frame}
+  \small
+  \setlength{\abovedisplayskip}{5pt}
+  \setlength{\belowdisplayskip}{5pt}
+
+  \textbf{Definition:} $\bar{\mathbf{x}}$ is a
+  {\color{MediumBlue}pseudo Bouligand stationary} solution of the G-HSCOP if
+  $\bar{\mathbf{x}}$ is a Bouligand stationary solution of the above NLP.
+
+  \vspace{0.06cm}
+  \textcolor{MediumRed}{Recall}
+  \[
+    \begin{aligned}
+      &\bar{\mathbf{x}}\text{ is epi-stationary of }
+        \operatorname*{\textbf{minimize}}_{\mathbf{x}\in X}f(\mathbf{x})
+        \quad\overset{\text{def}}{\Longleftrightarrow}\\[2pt]
+      &(\bar{t},\bar{\mathbf{x}})\text{ is Bouligand stationary of }
+        \operatorname*{\textbf{minimize}}_{(t,\mathbf{x})\in\mathbb{R}\times X}
+        t\ \ \operatorname*{\textbf{subject to}}\ t\geq f(\mathbf{x}).
+    \end{aligned}
+  \]
+
+  \vspace{0.02cm}
+  It holds that
+  \[
+    \text{local min}\ \Rightarrow\
+    \underbrace{\text{epi-stationary}}_{
+      \textcolor{MediumRed}{\text{theoretically sharp}}}
+    \ \Rightarrow\
+    \underbrace{\text{pseudo Bouligand stationary}}_{
+      \textcolor{MediumRed}{\text{provably computable}}}.
+  \]
+
+  \vspace{0.04cm}
+  Conversely, if the set
+  $Z\triangleq\mathrm{epi}(x)\cap(\mathbb{R}\times X)$%
+  \footnote{\scriptsize As shown on the slide; likely a typo for
+    $\mathrm{epi}(f)=\{(t,\mathbf{x}):t\geq f(\mathbf{x})\}$, the feasible set
+    of the lifted problem above.}
+  is convex-like near the pair
+  $(f(\bar{\mathbf{x}}),\bar{\mathbf{x}})\in Z$, then $\bar{\mathbf{x}}$
+  is a local minimizer of $f$ on $X$ if and only if $\bar{\mathbf{x}}$ is an
+  epi-stationary solution.
+\end{frame}
+
+% Original slide 55.
+\begin{frame}
+  \small
+  \setlength{\abovedisplayskip}{6pt}
+  \setlength{\belowdisplayskip}{6pt}
+
+  For simplification, consider the G-HSCOP with a single Heaviside
+  constraint:
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{minimize}}_{\mathbf{x}\in P}\quad
+      &\Phi(\mathbf{x})\triangleq c(\mathbf{x})
+        +\sum_{k=1}^{K}\varphi_k(\mathbf{x})
+        \mathds{1}_{[0,\infty)}\bigl(g_k(\mathbf{x})\bigr)\\[4pt]
+      \operatorname*{\textbf{subject to}}\quad
+      &\sum_{\ell=1}^{L}\varphi_\ell(\mathbf{x})
+        \mathds{1}_{[0,\infty)}\bigl(h_\ell(\mathbf{x})\bigr)\leq b
+        &&{\color{MediumBlue}\text{the functional constraint}}
+    \end{aligned}
+  \]
+\end{frame}
+
+% Original slide 56.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  The associated ``pulled-out'' problem:
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{minimize}}_{\mathbf{x}}\quad
+      &\Phi(\mathbf{x};\bar{\mathbf{x}})\triangleq c(\mathbf{x})
+        +\sum_{k\in\mathcal{K}_{>}(\bar{\mathbf{x}})}\varphi_k(\mathbf{x})\\[2pt]
+      \operatorname*{\textbf{subject to}}\quad
+      &\mathbf{x}\in P;\quad
+        \sum_{\ell\in\mathcal{L}_{>}(\bar{\mathbf{x}})}\varphi_\ell(\mathbf{x})
+        \leq b\\[2pt]
+      \textbf{and}\quad
+      &\left\{
+        \begin{array}{l}
+          g_k(\mathbf{x})\leq 0\quad\forall k\in
+            \mathcal{K}_{=}(\bar{\mathbf{x}})\cup\mathcal{K}_{<}(\bar{\mathbf{x}})
+            \triangleq\mathcal{K}_{\leq}(\bar{\mathbf{x}})\\[3pt]
+          g_k(\mathbf{x})\geq 0\quad\forall k\in
+            \mathcal{K}_{>}(\bar{\mathbf{x}})\\[3pt]
+          h_\ell(\mathbf{x})\leq 0\quad\forall\ell\in
+            \mathcal{L}_{=}(\bar{\mathbf{x}})\cup\mathcal{L}_{<}(\bar{\mathbf{x}})
+            \triangleq\mathcal{L}_{\leq}(\bar{\mathbf{x}})\\[3pt]
+          h_\ell(\mathbf{x})\geq 0\quad\forall\ell\in
+            \mathcal{L}_{>}(\bar{\mathbf{x}})
+        \end{array}\right.
+    \end{aligned}
+  \]
+
+  \vspace{0.04cm}
+  whose feasible set, excluding the functional constraint, is denoted
+  $\widehat{\mathcal{S}}_{\mathrm{ps}}(\bar{\mathbf{x}})$.
+\end{frame}
+
+% Board work (2026-07-21, 10:08): the smooth unconstrained prototype of the
+% fixed-point definition -- reconstructed from a photograph of the chalkboard.
+\begin{frame}
+  \normalsize
+  \centering
+
+  $\operatorname*{\textbf{minimize}}\limits_{\mathbf{x}\in\mathbb{R}^n}
+   f(\mathbf{x})
+   \qquad {\footnotesize f:\mathbb{R}^n\to\mathbb{R}\ \text{(scalar-valued)}}$
+
+  \vspace{0.16cm}
+  $\big\downarrow\ {\scriptstyle\text{loc.\ min},\ f\text{ diff.}}$
+
+  \vspace{0.16cm}
+  $\underbrace{\nabla f(\bar{\mathbf{x}})=\mathbf{0}}_{\text{equation}}
+   \quad\Longleftrightarrow\quad
+   \bar{\mathbf{x}}=\bar{\mathbf{x}}-\nabla f(\bar{\mathbf{x}})$
+
+  \vspace{0.16cm}
+  $\big\downarrow$
+
+  \vspace{0.20cm}
+  \[
+    \begin{array}{r@{}c@{}l@{\qquad}l}
+      \boxed{\,\mathbf{x}=F(\mathbf{x})\,},\ \ F(\mathbf{x})=\ &
+        \mathbf{x}-\nabla f(\mathbf{x}) & &
+        {\footnotesize F:\mathbb{R}^n\to\mathbb{R}^n\ \text{(vector-valued)}}\\[12pt]
+      \mathbf{x}=\operatorname{Proj}_{\mathcal{X}}\bigl(\ &
+        \mathbf{x}-\nabla f(\mathbf{x}) & \bigr) &
+        {\footnotesize \mathbf{x}\in\mathcal{X}}
+    \end{array}
+  \]
+\end{frame}
+
+% Original slide 57.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  \textbf{The penalized epigraphical formulation:}
+
+  \vspace{0.04cm}
+  {\color{MediumBlue}Assume that the functions $\varphi_k$ and
+  $\varphi_\ell$ are nonnegative on $P\cap g_k^{-1}(0)$ and
+  $P\cap h_\ell^{-1}(0)$, respectively.}
+  \[
+    \operatorname*{\textbf{minimize}}_{\mathbf{x}\in P;\,\mathbf{t},\mathbf{s}}
+    \quad
+    \Phi_\lambda(\mathbf{x},\mathbf{t},\mathbf{s})\triangleq
+    \underbrace{c(\mathbf{x})+\sum_{k=1}^{K}t_k}_{\Phi(\mathbf{x})\text{ in epi-form}}
+    +\lambda\underbrace{\max\Bigl(\sum_{\ell=1}^{L}s_\ell-b,\ 0\Bigr)}_{
+      \substack{\text{constraint residual}\\\text{fnc.\ in epi-form}}}
+  \]
+
+  \[
+    \operatorname*{\textbf{subject to}}\quad
+    \begin{aligned}[t]
+      &\left\{\begin{array}{@{}l@{}}
+        \text{for all }k\in[K]:\\[2pt]
+        \min\bigl(\max(\varphi_k(\mathbf{x})-t_k,\,-g_k(\mathbf{x})),\,
+          \max(g_k(\mathbf{x}),\,-t_k)\bigr)\leq 0
+      \end{array}\right.\\[6pt]
+      &\left\{\begin{array}{@{}l@{}}
+        \text{for all }\ell\in[L]:\\[2pt]
+        \min\bigl(\max(\varphi_\ell(\mathbf{x})-s_\ell,\,-h_\ell(\mathbf{x})),\,
+          \max(h_\ell(\mathbf{x}),\,-s_\ell)\bigr)\leq 0
+      \end{array}\right.
+    \end{aligned}
+  \]
+\end{frame}
+
+% Original slide 58.
+\begin{frame}
+  \frametitle{Exact penalization for finite $\lambda$}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  \textbf{Theorem.} Let $c$ and $\varphi_k$ be Lipschitz continuous. If
+  $\{\bar{\mathbf{x}},\bar{\mathbf{t}},\bar{\mathbf{s}}\}$ is a B-stationary
+  tuplet corresponding to a $\lambda$ satisfying
+  \[
+    \lambda>\mathrm{Lip}_c+K\,\mathrm{Lip}_\varphi,
+  \]
+  then $\bar{\mathbf{x}}$ is a pseudo B-stationary solution of the Heaviside
+  problem, provided that $\exists$ a vector
+  $\mathbf{v}\in\mathcal{T}\bigl(\widehat{\mathcal{S}}_{\mathrm{ps}}
+  (\bar{\mathbf{x}});\bar{\mathbf{x}}\bigr)$ with unit length satisfying:
+  \[
+    \sum_{\ell\in\mathcal{L}_>(\bar{\mathbf{x}})}
+      \varphi_\ell'(\bar{\mathbf{x}};\mathbf{v})\leq -1
+    \quad\textcolor{MediumRed}{\Bigl[\text{a descent condition for }
+      \textstyle\sum_{\ell\in\mathcal{L}_>(\bar{\mathbf{x}})}
+      \varphi_\ell(\bullet)\text{ at }\bar{\mathbf{x}}\Bigr]}.
+  \]
+
+  \vspace{0.06cm}
+  {\color{MediumBlack}\rule{\linewidth}{0.4pt}}
+  \vspace{0.06cm}
+
+  For computation, apply \textcolor{MediumRed}{smoothing} of the open
+  Heaviside function $\mathds{1}_{(0,\infty)}(\bullet)$, in addition to
+  penalization.
+
+  \vspace{0.06cm}
+  There are 2 general approximation approaches that are ``equivalent'':
+  \begin{itemize}
+    \setlength{\itemsep}{0.04cm}
+    \item[(i)] truncation based, and
+    \item[(ii)] average (i.e., integration) based.
+  \end{itemize}
+\end{frame}
+
+% Original slide 60.  (Slide 59 not yet photographed.)
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  Further, let {\color{MediumBlue}(a difference-of-convex PA function)}
+  \[
+    \begin{aligned}
+      T_{[0,1]}(t) &\triangleq\min\{\max(t,0),\,1\}
+        =\max\{\min(t,1),\,0\}\\
+      &=\max(t,0)-\max(t-1,0),\quad t\in\mathbb{R}
+    \end{aligned}
+  \]
+  be the truncation operator to the range $[0,1]$ and define the composite
+  function:
+  \[
+    \theta_{\mathrm{tr}}(t,\delta)\triangleq
+    T_{[0,1]}\bigl(\widehat{\theta}(t,\delta)\bigr),\qquad
+    (t,\delta)\in\mathbb{R}\times\mathbb{R}_{++}.
+  \]
+
+  {\color{MediumBlue}Example:} The \textcolor{MediumRed}{symmetric}
+  truncation hinge loss function for $\delta>0$:
+  \[
+    T_h(t,\delta)\triangleq\frac{1}{2\delta}
+    \bigl[\max(t+\delta,0)-\max(t-\delta,0)\bigr]
+  \]
+  fails condition (T2) and as a result does not ``recover'' the Heaviside
+  function as $\delta\downarrow 0$ because $T_h(0,\delta)=\tfrac{1}{2}$ for
+  all $\delta$. Instead, the \textcolor{MediumRed}{asymmetric} modification
+  remedies this failure:
+  \[
+    \widetilde{T}_h(t,\delta)\triangleq\min\biggl\{\max\biggl(
+      \frac{t}{\delta+\sqrt{\delta}}+\frac{\sqrt{\delta}}{1+\sqrt{\delta}},\,
+      0\biggr),\,1\biggr\}.
+  \]
+
+  \begin{supplementarynote}
+    The truncation operator $T_{[0,1]}$ is difference-of-convex; so are its
+    equivalent $\min$/$\max$ forms.
+  \end{supplementarynote}
+\end{frame}
+
+% Original slide 61.  (Slide 59 not yet photographed.)
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  Consider the approximation of the Heaviside composite program:
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{minimize}}_{\substack{\boxed{\mathbf{x}\in P}\\[2pt]
+        \text{\scriptsize simple}}}\quad
+      \widehat{\Phi}_\lambda(\mathbf{x},\delta)\triangleq{}&c(\mathbf{x})
+        +\underbrace{\sum_{k=1}^{K}\varphi_k(\mathbf{x})
+          \theta_k^\varphi(g_k(\mathbf{x}),\delta)}_{
+          \text{approx.\ of Heaviside in objective}}\\
+      &+\underset{\text{\scriptsize fixed}}{\lambda}\,
+        \overbrace{\max\Bigl(\underbrace{\sum_{\ell=1}^{L}
+          \varphi_\ell(\mathbf{x})\theta_\ell^\varphi(h_\ell(\mathbf{x}),\delta)}_{
+          \text{approx.\ of Heaviside in constraint}}-b,\ 0\Bigr)}^{
+          \text{constraint penalization}}
+    \end{aligned}
+  \]
+
+  \vspace{0.10cm}
+  This is a difference-of-convex program, if all the functions are dc.
+
+  \vspace{0.06cm}
+  \textcolor{MediumRed}{Goal:} establish the limit property of a convergent
+  sequence $\{\mathbf{x}^\nu\}$ of directional stationary solutions
+  corresponding to a sequence $\{\delta_\nu\}\downarrow 0$; where
+  \[
+    \widehat{\Phi}_\lambda(\bullet,\delta)'(\mathbf{x}^\nu;
+      \mathbf{x}-\mathbf{x}^\nu)\geq 0,\qquad\text{for all }\mathbf{x}\in P.
+  \]
+\end{frame}
+
+% Original slide 63.  (Slide 62 not yet photographed.)
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  \textbf{(C4)} \textcolor{MediumRed}{descent for exact penalization}: For any
+  $\mathbf{x}\in P\cap\mathcal{N}$, where $\mathcal{N}_*$ such that
+  $\sum_{\ell\in\mathcal{L}_>(\mathbf{x})}\varphi_\ell(\mathbf{x})>b$, there
+  exists a vector
+  $\bar{\mathbf{v}}\in\mathcal{T}\bigl(\widehat{\mathcal{S}}_{\mathrm{ps}}
+  (\mathbf{x});\mathbf{x}\bigr)$ with unit length satisfying:
+  \[
+    \sum_{\ell\in\mathcal{L}_>(\mathbf{x})}
+      \varphi_\ell'(\mathbf{x};\bar{\mathbf{v}})\leq -1;\quad\text{and}
+  \]
+
+  \textbf{(C5)} \textcolor{MediumRed}{Clarke regularity}: the functions $c$,
+  $\{\varphi_k\}_{k\in\mathcal{K}_>(\mathbf{x}^*)}$, and
+  $\{\varphi_\ell\}_{\ell\in\mathcal{L}_>(\mathbf{x}^*)}$ are Clarke regular
+  at $\mathbf{x}^*$. For a B-differentiable function $f$, this means that for
+  all sequences $\{\mathbf{z}^\nu\}$ converging to $\bar{\mathbf{x}}$, it
+  holds that
+  \[
+    \limsup_{\nu\to\infty}\fp(\mathbf{z}^\nu;\mathbf{v})
+    \leq\fp(\bar{\mathbf{x}};\mathbf{v}),\qquad
+    \forall\,\mathbf{v}\in\mathbb{R}^n.
+  \]
+
+  \vspace{0.04cm}
+  {\color{MediumBlack}\rule{\linewidth}{0.4pt}}
+  \vspace{0.06cm}
+
+  \textbf{Theorem.} Under (C1)--(C5), $\mathbf{x}^*$ is a pseudo B-stationary
+  solution of the Heaviside optimization problem.
+\end{frame}
+
+% Chapter V divider: subtitle awaiting user confirmation (the section-title
+% slide falls in the not-yet-photographed range 64--67).
+\section{Chapter V}
+
+\begin{frame}[plain]
+  \centering
+  \vfill
+  {\usebeamercolor[fg]{structure}\usebeamerfont{title}Chapter V\par}
+  \vfill
+\end{frame}
+
+% Original slide 68.  (Slides 64--67 not yet photographed.)
+\begin{frame}
+  \small
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  \textbf{The A-HSCOP} with \textcolor{MediumRed}{mixed signed} constant
+  coefficients $\{\psi_{ik}\}$:
+  \[
+    \boxed{
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\quad
+      &\Phi(\mathbf{x})\triangleq c(\mathbf{x})
+        +\sum_{k=1}^{K_0}\psi_{0k}\,
+        \mathds{1}_{[0,\infty)}\bigl(\phi_{0k}(\mathbf{x})\bigr)\\[2pt]
+      \operatorname*{\textbf{subject to}}\quad
+      &\text{for all }i=1,\ldots,I\\[2pt]
+      &\mathbf{A}_{i\bullet}\mathbf{x}
+        +\sum_{k=1}^{K_i}\psi_{ik}\,
+        \mathds{1}_{[0,\infty)}\bigl(\phi_{ik}(\mathbf{x})\bigr)\geq\eta_i.
+    \end{aligned}}
+  \]
+
+  \vspace{0.06cm}
+  Feasible set denoted $X_{\mathrm{AHS}}$.
+
+  \vspace{0.10cm}
+  \textbf{Proposition:} If $P$ is convex and each $\phi_{ij}$ is piecewise
+  affine, then $X_{\mathrm{AHS}}$ is {\color{MediumBlue}locally star-shaped};
+  i.e., for every $\bar{\mathbf{x}}\in X_{\mathrm{AHS}}$, $\exists$ a
+  neighborhood of $\bar{\mathbf{x}}$ such that for every
+  $\mathbf{x}\in X_{\mathrm{AHS}}$, a scalar $\bar{\tau}>0$ exists satisfying
+  $\bar{\mathbf{x}}+\tau(\mathbf{x}-\bar{\mathbf{x}})\in X_{\mathrm{AHS}}$ for
+  all $\tau\in[0,\bar{\tau}]$.
+
+  \vspace{0.06cm}
+  This is a sharper property than local convexity-like.
+\end{frame}
+
+% Original slide 69.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  Suppose that $c$ is B(ouligand) differentiable and
+  {\color{MediumBlue}locally concave-like} near
+  $\bar{\mathbf{x}}\in X_{\mathrm{AHS}}^{\mathrm{PA}}$, i.e., if
+  \[
+    f(\mathbf{x})\leq f(\bar{\mathbf{x}})+\fp(\bar{\mathbf{x}};
+      \mathbf{x}-\bar{\mathbf{x}})\quad
+    \forall\,\mathbf{x}\text{ sufficiently close to }\bar{\mathbf{x}}.
+  \]
+
+  \vspace{0.02cm}
+  Then (A) $\Leftrightarrow$ (B) $\Leftrightarrow$ (C), where
+  \begin{itemize}
+    \setlength{\itemsep}{0.04cm}
+    \item[(A)] $\bar{\mathbf{x}}$ is a local maximizer of the A-HSCOP;
+    \item[(B)] $\bar{\mathbf{x}}$ is an epi-stationary point of the A-HSCOP;
+    \item[(C)] for all $\mathbf{x}\in X_{\mathrm{AHS}}^{\mathrm{PA}}$
+      sufficiently near $\bar{\mathbf{x}}$, it holds that
+      \[
+        \sum_{j=1}^{J_0}\psi_{0j}\,\mathds{1}_{[0,\infty)}
+          \bigl(\phi_{0j}(\mathbf{x})\bigr)\leq
+        \sum_{j=1}^{J_0}\psi_{0j}\,\mathds{1}_{[0,\infty)}
+          \bigl(\phi_{0j}(\bar{\mathbf{x}})\bigr);
+      \]
+      moreover, if equality holds in any one of the above 3 inequalities,
+      then $c(\mathbf{x})\leq c(\bar{\mathbf{x}})$ and
+      $c'(\bar{\mathbf{x}};\mathbf{x}-\bar{\mathbf{x}})\leq 0$.
+  \end{itemize}
+
+  \vspace{0.06cm}
+  {\color{MediumBlue}A hierarchical interpretation:} $\bar{\mathbf{x}}$
+  locally maximizes the Heaviside sum, followed by the function $c$ among the
+  $\mathbf{x}$ with maximum Heaviside sum.
+\end{frame}
+
+% Original slide 70.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  \textbf{A restrictive but motivating existence result}
+
+  \vspace{0.04cm}
+  Let $P$ be a closed set. Suppose that $c$ is continuous and negatively
+  coercive on the nonempty set $X_{\mathrm{AHS}}$ and that the functions
+  $\{\phi_{ij}\}$ are continuous. If
+  \[
+    \boxed{\exists\,\bar{\mathbf{x}}\in X_{\mathrm{AHS}}\text{ satisfying }
+      \phi_{ij}(\bar{\mathbf{x}})<0\text{ for all }(i,j)\text{ such that }
+      \psi_{ij}<0,}
+  \]
+  then there exists $\bar{\varepsilon}>0$ such that the problem:
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\ \
+      &c(\mathbf{x})+\sum_{j=1}^{J_0}\psi_{0j}^+\mathds{1}_{[0,\infty)}
+        \bigl(\phi_{0j}(\mathbf{x})\bigr)
+        -\sum_{j=1}^{J_0}\psi_{0j}^-\mathds{1}_{(-\varepsilon,\infty)}
+        \bigl(\phi_{0j}(\mathbf{x})\bigr)\\[2pt]
+      \operatorname*{\textbf{subject to}}\ \ &\text{for all }i=1,\ldots,I:\\[2pt]
+      &\mathbf{A}_{i\bullet}\mathbf{x}+\sum_{j=1}^{J_i}\psi_{ij}^+
+        \mathds{1}_{[0,\infty)}\bigl(\phi_{ij}(\mathbf{x})\bigr)
+        -\sum_{j=1}^{J_i}\psi_{ij}^-\mathds{1}_{(-\varepsilon,\infty)}
+        \bigl(\phi_{ij}(\mathbf{x})\bigr)\geq\eta_i,
+    \end{aligned}
+  \]
+  where $\psi_{ij}^\pm\triangleq\max(0,\pm\psi_{ij})$, has an optimal solution
+  for all $\varepsilon\in(0,\bar{\varepsilon}]$.
+\end{frame}
+
+% Original slide 71.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  \textbf{The local semicontinuous equivalent}
+  $(\mathrm{P}^\varepsilon_{\mathrm{AHS}})$
+
+  \vspace{0.04cm}
+  For a given $\varepsilon>0$,
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\ \
+      &\theta^\varepsilon_{\mathrm{AHS}}\triangleq c(\mathbf{x})
+        +\underbrace{\sum_{j=1}^{J_0}\psi_{0j}^+\mathds{1}_{[0,\infty)}
+          \bigl(\phi_{0j}(\mathbf{x})\bigr)
+          -\sum_{j=1}^{J_0}\psi_{0j}^-\mathds{1}_{(-\varepsilon,\infty)}
+          \bigl(\phi_{0j}(\mathbf{x})\bigr)}_{\text{upper semicontinuous}}\\[2pt]
+      \operatorname*{\textbf{subject to}}\ \ &\text{for all }i=1,\ldots,I:\\[2pt]
+      &\mathbf{A}_{i\bullet}\mathbf{x}
+        +\underbrace{\sum_{j=1}^{J_i}\psi_{ij}^+\mathds{1}_{[0,\infty)}
+          \bigl(\phi_{ij}(\mathbf{x})\bigr)
+          -\sum_{j=1}^{J_i}\psi_{ij}^-\mathds{1}_{(-\varepsilon,\infty)}
+          \bigl(\phi_{ij}(\mathbf{x})\bigr)}_{\text{upper semicontinuous}}
+        \geq\eta_i,
+    \end{aligned}
+  \]
+  feasible set denoted $X^\varepsilon_{\mathrm{AHS}}$, including $P$:
+  \[
+    X^{\varepsilon'}_{\mathrm{AHS}}\subseteq X^\varepsilon_{\mathrm{AHS}}
+    \subseteq X_{\mathrm{AHS}},\qquad\forall\,\varepsilon'>\varepsilon>0
+    \qquad\textcolor{MediumBlue}{[\text{approximating from inside}]}.
+  \]
+\end{frame}
+
+% Original slide 72.  (Slide 73 not yet photographed.)
+\begin{frame}
+  \small
+  \setlength{\parskip}{0pt}
+
+  \textbf{With local sign-invariance assumption.}
+
+  \vspace{0.10cm}
+  Let $\bar{\mathbf{x}}\in X$ given. Let each $\phi_{ij}$ be continuous. There
+  exists $\bar{\varepsilon}>0$ such that for all
+  $\varepsilon\in(0,\bar{\varepsilon}]$, the following two statements hold.
+
+  \vspace{0.10cm}
+  \begin{itemize}
+    \setlength{\itemsep}{0.14cm}
+    \item[(A)] If $\bar{\mathbf{x}}$ is a local maximizer of the A-HSCOP, then
+      $\bar{\mathbf{x}}$ is a local maximizer of
+      $(\mathrm{P}^\varepsilon_{\mathrm{AHS}})$.
+    \item[(B)] Conversely, suppose that $\bar{\mathbf{x}}$ satisfies the local
+      sign invariance property with reference to
+      $\bigl\{(\psi_{ij},\phi_{ij})_{j=1}^{J_i}\bigr\}_{i=0}^{I}$; i.e.,
+      $\phi_{ij}$ is nonnegative near $\bar{\mathbf{x}}$ for all
+      $j\in\mathcal{J}_{i,0}^-(\bar{\mathbf{x}})$ and all $i=0,1,\ldots,I$.
+      If $\bar{\mathbf{x}}$ is a local maximizer of
+      $(\mathrm{P}^\varepsilon_{\mathrm{AHS}})$, then $\bar{\mathbf{x}}$ is a
+      local maximizer of the A-HSCOP.
+  \end{itemize}
+\end{frame}
+
+\section{Chapter VI: IP-based Solution Algorithms for scalar combinations}
+
+% Original slide 74.  (Slide 73 not yet photographed.)
+\begin{frame}[plain]
+  \centering
+  \vfill
+  {\usebeamercolor[fg]{structure}\usebeamerfont{title}Chapter VI\par}
+  \vspace{0.34cm}
+  {\usebeamercolor[fg]{structure}\usebeamerfont{subtitle}\mdseries\large
+    IP-based Solution Algorithms for scalar combinations\par}
+  \vspace{0.24cm}
+  {\usebeamercolor[fg]{structure}\normalsize\mdseries
+    sketch of key ideas; details to be provided in implementation\par}
+  \vfill
+\end{frame}
+
+% Original slide 75.
+\begin{frame}
+  \small
+  \setlength{\parskip}{0pt}
+
+  \textbf{Classes of Problems:}
+  \begin{itemize}
+    \setlength{\itemsep}{0.06cm}
+    \item {\color{MediumBlue}Scalar combinations}: constant $\psi_{ij}$
+      \begin{itemize}
+        \setlength{\itemsep}{0.03cm}
+        \item[--] $\psi_{ij}\geq 0$ and \textcolor{MediumRed}{concave} inner
+          functions $\phi_{ij}$
+        \item[--] $\psi_{ij}\geq 0$ and
+          \textcolor{MediumRed}{piecewise affine} inner functions $\phi_{ij}$
+        \item[--] mixed-signed $\psi_{ij}$ and \textcolor{MediumRed}{PA}
+          $\phi_{ij}$
+        \item[--] mixed-signed $\psi_{ij}$ and
+          \textcolor{MediumRed}{multiplicative HSCOP} with concave or PA
+          $\phi_{ij}$
+      \end{itemize}
+  \end{itemize}
+
+  \vspace{0.12cm}
+  \begin{center}
+    \fbox{\begin{minipage}{0.86\textwidth}
+      \textcolor{MediumRed}{Blanket assumption}: $\exists\,M>0$ such that
+      \[
+        |\phi_{ij}(\mathbf{x})|\leq M\quad\forall\,(i,j)\text{ and all }
+        \mathbf{x}\in P.
+      \]
+    \end{minipage}}
+  \end{center}
+
+  \vspace{0.12cm}
+  \textbf{Key restriction:} Avoid solving \textcolor{MediumRed}{non-concave}
+  or \textcolor{MediumRed}{non-PA} integer minimization problems, because the
+  technology is not here yet.
+\end{frame}
+
+% Original slide 76.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  {\color{MediumBlue}Base case}: $\psi_{ij}\geq 0$ and concave $\phi_{ij}$.
+  The full IP formulation:
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P;\,\mathbf{z}}\quad
+      &\theta^{\oplus}_{\mathrm{AHS}}(\mathbf{x},\mathbf{z})\triangleq
+        c(\mathbf{x})+\sum_{j=1}^{J_0}\psi_{0j}z_{0j}\\[2pt]
+      \operatorname*{\textbf{subject to}}\quad
+      &\text{for all }i=0,1,\ldots,I:\\[2pt]
+      &\mathbf{A}_{i\bullet}\mathbf{x}
+        +\sum_{j=1}^{J_i}\psi_{ij}z_{ij}\geq\eta_i\\[2pt]
+      \textbf{and}\quad
+      &\left\{
+        \begin{array}{l}
+          \underbrace{\phi_{ij}(\mathbf{x})\geq -M(1-z_{ij})}_{
+            \text{convex constraints}}\\[8pt]
+          z_{ij}\in\{0,1\}
+        \end{array}\right\}\ j=1,\ldots,J_i
+    \end{aligned}
+  \]
+
+  \vspace{0.06cm}
+  {\color{MediumRed}Equivalence}: $\bar{\mathbf{x}}$ is optimal for the
+  A-HSCOP if and only if $(\bar{\mathbf{x}},\bar{\mathbf{z}})$, where
+  $\bar{z}_{ij}\triangleq\mathds{1}_{[0,\infty)}(\phi_{ij}(\bar{\mathbf{x}}))$,
+  is optimal for IP.
+\end{frame}
+
+% Original slide 77.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  {\color{MediumBlue}\textbf{The PIP subproblems.}} Goal is to reduce the
+  number of integer variables.
+
+  \vspace{0.04cm}
+  For a given scalar $\delta>0$ and vector $\bar{\mathbf{x}}\in
+  X_{\mathrm{AHS}}$, let $\mathcal{J}^\delta_{i;>}(\bar{\mathbf{x}})$ and
+  $\mathcal{J}^\delta_{i;<}(\bar{\mathbf{x}})$ be two disjoint subsets of
+  $\{1,\ldots,J_i\}$ for all $i=0,1,\ldots,I$ such that
+  \[
+    \begin{aligned}
+      \mathcal{J}^\delta_{i;>}(\bar{\mathbf{x}}) &\subseteq
+        \underbrace{\bigl\{j\in[J_i]\mid\phi_{ij}(\bar{\mathbf{x}})\geq\delta
+          \bigr\}}_{\text{expansion of }\phi_{ij}(\bar{\mathbf{x}})\geq 0}\\[6pt]
+      \mathcal{J}^\delta_{i;<}(\bar{\mathbf{x}}) &\subseteq
+        \underbrace{\bigl\{j\in[J_i]\mid\phi_{ij}(\bar{\mathbf{x}})\leq-\delta
+          \bigr\}}_{\text{expansion of }\phi_{ij}(\bar{\mathbf{x}})\leq 0}
+    \end{aligned}\tag{5}
+  \]
+  and let $\mathcal{J}^\delta_{i;0}(\bar{\mathbf{x}})$ be the complement of
+  $\mathcal{J}^\delta_{i;>}(\bar{\mathbf{x}})\cup
+  \mathcal{J}^\delta_{i;<}(\bar{\mathbf{x}})$; thus
+  \[
+    \mathcal{J}^\delta_{i;0}(\bar{\mathbf{x}})\supseteq
+      \underbrace{\bigl\{j\in[J_i]\mid -\delta<\phi_{ij}(\bar{\mathbf{x}})
+        <\delta\bigr\}}_{\text{indeterminate indices}}
+      \supseteq\bigl\{j\in[J_i]\mid\phi_{ij}(\bar{\mathbf{x}})=0\bigr\}.
+  \]
+
+  \vspace{0.02cm}
+  $\textcolor{MediumRed}{\mathcal{J}^\delta_{i;>}(\bar{\mathbf{x}}),\
+    \mathcal{J}^\delta_{i;<}(\bar{\mathbf{x}}),\text{ and }
+    \mathcal{J}^\delta_{i;0}(\bar{\mathbf{x}})}$ are
+  \textcolor{MediumRed}{working} index sets that determine the binary
+  variables to be fixed or solved.
+\end{frame}
+
+% Original slide 78.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+
+  For a given scalar $\rho>0$, define the
+  $\bigl(\mathrm{IP}^{\oplus;\delta}_{\mathrm{AHS};\rho}(\bar{\mathbf{x}})
+  \bigr)$:
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P;\,\mathbf{z}}\ \
+      &\theta^{\oplus;\delta}_{\mathrm{AHS};\rho}
+        (\mathbf{x},\mathbf{z};\bar{\mathbf{x}})\triangleq c(\mathbf{x})
+        +\sum_{j\in\mathcal{J}^\delta_{0;0}(\bar{\mathbf{x}})}\psi_{0j}z_{0j}
+        -\underbrace{\frac{\rho}{2}\|\mathbf{x}-\bar{\mathbf{x}}\|_2^2}_{
+          \text{proximal term}}\\[2pt]
+      \operatorname*{\textbf{subject to}}\ \ &\text{for all }i=1,\ldots,I:\\[1pt]
+      &\mathbf{A}_{i\bullet}\mathbf{x}
+        +\sum_{j\in\mathcal{J}^\delta_{i;0}(\bar{\mathbf{x}})}\psi_{ij}z_{ij}
+        +\sum_{j\in\mathcal{J}^\delta_{i;>}(\bar{\mathbf{x}})}\psi_{ij}
+        \geq\eta_i,\\[1pt]
+      \textbf{and}\ \ &\text{for all }i=0,1,\ldots,I:\\[1pt]
+      &\left.\begin{array}{@{}l@{}}
+          \phi_{ij}(\mathbf{x})\geq -M(1-z_{ij})\\[2pt]
+          z_{ij}\in\{0,1\}
+        \end{array}\right\}\ j\in\mathcal{J}^\delta_{i;0}(\bar{\mathbf{x}})
+        \quad\text{\scriptsize integer variables here only}\\[2pt]
+      &\phi_{ij}(\mathbf{x})\geq 0\ \text{(equivalent to fixing }z_{ij}=1);
+        \ j\in\mathcal{J}^\delta_{i;>}(\bar{\mathbf{x}})\\[1pt]
+      &\phi_{ij}(\mathbf{x})\text{ free (equivalent to fixing }z_{ij}=0);
+        \ j\in\mathcal{J}^\delta_{i;<}(\bar{\mathbf{x}})
+    \end{aligned}
+  \]
+
+  \vspace{0.04cm}
+  This is a \textcolor{MediumRed}{convex-constrained mixed-binary program},
+  solvable by GUROBI.
+\end{frame}
+
+% Original slide 80.  (Slide 79 not yet photographed.)
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+  \setlength{\parskip}{0.06cm}
+
+  \textbf{The PIP method for the A-HSCOP} \textcolor{MediumRed}{with
+  $\psi_{ij}\geq 0$ and concave $\phi_{ij}$}
+
+  \textbf{Main computation.} Given an iterate $\mathbf{x}^\nu$, select two
+  disjoint index sets $\mathcal{J}^\delta_{i;>}(\mathbf{x}^\nu)$ and
+  $\mathcal{J}^\delta_{i;<}(\mathbf{x}^\nu)$ satisfying the inclusions in (5).
+  Solve the partial $\bigl(\mathrm{IP}^{\oplus;\delta}_{\mathrm{AHS};\rho}
+  (\mathbf{x}^\nu)\bigr)$, warm starting at $\mathbf{x}^\nu$.
+
+  \textbf{Termination.} If $\mathbf{x}^\nu$ itself is an optimal solution of
+  the self-defined partial IP, stop; the vector $\mathbf{x}^\nu$ is a local
+  maximizer of the A-HSCOP.
+
+  \textbf{Updates of index sets.} Otherwise, let $\mathbf{x}^{\nu+1}$ be an
+  optimal solution and choose new index sets
+  $\mathcal{J}^\delta_{i;>}(\mathbf{x}^{\nu+1})$ and
+  $\mathcal{J}^\delta_{i;<}(\mathbf{x}^{\nu+1})$ satisfying (5), ensuring that
+  the cardinality
+  \[
+    \bigl|\mathcal{J}^\delta_{i;>}(\mathbf{x}^{\nu+1})\cup
+      \mathcal{J}^\delta_{i;<}(\mathbf{x}^{\nu+1})\bigr|
+  \]
+  of the new sets is at least one less than the cardinality of the old sets
+  at $\mathbf{x}^\nu$. Let $\nu\leftarrow\nu+1$ and repeat the main
+  computational step.
+
+  \textcolor{MediumRed}{Note:} (1) The index sets ensure that the iterate
+  $\mathbf{x}^{\nu+1}$ will remain feasible to its self-defined IP; and (2)
+  expansions of the index sets are subject to variations in implementation.
+\end{frame}
+
+% Original slide 81.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+
+  \textbf{The case of the A-HSCOP} \textcolor{MediumRed}{with
+  $\psi_{ij}\geq 0$ and PA $\phi_{ij}$}
+  \[
+    \begin{aligned}
+      \phi^{\mathrm{PA}}_{ij}(\mathbf{x}) &=
+        \underbrace{\max_{1\leq k\leq K_{ij}}\bigl[(\mathbf{a}^k_{ij})^\top
+          \mathbf{x}+\alpha^k_{ij}\bigr]}_{
+          \text{denoted }\phi^{\mathrm{PAcvx}}_{ij}(\mathbf{x})}
+        +\underbrace{\min_{1\leq\ell\leq L_{ij}}\bigl[(\mathbf{b}^\ell_{ij})
+          ^\top\mathbf{x}+\beta^\ell_{ij}\bigr]}_{
+          \text{denoted }\phi^{\mathrm{PAcve}}_{ij}(\mathbf{x})}\\[2pt]
+      &=\max_{1\leq k\leq K_{ij}}\underbrace{\bigl[(\mathbf{a}^k_{ij})^\top
+          \mathbf{x}+\alpha^k_{ij}+\phi^{\mathrm{PAcve}}_{ij}(\mathbf{x})
+          \bigr]}_{\text{denoted }\phi^{k;+}_{ij}(\mathbf{x}),\text{ each }
+          \textcolor{MediumRed}{\text{concave}}}\\[2pt]
+      &\geq\phi^{k;+}_{ij}(\mathbf{x})\quad\forall k\in[K_{ij}],
+    \end{aligned}
+  \]
+  for some constant vectors $\mathbf{a}^k_{ij}$ and $\mathbf{b}^\ell_{ij}$
+  and scalars $\alpha^k_{ij}$ and $\beta^\ell_{ij}$. For a given vector
+  $\bar{\mathbf{x}}$, let for all pairs $(i,j)$,
+  \[
+    \mathcal{K}_{ij}(\bar{\mathbf{x}})\triangleq\bigl\{k\in[K_{ij}]\mid
+      (\mathbf{a}^k_{ij})^\top\bar{\mathbf{x}}+\alpha^k_{ij}\geq
+      \phi^{\mathrm{PAcvx}}_{ij}(\bar{\mathbf{x}})\bigr\}.
+  \]
+  Note that $\phi^{\mathrm{PA}}_{ij}(\bar{\mathbf{x}})
+  =\phi^{k;+}_{ij}(\bar{\mathbf{x}})$ for any
+  $k\in\widehat{\mathcal{K}}_{ij}\supseteq\mathcal{K}_{ij}(\bar{\mathbf{x}})$,
+  in particular for $\widehat{\mathcal{K}}_{ij}$ given by
+  \[
+    \widehat{\mathcal{K}}^\delta_{ij}(\bar{\mathbf{x}})\triangleq
+      \bigl\{k\in[K_{ij}]\mid(\mathbf{a}^k_{ij})^\top\bar{\mathbf{x}}
+      +\alpha^k_{ij}\geq\phi^{\mathrm{PAcvx}}_{ij}(\bar{\mathbf{x}})-\delta
+      \bigr\},\quad\delta>0.
+  \]
+\end{frame}
+
+% Original slide 82.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+
+  \textbf{The regularized, decomposed A-HSCOP} for a given tuple
+  $\mathbf{k}\triangleq(k_{ij})$:
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\ \
+      &\theta^{\oplus;k_0}_{\mathrm{AHS};\rho}(\mathbf{x})\triangleq
+        c(\mathbf{x})+\sum_{j=1}^{J_0}\psi_{0j}\mathds{1}_{[0,\infty)}
+        \bigl(\phi^{k_{0j};+}_{0j}(\mathbf{x})\bigr)\\
+      &\qquad\qquad-\frac{\rho}{2}\|\mathbf{x}-\bar{\mathbf{x}}\|_2^2;
+        \quad\rho\geq 0\\[2pt]
+      \operatorname*{\textbf{subject to}}\ \ &\text{for all }i=1,\ldots,I:\\[1pt]
+      &\mathbf{A}_{i\bullet}\mathbf{x}+\sum_{j=1}^{J_i}\psi_{ij}
+        \mathds{1}_{[0,\infty)}\bigl(\phi^{k_{ij};+}_{ij}(\mathbf{x})\bigr)
+        \geq\eta_i.
+    \end{aligned}
+  \]
+
+  \vspace{0.02cm}
+  feasible set denoted $X^{\oplus;\mathbf{k}}_{\mathrm{AHS}}$; problem denoted
+  $\bigl(\mathrm{P}^{\oplus;\mathbf{k}}_{\mathrm{AHS};\rho}\bigr)$
+
+  \vspace{0.06cm}
+  Each is of the previous kind: nonnegative coefficients and concave inner
+  functions; furthermore,
+  \[
+    \theta_{\mathrm{AHS}}(\mathbf{x})=\max_{\mathbf{k}}
+      \theta^{\oplus;k_0}_{\mathrm{AHS};0}(\mathbf{x}),\quad
+      \text{for any }\mathbf{x};\quad\text{and}\quad
+      X_{\mathrm{AHS}}=\bigcup_{\mathbf{k}}X^{\oplus;\mathbf{k}}_{\mathrm{AHS}}.
+  \]
+\end{frame}
+
+% Original slide 83.  (Slide 84 not yet photographed.)
+\begin{frame}
+  \setlength{\parskip}{0pt}
+
+  There are 2 versions of the algorithm:
+  \begin{itemize}
+    \setlength{\itemsep}{0.20cm}
+    \item {\color{MediumBlue}\textbf{Version I}}: PIP first and then decompose
+      each PIP subproblem
+    \item {\color{MediumBlue}\textbf{Version II}}: Decompose first and then
+      apply PIP to each decomposed problem.
+  \end{itemize}
+
+  \vspace{0.20cm}
+  Presented below is Version II: decompose-then-PIP.
+\end{frame}
+
+% Original slide 85.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+
+  \textbf{The Iterative Decomposed Shrinkage Algorithm,}
+  \textcolor{MediumRed}{IDSA-PIP}, \textbf{for the A-HSCOP}
+  \textcolor{MediumRed}{with mixed-signed $\psi_{ij}$ and PA $\phi_{ij}$}
+
+  \vspace{0.04cm}
+  Several steps:
+  \begin{itemize}
+    \setlength{\itemsep}{0.10cm}
+    \item Write $\psi_{ij}=\psi^+_{ij}-\psi^-_{ij}$; note
+      \[
+        -\psi^-_{ij}\mathds{1}_{(-\varepsilon,\infty)}
+          \bigl(\phi_{ij}(\mathbf{x})\bigr)
+        =-\psi^-_{ij}+\psi^-_{ij}\mathds{1}_{[0,\infty)}
+          \bigl(-\phi_{ij}(\mathbf{x})-\varepsilon\bigr)
+      \]
+    \item Solve a sequence of decomposed $\varepsilon_\nu$-approximation
+      problems by the PIP method described above, for a sequence of
+      $\{\varepsilon_\nu\}\downarrow 0$.
+    \item For each $\varepsilon$-subproblem, need majorization and
+      minorization $\phi^{\mathrm{PA}}_{ij}(\mathbf{x})$ by
+      \[
+        \phi^{\ell;-}_{ij}(\mathbf{x})\leq\phi^{\mathrm{PA}}_{ij}(\mathbf{x})
+        \leq\phi^{k;+}_{ij}(\mathbf{x}),
+      \]
+      respectively.
+    \item After majorization/minorization, each PIP subproblem is a reduced
+      mixed-binary, concave maximization program (with the only nonlinear
+      function being $c(\mathbf{x})$).
+  \end{itemize}
+\end{frame}
+
+% Original slide 87.  (Slide 86 not yet photographed.)
+\begin{frame}
+  \scriptsize
+  \setlength{\abovedisplayskip}{2pt}
+  \setlength{\belowdisplayskip}{2pt}
+
+  \textbf{The computational workhorse}
+  $\bigl(\mathrm{IP}^{\varepsilon_\nu;k,\ell,\delta'}_{\mathrm{AHS};\rho}
+  (\mathbf{x}^\nu)\bigr)$ at $\widehat{\mathbf{x}}\in X^\varepsilon_{\mathrm{AHS}}$:
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P;\,\mathbf{z}^\pm}\ \
+      &c(\mathbf{x})
+        +\sum_{j\in\widehat{\mathcal{J}}^{+\delta'}_{0;0}(\widehat{\mathbf{x}})}
+          \psi^+_{0j}z^+_{0j}
+        +\sum_{j\in\widehat{\mathcal{J}}^{-\delta'}_{0;0}(\widehat{\mathbf{x}})}
+          \psi^-_{0j}z^-_{0j}
+        +\sum_{j\in\widehat{\mathcal{J}}^{+\delta'}_{0;>}(\widehat{\mathbf{x}})}
+          \psi^+_{0j}\\
+      &\quad-\sum_{j\in\widehat{\mathcal{J}}^{-\delta'}_{0;0}(\widehat{\mathbf{x}})
+          \cup\widehat{\mathcal{J}}^{-\delta'}_{0;<}(\widehat{\mathbf{x}})}
+          \psi^-_{0j}
+        -\frac{\rho}{2}\|\mathbf{x}-\mathbf{x}^\nu\|_2^2\\[2pt]
+      \operatorname*{\textbf{subject to}}\ \
+      &\mathbf{A}_{i\bullet}\mathbf{x}
+        +\sum_{j\in\widehat{\mathcal{J}}^{+\delta'}_{i;0}(\widehat{\mathbf{x}})}
+          \psi^+_{ij}z^+_{ij}
+        +\sum_{j\in\widehat{\mathcal{J}}^{+\delta'}_{i;>}(\widehat{\mathbf{x}})}
+          \psi^+_{ij}
+        +\sum_{j\in\widehat{\mathcal{J}}^{-\delta'}_{i;0}(\widehat{\mathbf{x}})}
+          \psi^-_{ij}z^-_{ij}\\
+      &\quad\geq
+        \sum_{j\in\widehat{\mathcal{J}}^{-\delta'}_{i;0}(\widehat{\mathbf{x}})
+          \cup\widehat{\mathcal{J}}^{-\delta'}_{i;<}(\widehat{\mathbf{x}})}
+          \psi^-_{ij}+\eta_i,\quad\forall i\in[I]:\\[4pt]
+      \textbf{and}\ \
+      &\text{for all }i=0,\ldots,I:\\[3pt]
+      &\left.\begin{array}{@{}l@{\ }l@{}}
+        \phi^{k_{ij};+}_{ij}(\mathbf{x})\geq -M(1-z^+_{ij});\ z^+_{ij}\in\{0,1\};
+          & j\in\widehat{\mathcal{J}}^{+\delta'}_{i;0}(\widehat{\mathbf{x}})\\[3pt]
+        -\phi^{\ell_{ij};-}_{ij}(\mathbf{x})\geq -M(1-z^-_{ij})+\varepsilon;\
+          z^-_{ij}\in\{0,1\};
+          & j\in\widehat{\mathcal{J}}^{-\delta'}_{i;0}(\widehat{\mathbf{x}})
+      \end{array}\right\}\\[5pt]
+      &\left.\begin{array}{@{}l@{\ }l@{}}
+        \phi^{k_{ij};+}_{ij}(\mathbf{x})\geq 0;\ (\text{equivalent to }
+          z^+_{ij}=1); & j\in\widehat{\mathcal{J}}^{+\delta'}_{i;>}(\widehat{\mathbf{x}})\\[3pt]
+        -\phi^{\ell_{ij};-}_{ij}(\mathbf{x})\geq\varepsilon;\ (\text{equivalent to }
+          z^-_{ij}=1); & j\in\widehat{\mathcal{J}}^{-\delta'}_{i;>}(\widehat{\mathbf{x}})
+      \end{array}\right\}
+    \end{aligned}
+  \]
+\end{frame}
+
+% PDF page 89 -- Sketch of IDSA-PIP (formal algorithm statement).
+\begin{frame}
+  \frametitle{Sketch of IDSA-PIP}
+  \small
+  \setlength{\abovedisplayskip}{5pt}
+  \setlength{\belowdisplayskip}{5pt}
+  \setlength{\parskip}{0.14cm}
+
+  \textbf{Initialization.} Let $\{\varepsilon_\nu\}_{\nu=0}^{\infty}\downarrow 0$.
+  Let $\mathbf{x}^0\in X^{\varepsilon_0}_{\mathrm{AHS}}$; let
+  $(\rho,\delta,\delta')>0$, and $\nu=0$.
+
+  \textbf{Main Computation.} Apply PIP to solve the problem
+  $\bigl(\mathrm{P}^{\varepsilon_\nu;k,\ell}_{\mathrm{AHS};\rho}
+  (\mathbf{x}^\nu)\bigr)$ for all pairs $(\mathbf{k},\boldsymbol{\ell})$ in
+  $\mathcal{M}^\delta(\mathbf{x}^\nu)$ and obtain a local maximizer, denoted
+  $\mathbf{x}^{k,\ell}(\mathbf{x}^\nu)$. Determine the maximum of
+  \[
+    \theta^{\varepsilon_\nu;k;\ell}_{\mathrm{AHS};\rho}
+    \bigl(\mathbf{x}^{k,\ell}(\mathbf{x}^\nu);\mathbf{x}^\nu\bigr)
+  \]
+  among all pairs $(\mathbf{k},\boldsymbol{\ell})$ in
+  $\mathcal{M}^\delta(\mathbf{x}^\nu)$.
+
+  \textbf{Termination.} Terminate if $\mathbf{x}^{\nu+1}$ satisfies a prescribed
+  rule (e.g., if $\|\mathbf{x}^{\nu+1}-\mathbf{x}^\nu\|$ is within a given
+  tolerance). Otherwise, return to the main computation step with
+  $\nu\leftarrow\nu+1$.
+\end{frame}
+
+% PDF page 90 -- convergence/limit result for the IDSA-PIP algorithm.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  Let $P$ be compact, $c$ be continuous and each $\phi_{ij}$ be PA.
+  \textcolor{MediumRed}{Every accumulation point} $\mathbf{x}^\infty$ of a
+  sequence $\{\mathbf{x}^\nu\}$ produced by the IDSA-PIP algorithm is feasible
+  to the \textcolor{MediumRed}{A-HSCOP} (with \textcolor{MediumRed}{mixed
+  signed} $\psi_{ij}$).
+
+  \vspace{0.06cm}
+  Moreover, if $\mathcal{J}_{i,0}^-(\mathbf{x}^\infty)=\emptyset$ for all
+  $i=0,1,\ldots,I$, $\exists$ a pair
+  $(\mathbf{k}^\infty,\boldsymbol{\ell}^\infty)\in\mathcal{M}(\mathbf{x}^\infty)$
+  such that $\mathbf{x}^\infty$ is a local maximizer of the problem:
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\quad
+      &c(\mathbf{x})
+        +\sum_{j=1}^{J_0}\psi^+_{0j}\mathds{1}_{[0,\infty)}
+          \bigl(\phi^{k^{\infty}_{0j};+}_{0j}(\mathbf{x})\bigr)\\
+      &\qquad{}-\sum_{j=1}^{J_0}\psi^-_{0j}\mathds{1}_{[0,\infty)}
+          \bigl(\phi^{\ell^{\infty}_{0j};-}_{0j}(\mathbf{x})\bigr)\\[4pt]
+      \operatorname*{\textbf{subject to}}\quad
+      &\mathbf{A}_{i\bullet}\mathbf{x}
+        +\sum_{j=1}^{J_i}\psi^+_{ij}\mathds{1}_{[0,\infty)}
+          \bigl(\phi^{k^{\infty}_{ij};+}_{ij}(\mathbf{x})\bigr)\\
+      &\qquad{}-\sum_{j=1}^{J_i}\psi^-_{ij}\mathds{1}_{[0,\infty)}
+          \bigl(\phi^{\ell^{\infty}_{ij};-}_{ij}(\mathbf{x})\bigr)
+        \geq\eta_i,\quad\text{for all }i\in[I].
+    \end{aligned}\tag{6}
+  \]
+
+  \vspace{0.04cm}
+  If additionally $\mathcal{M}(\mathbf{x}^\infty)$ is a singleton, then
+  $\mathbf{x}^\infty$ is a local maximizer of the A-HSCOP.
+\end{frame}
+
+% PDF page 91 -- the multiplicative Heaviside composite problem (M-HSCOP).
+% Source-slide typos corrected: "Heavide"->"Heaviside", "compositive"->"composite".
+% NOTE: the epsilon-perturbed intervals in the approximation line were read off a
+% glare-y photo; endpoints flagged to the user for confirmation.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  \textbf{The multiplicative Heaviside composite problem}
+  \textcolor{MediumBlue}{M-HSCOP}:
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\quad
+      &c(\mathbf{x})+\sum_{j=1}^{J_0}\psi_{0j}\,
+        \mathds{1}_{[0,\infty)}\bigl(\phi_{0j}(\mathbf{x})\bigr)\,
+        \mathds{1}_{(0,\infty)}\bigl(\varphi_{0j}(\mathbf{x})\bigr)\\[2pt]
+      \operatorname*{\textbf{subject to}}\quad
+      &\text{for all }i=1,\ldots,I:\\[2pt]
+      &\mathbf{A}_{i\bullet}\mathbf{x}+\sum_{j=1}^{J_i}\psi_{ij}\,
+        \mathds{1}_{[0,\infty)}\bigl(\phi_{ij}(\mathbf{x})\bigr)\,
+        \mathds{1}_{(0,\infty)}\bigl(\varphi_{ij}(\mathbf{x})\bigr)\geq\eta_i.
+    \end{aligned}
+  \]
+
+  \vspace{0.04cm}
+  \textcolor{MediumBlue}{Approximation of the product:}
+  \[
+    \psi_{ij}\,
+      \underbrace{\mathds{1}_{[0,\infty)}\bigl(\phi_{ij}(\mathbf{x})\bigr)}_{
+        \text{closed Heaviside}}\,
+      \underbrace{\mathds{1}_{(0,\infty)}\bigl(\varphi_{ij}(\mathbf{x})\bigr)}_{
+        \text{open Heaviside}}\ \approx
+  \]
+  \vspace{-0.30cm}
+  \[
+    \begin{aligned}
+      &\psi^+_{ij}\,\mathds{1}_{[0,\infty)}\bigl(\phi_{ij}(\mathbf{x})\bigr)\,
+        \mathds{1}_{[\varepsilon,\infty)}\bigl(\varphi_{ij}(\mathbf{x})\bigr)\\
+      &\quad{}-\psi^-_{ij}\,\mathds{1}_{(-\varepsilon,\infty)}
+        \bigl(\phi_{ij}(\mathbf{x})\bigr)\,
+        \mathds{1}_{(0,\infty)}\bigl(\varphi_{ij}(\mathbf{x})\bigr)
+    \end{aligned}
+  \]
+
+  \vspace{0.02cm}
+  preserves monotonicity and ensures applicability and guaranteed convergence of
+  the IDSA-PIP algorithm. (vs.\ an alternative approximation).
+\end{frame}
+
+% PDF pages 92--94 not photographed.
+
+% PDF page 95 -- forward-looking list of problem classes.
+\begin{frame}
+  \textbf{Classes of Problems:}
+
+  \vspace{0.35cm}
+  \begin{itemize}
+    \setlength{\itemsep}{0.32cm}
+    \item \textcolor{MediumBlue}{Affine outer combinations of HSCOPs}
+    \item \textcolor{MediumBlue}{A-HSCOP with complementarity constraints}
+    \item \textcolor{MediumBlue}{Fractional HSCOPs and 2-sum fractional extension}
+    \item \textcolor{MediumBlue}{Doubly Heaviside composite problems}
+  \end{itemize}
+\end{frame}
+
+% PDF page 96 -- HSCOP with affine psi_{ij}.
+% NOTE: objective subscript read as "QHS" off a glare-y photo -- flagged for confirmation.
+\begin{frame}
+  \small
+  \setlength{\abovedisplayskip}{6pt}
+  \setlength{\belowdisplayskip}{6pt}
+
+  \textbf{HSCOP with affine} $\psi_{ij}$
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\quad
+      &\theta_{\mathrm{QHS}}(\mathbf{x})\triangleq c(\mathbf{x})
+        +\sum_{j=1}^{J_0}\bigl[(\mathbf{a}^{0j})^\top\mathbf{x}+\alpha_{0j}\bigr]
+        \mathds{1}_{[0,\infty)}\bigl(\phi_{0j}(\mathbf{x})\bigr)\\[2pt]
+      \operatorname*{\textbf{subject to}}\quad
+      &\text{for }i=1,\ldots,I:\\[2pt]
+      &\mathbf{A}_{i\bullet}\mathbf{x}
+        +\sum_{j=1}^{J_i}\bigl[(\mathbf{a}^{ij})^\top\mathbf{x}+\alpha_{ij}\bigr]
+        \mathds{1}_{[0,\infty)}\bigl(\phi_{ij}(\mathbf{x})\bigr)\geq\eta_i,
+        \quad i=1,\ldots,I.
+    \end{aligned}
+  \]
+\end{frame}
+
+% PDF page 97 -- solving the affine-psi HSCOP: reduction to a mixed-IP.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+  \setlength{\parskip}{0.10cm}
+
+  \textcolor{MediumBlue}{Several steps:}
+
+  \textcolor{MediumRed}{Step 1:} Write
+  $(\mathbf{a}^{ij})^\top\mathbf{x}+\alpha_{ij}
+    =\bigl[(\mathbf{a}^{ij})^\top\mathbf{x}+\alpha_{ij}\bigr]_+
+    -\bigl[(\mathbf{a}^{ij})^\top\mathbf{x}+\alpha_{ij}\bigr]_-$,
+  \[
+    \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\ c(\mathbf{x})
+    +\sum_{j=1}^{J_0}\left\{
+      \begin{aligned}
+        &\bigl[(\mathbf{a}^{0j})^\top\mathbf{x}+\alpha_{0j}\bigr]_+
+          \mathds{1}_{[0,\infty)}\bigl(\phi_{0j}(\mathbf{x})\bigr)\\
+        &{}-\bigl[(\mathbf{a}^{0j})^\top\mathbf{x}+\alpha_{0j}\bigr]_-
+          \mathds{1}_{[0,\infty)}\bigl(\phi_{0j}(\mathbf{x})\bigr)
+      \end{aligned}\right\}
+  \]
+  and similarly for constraints.
+
+  \textcolor{MediumRed}{Step 2:} Open up the negative Heaviside terms:
+  \[
+    \bigl[(\mathbf{a}^{0j})^\top\mathbf{x}+\alpha_{0j}\bigr]_-
+      \mathds{1}_{[0,\infty)}\bigl(\phi_{0j}(\mathbf{x})\bigr)
+    \approx
+    \bigl[(\mathbf{a}^{0j})^\top\mathbf{x}+\alpha_{0j}\bigr]_-
+      \mathds{1}_{(-\varepsilon,\infty)}\bigl(\phi_{0j}(\mathbf{x})\bigr).
+  \]
+
+  \textcolor{MediumRed}{Step 3:} Linearize the products: $s=yz$, where
+  $0\leq y-s\leq\bar{y}(1-z)$ and $0\leq s\leq\bar{y}z$, where
+  $0\leq y\leq\bar{y}$ and $z\in\{0,1\}$.
+
+  \textcolor{MediumRed}{Step 4:} Apply IDSA-PIP to the resulting mixed-IP
+  formulation.
+\end{frame}
+
+% =====================================================================
+% Second talk merged in at the user's request: Junyi Liu (Tsinghua),
+% "Case Studies: Policy Learning and Classification via Affine Heaviside
+% Composite Optimization" -- a separate 52-page deck.  Page references below
+% are to THAT deck.  The source uses a Tsinghua maroon/navy theme and plain
+% (non-bold) vectors; reconstructed here in this deck's SimplePlus conventions
+% (blue structure, \mathbf vectors, MediumRed/MediumBlue emphasis) for a single
+% coherent document.
+% =====================================================================
+\section{Case Studies: Policy Learning and Classification (Junyi Liu)}
+
+% Case-studies PDF page 1 -- title, shown as a part divider.
+\begin{frame}[plain]
+  \centering
+  \vfill
+  {\usebeamercolor[fg]{structure}\large\bfseries
+    Case Studies: Policy Learning and Classification\\[2pt]
+    via Affine Heaviside Composite Optimization\par}
+  \vspace{0.55cm}
+  {\large Junyi Liu\par}
+  \vspace{0.22cm}
+  Department of Industrial Engineering, Tsinghua University\par
+  \vspace{0.40cm}
+  Summer School at Peking University, Beijing, China\par
+  \vspace{0.08cm}
+  July 22, 2026\par
+  \vfill
+\end{frame}
+
+% Case-studies PDF page 2 -- underlying research works.
+\begin{frame}{Based on the research works:}
+  \small
+  \begin{itemize}
+    \setlength{\itemsep}{0.24cm}
+    \item[--] Solving Constrained Affine Heaviside Composite Optimization
+      Problems by a Progressive IP Approach. (2026)
+      {\footnotesize\texttt{https://arxiv.org/abs/2605.06020}}
+      \textit{Joint work with Ke Zheng, Yurui Wang, Jong-Shi Pang.}
+    \item[--] Offline policy learning with weight clipping and Heaviside
+      composite optimization. (2026)
+      {\footnotesize\texttt{https://arxiv.org/abs/2601.12117}}.
+      \textit{Joint work with Jingren Liu, Hanzhang Qin, Mabel C. Chou,
+      Jong-Shi Pang.}
+    \item[--] Classification and treatment Learning with constraints via
+      Heaviside optimization: a Progressive MIP Method (2025). Computational
+      Optimization and Applications.
+      \textit{Joint work with Yue Fang and Jong-Shi Pang.}
+  \end{itemize}
+\end{frame}
+
+% Case-studies PDF page 3 -- the A-HSCOP model (fuller build; the partial
+% "3/52" photo is an earlier reveal of this same slide).
+\begin{frame}{Affine Heaviside composite optimization problem (A-HSCOP)}
+  \small
+  \setlength{\abovedisplayskip}{5pt}
+  \setlength{\belowdisplayskip}{5pt}
+
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\quad
+      &c(\mathbf{x})+\sum_{j=1}^{J_0}\psi_{0j}\,
+        \mathds{1}_{[0,\infty)}\bigl(\phi_{0j}(\mathbf{x})\bigr),\\[2pt]
+      \operatorname*{\textbf{subject to}}\quad
+      &\sum_{j=1}^{J_i}\psi_{ij}\,
+        \mathds{1}_{[0,\infty)}\bigl(\phi_{ij}(\mathbf{x})\bigr)\geq b_i,
+        \quad\text{for }i=1,\ldots,m
+        \quad(\text{upper semicontinuous})
+    \end{aligned}
+  \]
+
+  \begin{itemize}
+    \setlength{\itemsep}{0.08cm}
+    \item Heaviside function $\mathds{1}_{[0,\infty)}(t)\triangleq
+      \begin{cases}1 & \text{if }t\geq 0\\ 0 & \text{otherwise}\end{cases}$
+    \item mixed signed scalars $\{\psi_{ij}\}$;\quad
+      \textcolor{MediumRed}{(non u.s.c.\ problem)}
+    \item piecewise affine functions $\{\phi_{ij}\}:\mathbb{R}^n\to\mathbb{R}$;
+    \item $c:\mathbb{R}^n\to\mathbb{R}$ is a Bouligand differentiable function
+      (locally Lipschitz and directional differentiable)
+    \item a polyhedron set $P\subseteq\mathbb{R}^n$.
+  \end{itemize}
+\end{frame}
+
+% Case-studies PDF page 4 -- source problems and distinguished features.
+% NOTE: which key terms are maroon-emphasized is my best reading off a glare-y
+% photo; flagged for confirmation.
+\begin{frame}{Affine Heaviside composite optimization problem (A-HSCOP)}
+  \footnotesize
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+
+  \textcolor{MediumBlue}{\textbf{Source problems:}}
+  \begin{itemize}
+    \setlength{\itemsep}{0.05cm}
+    \item chance-constraint $\mathbb{P}\bigl(f(\mathbf{x},\xi)\geq 0\bigr)
+      =\mathbb{E}\bigl[\mathds{1}_{[0,\infty)}\bigl(f(\mathbf{x},\xi)\bigr)\bigr]$
+    \item endogenous uncertainty
+      $\mathbb{P}\bigl(\tilde{\xi}=\xi\mid\mathbf{x}\bigr)
+      =\sum_{s=1}^{S}p_s\Bigl[\xi\,\mathds{1}_{[0,\infty)}
+      \bigl(\phi(\mathbf{x},\omega^s)\bigr)
+      +(1-\xi)\,\mathds{1}_{(-\infty,0)}\bigl(\phi(\mathbf{x},\omega^s)\bigr)\Bigr]$
+    \item \textcolor{MediumRed}{classification}
+    \item \textcolor{MediumRed}{policy learning}
+    \item \textcolor{MediumRed}{clustering}
+    \item[] $\cdots$
+  \end{itemize}
+
+  \vspace{0.05cm}
+  \textcolor{MediumBlue}{\textbf{Distinguished features:}}
+  \begin{itemize}
+    \setlength{\itemsep}{0.05cm}
+    \item a \textcolor{MediumRed}{mixed-signed combination} of Heaviside
+      composite functions, which leads to the loss of upper semicontinuity.
+    \item \textcolor{MediumRed}{piecewise affine inner functions.}
+    \item \textcolor{MediumRed}{composition of the two highlighted features
+      above.}
+    \item \textcolor{MediumRed}{functional constraints} with the same features
+      further add to the challenges.
+    \item large number of Heaviside functions: $O(N),\,O(N^2)$
+  \end{itemize}
+\end{frame}
+
+% Case-studies PDF page 6 -- solution methods, discrete approach.
+% (Case-studies PDF page 5 not photographed.)
+\begin{frame}{Solution methods for A-HSCOP}
+  \small
+  \setlength{\parskip}{0.10cm}
+
+  $\bullet$~\textbf{Discrete approach:} Given all affine coefficients are
+  nonnegative, \underline{A-HSCOP can be formulated as MIP with big-$M$
+  technique}
+  \begin{itemize}
+    \setlength{\itemsep}{0.10cm}
+    \item[--] off-the-shelf solvers, BB methods for mid-size problems with
+      univariate splits [Bertsimas \& Dunn (2017)] [Verwer, Zhang (2019)]
+      [Aghaei, Gómez, Vayanos (2025)]
+    \item[--] often can not efficiently handle problems of large size,
+      complicated by the piecewise affine inner functions and feasibility issue
+    \item[--] can not apply to the A-HSCOP problem with mixed-signed
+      coefficients.
+  \end{itemize}
+\end{frame}
+
+% Case-studies PDF page 7 -- solution methods, PIP approach.
+\begin{frame}{Solution methods for A-HSCOP}
+  \small
+  \setlength{\parskip}{0.10cm}
+
+  \textcolor{MediumRed}{\textbf{PIP approach:}} in-between the continuous and
+  discontinuous approach for A-HSCOP of a BIG size
+  \begin{itemize}
+    \setlength{\itemsep}{0.12cm}
+    \item[--] leverage state-of-art \textbf{MIP solver for mid-size problems
+      progressively}, rather than solve the whole MIP problem
+    \item[--] take advantage of \textbf{progressively DC decomposition} for
+      dealing with the piecewise affine inner functions
+    \item[--] guarantee the \textbf{iterative progressive improvement}, and
+      characterize the local optimality to A-HSCOP, which is linked to global
+      optimality through \textbf{controllable parameters}
+  \end{itemize}
+\end{frame}
+
+% Case-studies PDF page 8 -- A-HSCOP with nonnegative coefficients + MIP reformulation.
+\begin{frame}{A-HSCOP with nonnegative coefficients}
+  \footnotesize
+  \textbf{Assume that:}
+  \begin{itemize}
+    \setlength{\itemsep}{0.02cm}
+    \item \textcolor{MediumRed}{all affine coefficients $\{\psi_{ij}\}$ are
+      nonnegative}
+    \item affine inner functions $\phi_{ij}(\mathbf{x})$
+    \item there exists a constant $\underline{M}$ such that
+      $\phi_{ij}(\mathbf{x})\geq -M$ for all $\mathbf{x}\in P$
+  \end{itemize}
+
+  \vspace{0.06cm}
+  \begin{columns}[t,onlytextwidth]
+    \column{0.5\textwidth}
+    \textbf{A-HSCOP} $\bigl(\mathrm{P}^{\oplus}_{\mathrm{AHS}}\bigr)$
+    \[
+      \begin{aligned}
+        \operatorname*{\textbf{max}}_{\mathbf{x}\in P}\
+        &\theta^{\oplus}_{\mathrm{AHS}}(\mathbf{x})\triangleq c(\mathbf{x})\\
+        &\ +\sum_{j=1}^{J_0}\psi_{0j}\mathds{1}_{[0,\infty)}
+          \bigl(\phi_{0j}(\mathbf{x})\bigr)\\[2pt]
+        \text{s.t.}\
+        &\sum_{j=1}^{J_i}\psi_{ij}\mathds{1}_{[0,\infty)}
+          \bigl(\phi_{ij}(\mathbf{x})\bigr)\geq b_i,\ \forall i
+      \end{aligned}
+    \]
+    \column{0.5\textwidth}
+    \textbf{MIP reformulation}
+    \[
+      \begin{aligned}
+        \operatorname*{\textbf{max}}_{\mathbf{x}\in P;\,\mathbf{z}}\
+        &c(\mathbf{x})+\sum_{j=1}^{J_0}\psi_{0j}z_{0j}\\
+        \text{s.t.}\
+        &\sum_{j=1}^{J_i}\psi_{ij}z_{ij}\geq b_i,\ \forall i\\
+        &\phi_{ij}(\mathbf{x})\geq -M(1-z_{ij}),\ \forall j,i\\
+        &z_{ij}\in\{0,1\},\ \forall j,i.
+      \end{aligned}
+    \]
+  \end{columns}
+
+  \vspace{0.04cm}
+  the number of Heaviside functions $=$ the number of integer variables:\
+  $\displaystyle\sum_{i=0}^{m} J_i.$
+\end{frame}
+
+% Case-studies PDF page 9 -- partial A-HSCOP and restricted MIP (delta-index sets).
+% DENSE + glare: several symbols are best-effort (b_i, [m], the big-M constant,
+% the exact forall conditions and index-set subscripts) -- flagged to the user.
+\begin{frame}{Partial HSCOP and restricted MIP}
+  \scriptsize
+  \setlength{\abovedisplayskip}{1pt}
+  \setlength{\belowdisplayskip}{1pt}
+
+  With $\mathcal{J}^\delta_{i;>}(\bar{\mathbf{x}})\subseteq\{j\in[J_i]\mid
+    \phi_{ij}(\bar{\mathbf{x}})>\delta_1\}$,\
+  $\mathcal{J}^\delta_{i;<}(\bar{\mathbf{x}})\subseteq\{j\in[J_i]\mid
+    \phi_{ij}(\bar{\mathbf{x}})<-\delta_2\}$,\
+  $\mathcal{J}^\delta_{i;0}(\bar{\mathbf{x}})\triangleq[J_i]/\bigl(
+    \mathcal{J}^\delta_{i;>}(\bar{\mathbf{x}})\cup
+    \mathcal{J}^\delta_{i;<}(\bar{\mathbf{x}})\bigr)$,
+
+  \vspace{0.04cm}
+  \textcolor{MediumRed}{\textbf{partial A-HSCOP}}
+  $\textcolor{MediumRed}{\bigl(\mathrm{P}^{\oplus;\delta}_{\mathrm{AHS}}
+    (\bar{\mathbf{x}})\bigr)}$
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{max}}_{\mathbf{x}\in P}\
+      &\theta^{\oplus}_{\mathrm{AHS}}(\mathbf{x};\bar{\mathbf{x}})\triangleq
+        c(\mathbf{x})
+        +\sum_{j\in\mathcal{J}^\delta_{0;0}(\bar{\mathbf{x}})}\psi_{0j}
+          \mathds{1}_{[0,\infty)}\bigl(\phi_{0j}(\mathbf{x})\bigr)
+        +\sum_{j\in\mathcal{J}^\delta_{0;>}(\bar{\mathbf{x}})}\psi_{0j}\\
+      \text{s.t.}\
+      &\sum_{j\in\mathcal{J}^\delta_{i;0}(\bar{\mathbf{x}})}\psi_{ij}
+          \mathds{1}_{[0,\infty)}\bigl(\phi_{ij}(\mathbf{x})\bigr)
+        +\sum_{j\in\mathcal{J}^\delta_{i;>}(\bar{\mathbf{x}})}\psi_{ij}
+        \geq\eta_i,\ \forall i\in[I]\\
+      &\phi_{ij}(\mathbf{x})\geq 0\quad
+        j\in\mathcal{J}^{+\delta}_{i;>}(\bar{\mathbf{x}}),\ \forall i\in[I].
+    \end{aligned}
+  \]
+
+  \vspace{-0.14cm}
+  {\color{MediumBlack}\rule{\linewidth}{0.4pt}}
+
+  \textcolor{MediumBlue}{\textbf{restricted IP}}
+  $\textcolor{MediumBlue}{\bigl(\mathrm{IP}^{\oplus;\delta}_{\mathrm{AHS}}
+    (\bar{\mathbf{x}})\bigr)}$
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{max}}_{\mathbf{x}\in P;\,\mathbf{z}}\
+      &c(\mathbf{x})
+        +\sum_{j\in\mathcal{J}^\delta_{0;0}(\bar{\mathbf{x}})}\psi_{0j}z_{0j}
+        +\sum_{j\in\mathcal{J}^\delta_{0;>}(\bar{\mathbf{x}})}\psi_{0j}\\
+      \text{s.t.}\
+      &\sum_{j\in\mathcal{J}^\delta_{i;0}(\bar{\mathbf{x}})}\psi_{ij}z_{ij}
+        +\sum_{j\in\mathcal{J}^{+\delta}_{i;>}(\bar{\mathbf{x}})}\psi_{ij}
+        \geq b_i,\ \forall i\in[m]\\
+      &\phi_{ij}(\mathbf{x})\geq \underline{B}(1-z_{ij}),\
+        \forall(i,j)\in\mathcal{J}^\delta_{i;0}(\bar{\mathbf{x}})\\
+      &\phi_{ij}(\mathbf{x})\geq 0,\ (\Leftrightarrow z_{ij}=1)\
+        \forall(i,j)\in\mathcal{J}^\delta_{i;>}(\bar{\mathbf{x}})\\
+      &z_{ij}\in\{0,1\},\
+        \forall(i,j)\in\mathcal{J}^\delta_{i;0}(\bar{\mathbf{x}}).
+    \end{aligned}
+  \]
+\end{frame}
+
+% Case-studies PDF page 10 -- the PIP algorithm.
+\begin{frame}{Computational Algorithm: PIP}
+  \small
+  \setlength{\parskip}{0.10cm}
+
+  \textbf{Progressive Integer Programming (PIP) algorithm}
+
+  At each iteration with feasible $\bar{\mathbf{x}}$,
+
+  $\bullet$~\textbf{MIP solver:} solve the restricted MIP problem at
+  $\bar{\mathbf{x}}$ and obtain an optimal solution $\mathbf{x}_{\mathrm{new}}$
+  and corresponding optimal value
+  $\theta^{\oplus}_{\mathrm{AHS}}(\mathbf{x}_{\mathrm{new}})$.
+
+  $\bullet$~\textbf{shrink:} if $\theta^{\oplus}_{\mathrm{AHS}}
+  (\mathbf{x}_{\mathrm{new}})>\theta^{\oplus}_{\mathrm{AHS}}(\bar{\mathbf{x}})$,
+  shrink the in-between interval $[\delta_1,\delta_2]$;
+
+  $\bullet$~\textbf{expand:} if $\theta^{\oplus}_{\mathrm{AHS}}
+  (\mathbf{x}_{\mathrm{new}})=\theta^{\oplus}_{\mathrm{AHS}}(\bar{\mathbf{x}})$,
+  expand the in-between interval $[\delta_1,\delta_2]$.
+
+  \textbf{Iterative progressive improvement:}
+  \[
+    \theta^{\oplus}_{\mathrm{AHS}}(\mathbf{x}_{\mathrm{new}})
+    \geq\theta^{\oplus}_{\mathrm{AHS}}(\mathbf{x}_{\mathrm{new}};\bar{\mathbf{x}})
+    \geq\theta^{\oplus}_{\mathrm{AHS}}(\bar{\mathbf{x}};\bar{\mathbf{x}})
+    =\theta^{\oplus}_{\mathrm{AHS}}(\bar{\mathbf{x}})
+  \]
+  the solution sequence progressively improves, and converges to a local
+  maximizer.
+\end{frame}
+
+% Case-studies PDF page 11 -- initialization: feasibility via an auxiliary residual variable.
+\begin{frame}{Initialization}
+  \small
+  \setlength{\abovedisplayskip}{4pt}
+  \setlength{\belowdisplayskip}{4pt}
+
+  \begin{itemize}
+    \setlength{\itemsep}{0.10cm}
+    \item It sometimes could be very hard to find a feasible solution satisfying
+      a complicated constraint, such as the Gini constraint, or precision
+      constraint.
+    \item With challenging constraint, one can include
+      \textcolor{MediumRed}{an auxiliary variable} as the residual of the
+      constraint to guard against infeasibility.
+    \item Specifically, we can apply the algorithms to the following problem:
+  \end{itemize}
+
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P;\,\gamma\geq 0}\quad
+      &c(\mathbf{x})+\sum_{j=1}^{J_0}\psi_{0j}\mathds{1}_{[0,\infty)}
+        \bigl(\phi_{0j}(\mathbf{x})\bigr)-\lambda\gamma\\
+      \operatorname*{\textbf{subject to}}\quad
+      &\sum_{j=1}^{J_i}\psi_{ij}\mathds{1}_{[0,\infty)}
+        \bigl(\phi_{ij}(\mathbf{x})\bigr)+\gamma\geq\eta_i,\quad i=1,\ldots,I;
+    \end{aligned}
+  \]
+
+  \noindent where the auxiliary variable $\gamma$ is the constraint residual and
+  $\lambda>0$ is a penalty parameter (e.g., $10^4$) whose aim is to enforce the
+  feasibility condition $\gamma=0$ if possible.
+\end{frame}
+
+% Case-studies PDF page 12 -- initialization: practical PIP start and index-set shrinking.
+\begin{frame}{Initialization}
+  \small
+  \begin{itemize}
+    \setlength{\itemsep}{0.12cm}
+    \item In practical implementation, one could start with an arbitrary
+      solution $\mathbf{x}^0$ with a suitable constant $\gamma_0$ such that the
+      constraints are satisfied. For instance, we could let $\mathbf{x}^0$ be an
+      unconstrained minimizer of the A-HSCOP together with a suitable $\gamma_0$
+      value as the initial feasible solution.
+    \item In the first several iterations of PIP, if IP solvers such as
+      \textsc{Gurobi} produce a solution with $\gamma=0$, then such a solution
+      is also feasible to the original A-HSCOP problem, and we could proceed the
+      PIP procedure without the $\gamma$ variable afterwards.
+    \item However, it is possible that in the algorithmic process of PIP,
+      \textsc{Gurobi} may keep producing solutions with positive $\gamma$
+      (infeasible solution) leading to the small progress with very small
+      objective values. Possible reason is that for restricted IP subproblems
+      with a smaller feasible region or even infeasible by fixing a portion of
+      integer variables, it remains challenging for the IP solver to find a
+      feasible solution.
+    \item Therefore, one effective approach to deal with the above phenomenon is
+      to reduce the size of the two fixing index sets
+      $\mathcal{J}^\delta_{i;>}(\bar{\mathbf{x}})$ and
+      $\mathcal{J}^\delta_{i;<}(\bar{\mathbf{x}})$ until a feasible solution is
+      obtained.
+  \end{itemize}
+\end{frame}
+
+% Case-studies PDF page 13 -- in-between index sets and update rules.
+\begin{frame}{In-between Index Sets and Update Rules}
+  \footnotesize
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+
+  \begin{itemize}
+    \setlength{\itemsep}{0.05cm}
+    \item In principle, after obtaining the new iterate point
+      $\mathbf{x}^{\nu+1}$, the algorithm proceed with three updated disjoint
+      index sets $\mathcal{J}^\delta_{i;>}(\mathbf{x}^{\nu+1})$,
+      $\mathcal{J}^\delta_{i;<}(\mathbf{x}^{\nu+1})$, and
+      $\mathcal{J}^\delta_{i;0}(\mathbf{x}^{\nu+1})$, such that the cardinality
+      of the in-between index set
+      $|\mathcal{J}^\delta_{i;0}(\mathbf{x}^{\nu+1})|$:
+      \begin{itemize}
+        \setlength{\itemsep}{0cm}
+        \item[--] shrink when objective improves
+        \item[--] expand when objective does not improve.
+      \end{itemize}
+    \item How to construct in-between index set
+      $\mathcal{J}^\delta_{i;0}(\mathbf{x}^{\nu+1})$, and how it shrinks or
+      expands is very critical for practical efficiency. It may depend on the
+      application contexts.
+  \end{itemize}
+
+  \smallskip
+  \hangindent=1.3em\hangafter=1
+  1.~(quantile) control the ratio of the integer number to be contained in
+  $\mathcal{J}^\delta_{i;0}(\bar{\mathbf{x}})$
+  \[
+    \mathcal{J}^\delta_{i;0}(\bar{\mathbf{x}})\triangleq
+    \bigl\{j\in[J_i]\mid -\delta_{2i}\leq\phi_{ij}(\bar{\mathbf{x}})\leq
+    \delta_{1i}\bigr\}
+  \]
+  where $\delta_{1i},\delta_{2i}$ are r-upper and r-lower quantiles of
+  $\{\phi_{ij}(\mathbf{x}^{\nu+1})\}_{j\in[J_i]}$ respectively
+
+  \smallskip
+  \hangindent=1.3em\hangafter=1
+  2.~(softmax probability) construct the in-between index set via
+  \textcolor{MediumBlue}{the softmax-based probabilities} (for clustering
+  problem, $\{\xi^s\}$ and $\{\bar{c}^k\}$ represent data points and the
+  centroids)
+  \[
+    \rho^\tau_{sk}\triangleq
+    \frac{\exp\{-\|\xi^s-\bar{c}^k\|/\tau\}}
+         {\sum_{k=1}^{K}\bigl(\exp\{-\|\xi^s-\bar{c}^k\|/\tau\}\bigr)},
+    \qquad
+    \mathcal{J}^\tau_0\triangleq
+    \bigl\{(s,k):1/K\leq\rho^\tau_{sk}<1/2\bigr\}
+  \]
+
+  \smallskip
+  $r$ and $\tau$ are \textbf{expanded or shrinked} during PIP iterations.
+\end{frame}
+
+% Case-studies PDF page 14 -- in-between index-set update procedure (quantile control).
+\begin{frame}{In-between Index Sets and Update Rules}
+  \footnotesize
+  \setlength{\abovedisplayskip}{2pt}
+  \setlength{\belowdisplayskip}{2pt}
+
+  For controlling the ratio of the integer number, we take the following
+  procedure:
+
+  \vspace{-0.02cm}
+  {\color{MediumBlack}\rule{\linewidth}{0.4pt}}
+
+  \begin{itemize}
+    \setlength{\itemsep}{0.03cm}
+    \item[--] Compute $\mathbf{x}^{\nu+1}$ an optimal solution of
+      $\bigl(\mathrm{P}^{\oplus;\delta}_{\mathrm{AHS}}(\mathbf{x}^\nu)\bigr)$
+      \begin{itemize}
+        \setlength{\itemsep}{0.01cm}
+        \item[--] If $\mathbf{x}^{\nu+1}=\mathbf{x}^\nu$, set
+          $r_{\nu+1}\leftarrow\min\{r_\nu+r_\Delta,\,r_{\max}\}$
+        \item[--] If $\mathbf{x}^{\nu+1}\neq\mathbf{x}^\nu$, set
+          $r_{\nu+1}\leftarrow\max\{r_\nu-r_\Delta,\,r_{\min}\}$
+      \end{itemize}
+      where $r_\Delta,r_{\max},r_{\min}\in(0,1)$ are predetermined scalars.
+    \item[--] Decompose the set of inner function values into two positive and
+      non-positive subsets
+      \[
+        \{\phi_{ij}(\mathbf{x}^{\nu+1})\}_{j\in[J_i]}
+        =S^+_{i,\nu+1}\cup S^-_{i,\nu+1}
+        =\{\phi^+_{ij}(\mathbf{x}^{\nu+1})\}_{j\in[J_i]}\cup
+         \{\phi^-_{ij}(\mathbf{x}^{\nu+1})\}_{j\in[J_i]}
+      \]
+    \item[--] Compute the lower and upper quantiles
+      \[
+        \delta^{\nu+1}_{i;1}
+          =\text{Lower\_quantile}\bigl(S^+_{i,\nu+1};r_{\nu+1}\bigr),\quad
+        \delta^{\nu+1}_{i;2}
+          =\text{Upper\_quantile}\bigl(S^-_{i,\nu+1};r_{\nu+1}\bigr)
+      \]
+  \end{itemize}
+
+  Update in-between index set\quad
+  $\mathcal{J}^{\nu+1}_{i;0}\leftarrow
+   \bigl\{j\mid\delta^{\nu+1}_{i;2}\leq\phi_{ij}(\mathbf{x}^{\nu+1})\leq
+   \delta^{\nu+1}_{i;1}\bigr\}.$
+
+  \vspace{0.02cm}
+  {\color{MediumBlack}\rule{\linewidth}{0.4pt}}
+
+  \vspace{0.02cm}
+  The aim of the update strategy is to enhance the performance of local
+  optimality while saving the computational cost by the shrinkage or truncation
+  strategy when needed.
+\end{frame}
+
+% Case-studies PDF page 15 -- termination criteria.
+\begin{frame}{Termination Criteria}
+  \small
+  \begin{itemize}
+    \setlength{\itemsep}{0.11cm}
+    \item In theory, PIP requires to solve a sequence of partial Heaviside
+      optimization problems of smaller sizes, which may be solved efficiently by
+      IP solvers such as \textsc{Gurobi}.
+    \item However, in practice, for the sake of computational efficiency, one
+      could embed the early termination strategy when solving the subproblems in
+      PIP; for instance, one could use callback mechanism to terminate the
+      solver if the objective value remains unchanged for a period of time
+      (e.g., 60s).
+    \item With early termination of \textsc{Gurobi} in PIP, though the iterate
+      point obtained is not guaranteed optimal, the algorithm still has the
+      ascent property.
+    \item With early termination of \textsc{Gurobi} in PIP, if at the
+      terminating iteration, the obtained solution by \textsc{Gurobi} is optimal
+      to the partial Heaviside problem, we can still claim that the obtained
+      solution has local optimality regarding to the original Heaviside
+      optimization problem.
+    \item The whole PIP terminates when the objective does not improve for
+      several consecutive expansions, yielding a local optimal solution. In
+      practical implementation, the number of expansions is usually set
+      heuristically depending on the time tolerance.
+  \end{itemize}
+\end{frame}
+
+% Case-studies PDF page 18 -- A-HSCOP with mixed-signed coefficients and PA inner functions.
+% (Case-studies PDF pages 16-17 not photographed.)
+\begin{frame}{A-HSCOP with mixed-signed coefficients and PA $\phi_{ij}(\mathbf{x})$}
+  \small
+  \setlength{\abovedisplayskip}{5pt}
+  \setlength{\belowdisplayskip}{5pt}
+
+  \textcolor{MediumBlue}{\textbf{Computational difficulties:}}
+  \begin{itemize}
+    \setlength{\itemsep}{0.16cm}
+    \item $\psi_{ij}=\psi^+_{ij}-\psi^-_{ij}$ are mixed-signed
+      ($\psi^+_{ij}\geq 0,\ \psi^-_{ij}\geq 0$), so the objective is not
+      upper-semicontinuous and the constrained set is not closed.
+    \item The inner function is a general PA $\phi_{ij}(\mathbf{x})$, that is the
+      sum of a convex and a concave PA function:
+      \[
+        \phi_{ij}(\mathbf{x})=\max_{1\leq k\leq K_{ij}}
+          \bigl[(\mathbf{a}^k_{ij})^\top\mathbf{x}+\alpha^k_{ij}\bigr]
+        +\min_{1\leq\ell\leq L_{ij}}
+          \bigl[(\mathbf{b}^\ell_{ij})^\top\mathbf{x}+\beta^\ell_{ij}\bigr]
+      \]
+  \end{itemize}
+\end{frame}
+
+% Case-studies PDF page 19 -- approximation and decomposition for mixed-signed PA A-HSCOP.
+% NOTE: the selected-vs-running piece indices (k_{ij}/ell_{ij} vs k'/ell') are a
+% careful reading off a dense slide -- flagged for a sanity check.
+\begin{frame}{A-HSCOP with mixed-signed coefficients and PA $\phi_{ij}(\mathbf{x})$}
+  \footnotesize
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+
+  \textcolor{MediumBlue}{\textbf{Approximation:}}
+  \begin{itemize}
+    \setlength{\itemsep}{0.02cm}
+    \item With $\psi_{ij}<0$,\
+      $\boxed{\psi_{ij}\mathds{1}_{[0,\infty)}\bigl(\phi_{ij}(\mathbf{x})\bigr)
+        \ \rightarrow\ \psi_{ij}\mathds{1}_{(-\varepsilon,\infty)}
+        \bigl(\phi_{ij}(\mathbf{x})\bigr)}$, which is a lower bound, and upper
+      semicontinuous for some $\varepsilon>0$
+  \end{itemize}
+
+  \vspace{0.06cm}
+  \textcolor{MediumBlue}{\textbf{Decomposition:}}
+  \begin{itemize}
+    \setlength{\itemsep}{0.02cm}
+    \item construct concave PA and convex PA functions with appropriate piece
+      selection $(k,\ell)\in\mathcal{M}^\delta(\bar{\mathbf{x}})$ respectively for
+      the usage depending on the sign of coefficients:
+  \end{itemize}
+  \vspace{-0.08cm}
+  \[
+    \begin{aligned}
+      \phi^{k_{ij};+}_{ij}(\mathbf{x}) &\triangleq
+        (\mathbf{a}^{k_{ij}}_{ij})^\top\mathbf{x}+\alpha^{k_{ij}}_{ij}
+        +\min_{1\leq\ell'\leq L_{ij}}
+          \bigl[(\mathbf{b}^{\ell'}_{ij})^\top\mathbf{x}+\beta^{\ell'}_{ij}\bigr],\\
+      \phi^{\ell_{ij};-}_{ij}(\mathbf{x}) &\triangleq
+        \max_{1\leq k'\leq K_{ij}}
+          \bigl[(\mathbf{a}^{k'}_{ij})^\top\mathbf{x}+\alpha^{k'}_{ij}\bigr]
+        +(\mathbf{b}^{\ell_{ij}}_{ij})^\top\mathbf{x}+\beta^{\ell_{ij}}_{ij},
+    \end{aligned}
+  \]
+
+  \vspace{0.02cm}
+  where
+  \[
+    \resizebox{\linewidth}{!}{$\displaystyle
+      \mathcal{M}^\delta(\bar{\mathbf{x}})=\prod_{i=0}^{I}\prod_{j=1}^{J_i}
+      \Bigl\{\delta\text{-}\operatorname*{argmax}_{1\leq k\leq K_{ij}}
+        \bigl[(\mathbf{a}^k_{ij})^\top\bar{\mathbf{x}}+\alpha^k_{ij}\bigr]\Bigr\}
+      \times\Bigl\{\delta\text{-}\operatorname*{argmin}_{1\leq\ell\leq L_{ij}}
+        \bigl[(\mathbf{b}^\ell_{ij})^\top\bar{\mathbf{x}}+\beta^\ell_{ij}\bigr]\Bigr\}.
+    $}
+  \]
+\end{frame}
+
+% Case-studies PDF page 20 -- decomposed epsilon-approximated (u.s.c.) subproblem.
+\begin{frame}{A-HSCOP with mixed-signed coefficients and PA $\phi_{ij}(\mathbf{x})$}
+  \scriptsize
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+
+  \textcolor{MediumBlue}{Decomposed} $\varepsilon$-approximated subproblem
+  $\bigl(\mathrm{P}^{\varepsilon;\mathbf{k},\ell}_{\mathrm{AHS}}\bigr)
+  (\bar{\mathbf{x}})$ u.s.c.\ problem
+  \[
+    \begin{aligned}
+      \operatorname*{\textbf{maximize}}_{\mathbf{x}\in P}\
+      &V^{\varepsilon;k_0,\ell_0}(\mathbf{x})\triangleq c(\mathbf{x})
+        +\sum_{j=1}^{J_0}\psi^+_{0j}\mathds{1}_{[0,\infty)}
+          \bigl(\phi^{k_{0j};+}_{0j}(\mathbf{x})\bigr)
+        -\sum_{j=1}^{J_0}\psi^-_{0j}\mathds{1}_{(-\varepsilon,\infty)}
+          \bigl(\phi^{\ell_{0j};-}_{0j}(\mathbf{x})\bigr)\\
+      \operatorname*{\textbf{subject to}}\
+      &\sum_{j=1}^{J_i}\psi^+_{ij}\mathds{1}_{[0,\infty)}
+          \bigl(\phi^{k_{ij};+}_{ij}(\mathbf{x})\bigr)
+        -\sum_{j=1}^{J_i}\psi^-_{ij}\mathds{1}_{(-\varepsilon,\infty)}
+          \bigl(\phi^{\ell_{ij};-}_{ij}(\mathbf{x})\bigr)\geq\eta_i,\
+          \forall i=1,\ldots,I.
+    \end{aligned}
+  \]
+
+  \vspace{-0.02cm}
+  {\color{MediumBlack}\rule{\linewidth}{0.4pt}}
+
+  For all tuples $(\mathbf{k},\ell)=\bigl\{\{(k_{ij},\ell_{ij})\}_{j=1}^{J_i}
+  \bigr\}_{i=0}^{I}$:
+  \[
+    \begin{aligned}
+      &V(\mathbf{x})\geq V^{\varepsilon;k_0,\ell_0}(\mathbf{x})\quad
+        \text{for any }\mathbf{x},\\
+      &X^{\varepsilon';\mathbf{k},\ell}_{\mathrm{AHS}}\subseteq
+        X^{\varepsilon;\mathbf{k},\ell}_{\mathrm{AHS}}\subseteq
+        X_{\mathrm{AHS}},\quad\forall\varepsilon'>\varepsilon>0.
+    \end{aligned}
+  \]
+\end{frame}
+
+% Case-studies PDF page 21 -- IDSA-PIP algorithm.
+\begin{frame}{Computational Algorithm: IDSA-PIP}
+  \small
+  \setlength{\parskip}{0.10cm}
+
+  \textbf{Iterative decomposed shrinkage algorithm (IDSA) -- PIP}
+
+  \vspace{-0.04cm}
+  {\color{MediumBlack}\rule{\linewidth}{0.4pt}}
+
+  \textbf{Initialization.} Let $\{\varepsilon_\nu\}_{\nu=0}^{\infty}$ be a
+  diminishing sequence. Let $\mathbf{x}^0$ be a feasible iterate to the problem
+  $\bigl(\mathrm{P}^{\varepsilon_0}_{\mathrm{AHS}}\bigr)$, and set
+  $\delta\in\mathbb{R}_+$.
+
+  For $\nu=1,2,\ldots$,
+
+  \textbf{Main Computation.} Solve the problem
+  $\bigl(\mathrm{P}^{\varepsilon_\nu;\mathbf{k},\ell}_{\mathrm{AHS}}
+  (\mathbf{x}^\nu)\bigr)$ via PIP algorithm for all pairs $(\mathbf{k},\ell)$ in
+  $\mathcal{M}^\delta(\mathbf{x}^\nu)$. Set $\mathbf{x}^{\nu+1}$ be the one that
+  achieves the maximal objective value among all index pairs.
+
+  \textbf{Terminate} if $\mathbf{x}^{\nu+1}$ satisfies a prescribed rule (e.g.,
+  if $\|\mathbf{x}^{\nu+1}-\mathbf{x}^\nu\|$ is within a given tolerance).
+\end{frame}
+
+% Case-studies PDF page 22 -- PIP variants for comparison.
+\begin{frame}{Computational Algorithm: IDSA-PIP}
+  \small
+  To evaluate the effectiveness of decomposition and shrinkage techniques, we
+  can have various version of PIP for comparisons:
+  \begin{enumerate}
+    \setlength{\itemsep}{0.12cm}
+    \item \textbf{Full MIP}: with fixed $\varepsilon$, solve
+      $\bigl(\mathrm{P}^{\varepsilon}_{\mathrm{AHS}}\bigr)$ by the IP solver
+      \textsc{Gurobi} to its full MIP formulation with time limit.
+    \item \textbf{PIP}: with fixed $\varepsilon$, solve
+      $\bigl(\mathrm{P}^{\varepsilon}_{\mathrm{AHS}}\bigr)$ by the PIP method
+      (Algorithm 1), without the decomposition of inner PA functions.
+    \item \textbf{ISA-PIP}: A variant of the iterative shrinkage method, in
+      which the inner loop computation is to apply PIP algorithm to
+      $\bigl(\mathrm{P}^{\varepsilon_\nu}_{\mathrm{AHS}}\bigr)$, without the
+      decomposition of the inner PA functions.
+    \item \textbf{IDSA-PIP}: A variant of the iterative shrinkage method, in
+      which the inner loop computation is to apply the PIP method (Algorithm 1)
+      to a decomposed approximating subproblem
+      $\bigl(\mathrm{P}^{\varepsilon_\nu;\mathbf{k}_\nu,\ell_\nu}_{\mathrm{AHS}}
+      \bigr)$ with an index pair $(\mathbf{k}_\nu,\ell_\nu)$
+      \textcolor{MediumBlue}{arbitrarily selected} from the active index set for
+      the inner PA functions.
+  \end{enumerate}
 \end{frame}
 
 \end{document}
