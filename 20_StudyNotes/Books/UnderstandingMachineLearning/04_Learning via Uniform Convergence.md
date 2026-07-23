@@ -28,7 +28,7 @@ $$
 $$
 $\diamond$
 
-- 一个样本集 $S$ 是 $\epsilon$-representative sample, 意味着对于任意的 hypothesis $h \in \mathcal{H}$, 其 empirical risk 与 true risk 的差都不会超过 $\epsilon$. 此时经验分布 $L_S(h)$ 可以很好地近似真实分布 $L_{\mathcal{D}}(h)$.
+- 由于在 $S$ 得到之前, $L_S(h)$ 是一个随机变量, 因此只有保证 $\mathcal{H}$ 中的任意 hypothesis 的 empirical risk 都接近其 true risk, 才能保证 ERM 输出的 hypothesis 的 true risk 是较小的. 
 
 ***Lemma* (ERM on $\epsilon/2$-Representative Sample)** 若训练集 $S$ 是 $\epsilon/2$-representative sample, 则任意的 ERM hypothesis $h_S \in \arg\min_{h \in \mathcal{H}} L_S(h)$ 都满足:
 $$
@@ -91,13 +91,10 @@ $$
 
 ## 4.2 Finite Classes Are Agnostic PAC Learnable
 
-本节的核心结论: **任意有限的 hypothesis class $\mathcal{H}$ 都是 agnostic PAC learnable**, 且 sample complexity 为
-$$
-m_\mathcal{H}(\epsilon, \delta) \leq \left\lceil \frac{2\log(2|\mathcal{H}|/\delta)}{\epsilon^2} \right\rceil
-$$
-而根据上面的推论, 只需证明 $\mathcal{H}$ 是关于 $\mathcal{Z}, \ell$ 的 uniform convergence 即可. 
+本节的核心结论: **任意有限的 hypothesis class $\mathcal{H}$ 都是 agnostic PAC learnable**, 而根据上面的推论, 只需证明 $\mathcal{H}$ 是关于 $\mathcal{Z}, \ell$ 的 uniform convergence 即可. 
 
-为叙述完整, 这里首先补充两个 concentration inequality 的 lemma. 
+
+在上述命题的证明过程中, 需要用到 Hoeffding's Inequality, 其又依赖于 Hoeffding's Lemma. 下面首先给出两命题的叙述和证明.
 
 ***Lemma* (Hoeffding's Lemma)** 设 $X\in [a, b]$ 是一个随机变量, 且 $\mathbb{E}[X] = 0$, 则对任意 $\lambda > 0$, 有
 $$
@@ -179,3 +176,76 @@ $$
     $$
 
 $\square$
+
+
+下正式给出并证明有限 hypothesis class 的 uniform convergence 性质. 首先说明有限 hypothesis class 是 uniform convergence 的. 
+
+***Proposition 1* (Finite Classes are Uniform Convergence)** 设 $\mathcal{H}$ 是一个有限的 hypothesis class, 且 loss function $\ell: \mathcal{H} \times \mathcal{Z} \to [0, 1]$. 对于任意定义在 $\mathcal{Z}$ 上的 distribution $\mathcal{D}$, 以及任意 $\epsilon, \delta \in (0, 1)$, 若训练集 $S = \{z_1, z_2, \ldots, z_m\}$ 是从 $\mathcal{D}$ 中 i.i.d. 采样得到的, 且 sample complexity 满足
+$$
+m^\text{UC}_\mathcal{H}(\epsilon, \delta) \leq \left\lceil \frac{\log(2|\mathcal{H}|/\delta)}{2\epsilon^2} \right\rceil
+$$
+即只要样本量 $m$ 满足 $m \geq \left\lceil \frac{\log(2|\mathcal{H}|/\delta)}{2\epsilon^2} \right\rceil$, 则有
+$$
+\mathbb{P}_{S \sim \mathcal{D}^m}\Bigl[\forall h \in \mathcal{H}, ~~|L_S(h) - L_{\mathcal{D}}(h)| \leq \epsilon\Bigr] \geq 1 - \delta  \tag{1}
+$$
+
+$\diamond$
+
+*Proof*. 证明 (1) 只需证明其补集的概率不超过 $\delta$, 即存在超过 $\epsilon$ 的 hypothesis 的概率不超过 $\delta$.
+
+- 根据集合性质: 存在性可以转换为事件的并集, 因此有:
+    $$
+    \begin{aligned}
+    \mathbb{P}_{S \sim \mathcal{D}^m}\Bigl[\exists h \in \mathcal{H}, ~~|L_S(h) - L_{\mathcal{D}}(h)| > \epsilon\Bigr] & = \mathbb{P}_{S \sim \mathcal{D}^m}\Bigl[\bigcup_{h \in \mathcal{H}} \{|L_S(h) - L_{\mathcal{D}}(h)| > \epsilon\}\Bigr] \\
+    & \leq \sum_{h \in \mathcal{H}} \mathbb{P}_{S \sim \mathcal{D}^m}\Bigl[|L_S(h) - L_{\mathcal{D}}(h)| > \epsilon\Bigr] \qquad \text{\small{(by union bound)}} \\
+    \end{aligned}
+    $$
+
+- 故对于每个给定 $h \in \mathcal{H}$, 需控制其概率 $\mathbb{P}_{S \sim \mathcal{D}^m}\Bigl[|L_S(h) - L_{\mathcal{D}}(h)| > \epsilon\Bigr]$, 对其使用 Hoeffding's Inequality 如下. 
+    - 对于每个给定 $h \in \mathcal{H}$, 记 $\theta_i := \ell(h, z_i)$ 是 i.i.d. 的随机变量, $i \in [m]$, 且 $\theta_i \in [0, 1]$, 其期望为:
+        $$
+        \mathbb{E}[\theta_i] = \mathbb{E}_{Z_i \sim \mathcal{D}}[\ell(h, Z_i)] = L_{\mathcal{D}}(h)
+        $$
+        而样本均值为:
+        $$
+        L_S(h) = \frac{1}{m} \sum_{i=1}^m \theta_i
+        $$
+    - 由 Hoeffding's Inequality, 对任意 $\epsilon > 0$, 有
+        $$
+        \mathbb{P}_{S \sim \mathcal{D}^m}\Bigl[|L_S(h) - L_{\mathcal{D}}(h)| > \epsilon\Bigr] = \mathbb{P}\left[\left|\frac{1}{m} \sum_{i=1}^m \theta_i - L_{\mathcal{D}}(h)\right| > \epsilon\right] \leq 2\exp(-2m\epsilon^2)
+        $$
+
+- 将 Hoeffding's Inequality 的结果代入 union bound, 便给出了一个具体的犯错概率上界:
+    $$
+    \mathbb{P}_{S \sim \mathcal{D}^m}\Bigl[\exists h \in \mathcal{H}, ~~|L_S(h) - L_{\mathcal{D}}(h)| > \epsilon\Bigr] \leq 2|\mathcal{H}|\exp(-2m\epsilon^2)
+    $$
+
+- 因此, 当样本量 $m$ 足够大时, 上述概率可以被控制在 $\delta$ 以内: 令上述犯错概率上界不超过 $\delta$, 即
+    $$
+    2|\mathcal{H}|\exp(-2m\epsilon^2) \leq \delta \implies m \geq \frac{\log(2|\mathcal{H}|/\delta)}{2\epsilon^2}
+    $$
+    故只要样本量满足
+    $$
+    m^\text{UC}_\mathcal{H}(\epsilon, \delta) \leq \left\lceil \frac{\log(2|\mathcal{H}|/\delta)}{2\epsilon^2} \right\rceil
+    $$
+    则有
+    $$
+    \mathbb{P}_{S \sim \mathcal{D}^m}\Bigl[\forall h \in \mathcal{H}, ~~|L_S(h) - L_{\mathcal{D}}(h)| \leq \epsilon\Bigr] \geq 1 - \delta
+    $$
+
+$\square$
+
+**Notes**:
+- 上述的证明依赖于假设: 损失函数 $\ell$ 的取值范围为 $[0, 1]$. 其可以推广到任意有界的损失函数, 然而若对于 MSE 等无约束的损失函数则不可以直接应用.
+
+
+***Proposition 2* (Finite Classes are Agnostic PAC Learnable)** 对于上述的有限 hypothesis class $\mathcal{H}$, 只要样本量 $m$ 满足
+$$
+m_\mathcal{H}(\epsilon, \delta) \leq \left\lceil \frac{2\log(2|\mathcal{H}|/\delta)}{\epsilon^2} \right\rceil
+$$
+则有 $\mathcal{H}$ 是 agnostic PAC learnable, 即任意 ERM 输出 $h_S \in \arg\min_{h \in \mathcal{H}} L_S(h)$ 都以至少概率 $1 - \delta$ 满足
+$$
+L_{\mathcal{D}}(h_S) \leq \min_{h \in \mathcal{H}} L_{\mathcal{D}}(h) + \epsilon.
+$$
+
+$\diamond$
