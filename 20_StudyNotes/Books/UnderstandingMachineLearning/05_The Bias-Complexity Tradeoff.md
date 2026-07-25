@@ -129,3 +129,28 @@ $$
     $$
 
 $\square$
+
+
+### 5.1.1 No-Free-Lunch and Prior Knowledge
+
+$\mathcal{H}$ 的选择体现了我们对任务的先验知识. PAC Learning 的理论框架中需要预先指定 $\mathcal{H}$. 反过来, 若不加任何先验, 则该问题是不可学习的. 
+
+***Corollary* (No-Free-Lunch Theorem for Realizable PAC Learning)**: 对于无限的输入空间 $\mathcal{X}$, 若不对 $\mathcal{H}$ 进行限制 (允许其为 $\mathcal{H} = \{h: \mathcal{X} \to \mathcal{Y} = \{0, 1\}\}$ 的全体), 则 $\mathcal{H}$ 不是 realizable PAC learnable 的.
+
+*Proof*. 
+- 用反证法. 假设 $\mathcal{H}$ 是 PAC 可学习的, 则存在一个学习算法 $\mathsf{A}$, 使得对于任意 $\epsilon, \delta \in (0, 1)$ (不妨 specify 为 $\epsilon < 1/8, \delta < 1/7$), 存在一个多项式函数 $m_{\mathcal{H}}(\epsilon, \delta)$, 使得对于任意定义在 $\mathcal{X} \times \mathcal{Y}$ 上的分布 $\mathcal{D}$, 当该分布本身为 realizable 的 (即存在 $h^* \in \mathcal{H}$, 使得 $L_{\mathcal{D}}(h^*) = 0$), 及当训练集大小 $m \geq m_{\mathcal{H}}(\epsilon, \delta)$ 时, 有
+    $$
+    \mathbb{P}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(\mathcal{A}(S)) \leq \epsilon] \geq 1 - \delta \implies \mathbb{P}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(\mathcal{A}(S)) > 1/8] \geq 6/7
+    $$
+
+- 然而根据 PAC 的定义, 由于 $\mathcal{X}$ 是无限的, 则对于任意训练集大小 $m$, 均存在一个 '坏' 分布 $\mathcal{D}$, 使得上述算法 $\mathsf{A}$ 在该分布下失败, 即
+    $$
+    \mathbb{P}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(\mathsf{A}(S)) > 1/8] > 1/7
+    $$
+
+- 二者相加将使得概率之和大于 1, 故矛盾, 因此 $\mathcal{H}$ 不是 realizable PAC learnable 的.
+
+$\square$
+
+## 5.2 Error Decomposition
+
