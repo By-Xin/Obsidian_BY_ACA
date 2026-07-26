@@ -40,9 +40,9 @@ $$
 ![](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/lemma_6_1_threshold_proof_layout.png)
 
 - 考虑 realizable 的情况. 假设存在 $a^\star$ 使得 $h^\star = h_{a^\star}$ 是最优的 hypothesis, 即 $L_{\mathcal{D}}(h^\star) = 0$.
-- 记 $\mathcal{X}$ 的边缘分布为 $\mathcal{D}_\mathcal{X}$, 故可以确定两个区间端点 $-\infty \leq a_0 < a^\star < a_1 \leq \infty$ 使得 $\mathcal{X}$ 在 $(a_0, a^\star)$ 和 $(a^\star, a_1)$ 上的概率质量分别为 $\epsilon$:
+- 记 $\mathcal{X}$ 的边缘分布为 $\mathcal{D}_\mathcal{X}$, 故可以确定两个区间端点 $-\infty \leq a_0 < a^\star < a_1 \leq \infty$ 使得 $\mathcal{X}$ 在 $(a_0, a^\star)$ 和 $(a^\star, a_1)$ 上的概率质量均不超过 $\epsilon$:
     $$
-    \mathcal{D}_\mathcal{X}((a_0, a^\star)) = \mathcal{D}_\mathcal{X}((a^\star, a_1)) = \epsilon
+    \mathcal{D}_\mathcal{X}((a_0, a^\star)) \leq \epsilon, \quad \mathcal{D}_\mathcal{X}((a^\star, a_1)) \leq \epsilon
     $$
 - 给定样本集 $S = \{(x_1, y_1), \ldots, (x_m, y_m)\}$. 取所有 $y_i = 1$ 的样本中最大的 $x_i$ 记为 $b_0$, 取所有 $y_i = 0$ 的样本中最小的 $x_i$ 记为 $b_1$: 
     $$
@@ -50,4 +50,26 @@ $$
     $$
      则 ERM algorithm 选择的 $h_S$ (由于当前 case 是 realizable 的, 故必须是正确分类的) 对应的 threshold $b_S$ 定介于二者之间: $b_0 \leq b_S \leq b_1$.
 
-     
+- 而可以看到, 只要 $b_0 \geq a_0$ 且 $b_1 \leq a_1$, 则一定能够保证 $L_{\mathcal{D}}(h_S) \leq \epsilon$.  故根据集合的关系, 有:
+    $$
+    \begin{aligned}
+        \mathbb{P}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(h_S) > \epsilon] &\leq \mathbb{P}_{S \sim \mathcal{D}^m}[b_0 < a_0 \lor b_1 > a_1] \\
+        &\leq \mathbb{P}_{S \sim \mathcal{D}^m}[b_0 < a_0] + \mathbb{P}_{S \sim \mathcal{D}^m}[b_1 > a_1]
+    \end{aligned}
+    $$
+  - 上述充分条件关系是因为: 只要 $[b_0, b_1] \subseteq [a_0, a_1]$, 则 $b_S$ 就一定落在 $[a_0, a_1]$ 中, 即使落在 $a^\star$ 的一侧, 其错误率也不会超过 $[a_0, a^\star]$ 或 $[a^\star, a_1]$ 的概率质量, 即 $\epsilon$.
+
+- 最终, 注意到事件 $\{b_0 < a_0\}$ 等价于没有任何样本落入 $(a_0, a^\star)$, $\{b_1 > a_1\}$ 等价于没有任何样本落入 $(a^\star, a_1)$ (由 realizability: 若有正例落入 $(a_0, a^\star)$, 则 $b_0$ 至少会推至该点, 故 $b_0 \geq a_0$; 负例方向对称). 因此:
+    $$
+    \begin{aligned}
+        \mathbb{P}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(h_S) > \epsilon]
+        &\leq \mathbb{P}[b_0 < a_0] + \mathbb{P}[b_1 > a_1] \\
+        &= \mathbb{P}[\forall i,\ x_i \notin (a_0,a^\star)] + \mathbb{P}[\forall i,\ x_i \notin (a^\star,a_1)] \\
+        &\leq (1-\epsilon)^m + (1-\epsilon)^m \\
+        &\leq 2e^{-\epsilon m}\\
+        &\leq \delta \qquad ( \text{when } m \geq \log(2/\delta)/\epsilon)
+    \end{aligned}
+    $$
+
+$\square$
+
