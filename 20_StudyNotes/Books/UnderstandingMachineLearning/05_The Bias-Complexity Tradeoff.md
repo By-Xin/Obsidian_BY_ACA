@@ -9,7 +9,7 @@
 
 ## 5.1 No-Free-Lunch Theorem
 
-***Theorem 5.1 (No-Free-Lunch Theorem)***: 给定定义域 $\mathcal{X}$ 和标签集 $\mathcal{Y}$ (这里暂时 specifiy 为二分类问题 $\mathcal{Y} = \{0, 1\}$), 对于其上的任意学习算法 $\mathcal{A}$, 以及任意训练集大小 $m < |\mathcal{X}|/2$, 存在一个定义在 $\mathcal{X} \times \mathcal{Y}$ 上的分布 $\mathcal{D}$, 使得:
+***Theorem 5.1 (No-Free-Lunch Theorem)***: 给定定义域 $\mathcal{X}$ 和标签集 $\mathcal{Y}$ (这里暂时 specify 为二分类问题 $\mathcal{Y} = \{0, 1\}$), 对于其上的任意学习算法 $\mathcal{A}$, 以及任意训练集大小 $m < |\mathcal{X}|/2$, 存在一个定义在 $\mathcal{X} \times \mathcal{Y}$ 上的分布 $\mathcal{D}$, 使得:
 - *(该学习任务是 realizable 的, 即存在完美的 predictor)* 存在函数 $f: \mathcal{X} \to \mathcal{Y}$, 满足 $L_{\mathcal{D}}(f) = 0$.
 - *(即使存在完美的 predictor, 任意预先固定的算法 $\mathcal{A}$ 也有概率在某个任务上失败)* 当训练集 $S \sim \mathcal{D}^m$ 时, 对于 $\mathcal{A}$ 输出的 predictor $h = \mathcal{A}(S)$ 满足 
     $$
@@ -58,7 +58,7 @@
     $$
     \mathbb{E}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(\mathcal{A}_{\mathcal{X}}(S))] = \mathbb{E}_{S \sim \mathcal{D}_{i^*}^m}[L_{\mathcal{D}_{i^*}}(\mathcal{A}_{\mathcal{C}}(S))] \geq 1/4 \qquad \text{(2)}
     $$
-    结合 (2) 与 $L_{\mathcal{D}}(\mathcal{A}_{\mathcal{X}}(S)) \in [0, 1]$ 的有界性, 可以通过 Markov 不等式立即得到, 对于任意尾部阈值 $a \in [0, 1]$, 有:
+    结合 (2) 与 $L_{\mathcal{D}}(\mathcal{A}_{\mathcal{X}}(S)) \in [0, 1]$ 的有界性, 可以通过 Markov 不等式立即得到, 对于任意尾部阈值 $a \in [0, 1)$, 有:
     $$
     \mathbb{P}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(\mathcal{A}_{\mathcal{X}}(S)) \geq a] \geq  \frac{1/4 - a}{1 - a}
     $$
@@ -114,8 +114,8 @@ $$
     \end{aligned}
     $$
     下证明最后面的 $\frac{1}{T} \sum_{i=1}^{T} \mathbb{1}[\mathcal{A}_{\mathcal{C}}(S_j^i)(v_r) \neq f_i(v_r)] = 1/2$, 即对于任意一个未见过的样本点 $v_r$, 其在所有可能的任务分布下, 有一半的概率被算法 $\mathcal{A}_{\mathcal{C}}$ 错误预测. 
-    - 首先将 $f_1, \ldots, f_T$ 按照 $v_r$ 的标签两两配对: 如果两个映射 $f_i, f_i'$ 在且仅在 $v_r$ 上的标签不同, 则将其配对 (对于任意 $c \in \mathcal{C}, f_i(c) \neq f_i'(c)$ iif $c = v_r$). 
-    - 对于这样的两组任务, 其训练集 $S_j^i$ 和 $S_j^{i'}$ 是完全相同的, 因为训练集不包含 $v_r$. 因此算法 $\mathcal{A}_{\mathcal{C}}$ 对于这两个任务的输出 hypothesis 是相同的, 即 $h(v_r) = \mathcal{A}_{\mathcal{C}}(S_j^i) = \mathcal{A}_{\mathcal{C}}(S_j^{i'})$. 然而, 对于预测 $h(v_r)$, 其只能与 $f_i(v_r)$ 或 $f_i'(v_r)$ 中的一个相同, 另一个不同, 即:
+    - 首先将 $f_1, \ldots, f_T$ 按照 $v_r$ 的标签两两配对: 如果两个映射 $f_i, f_i'$ 在且仅在 $v_r$ 上的标签不同, 则将其配对 (对于任意 $c \in \mathcal{C}, f_i(c) \neq f_i'(c)$ iff $c = v_r$). 
+    - 对于这样的两组任务, 其训练集 $S_j^i$ 和 $S_j^{i'}$ 是完全相同的, 因为训练集不包含 $v_r$. 因此算法 $\mathcal{A}_{\mathcal{C}}$ 对于这两个任务的输出 hypothesis 是相同的, 即 $h(v_r) = \mathcal{A}_{\mathcal{C}}(S_j^i)(v_r) = \mathcal{A}_{\mathcal{C}}(S_j^{i'})(v_r)$. 然而, 对于预测 $h(v_r)$, 其只能与 $f_i(v_r)$ 或 $f_i'(v_r)$ 中的一个相同, 另一个不同, 即:
         $$
         \mathbb{1}[\mathcal{A}_{\mathcal{C}}(S_j^i)(v_r) \neq f_i(v_r)] + \mathbb{1}[\mathcal{A}_{\mathcal{C}}(S_j^{i'})(v_r) \neq f_i'(v_r)] = 1
         $$
@@ -123,7 +123,7 @@ $$
         $$
         \frac{1}{T} \sum_{i=1}^{T} \mathbb{1}[\mathcal{A}_{\mathcal{C}}(S_j^i)(v_r) \neq f_i(v_r)] = 1/2
         $$
-    综上, 将 $frac{1}{T} \sum_{i=1}^{T} \mathbb{1}[\mathcal{A}_{\mathcal{C}}(S_j^i)(v_r) \neq f_i(v_r)] = 1/2$ 代入上式, 得到:
+    综上, 将 $\frac{1}{T} \sum_{i=1}^{T} \mathbb{1}[\mathcal{A}_{\mathcal{C}}(S_j^i)(v_r) \neq f_i(v_r)] = 1/2$ 代入上式, 得到:
     $$
     \frac{1}{T} \sum_{i=1}^{T} L_{\mathcal{D}_i}(\mathcal{A}_{\mathcal{C}}(S_j^i)) \geq \frac{1}{2} \min_{r \in [p]} \frac{1}{T} \sum_{i=1}^{T} \mathbb{1}[\mathcal{A}_{\mathcal{C}}(S_j^i)(v_r) \neq f_i(v_r)] = \frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4}
     $$
@@ -138,14 +138,14 @@ $\mathcal{H}$ 的选择体现了我们对任务的先验知识. PAC Learning 的
 ***Corollary* (No-Free-Lunch Theorem for Realizable PAC Learning)**: 对于无限的输入空间 $\mathcal{X}$, 若不对 $\mathcal{H}$ 进行限制 (允许其为 $\mathcal{H} = \{h: \mathcal{X} \to \mathcal{Y} = \{0, 1\}\}$ 的全体), 则 $\mathcal{H}$ 不是 realizable PAC learnable 的.
 
 *Proof*. 
-- 用反证法. 假设 $\mathcal{H}$ 是 PAC 可学习的, 则存在一个学习算法 $\mathsf{A}$, 使得对于任意 $\epsilon, \delta \in (0, 1)$ (不妨 specify 为 $\epsilon < 1/8, \delta < 1/7$), 存在一个多项式函数 $m_{\mathcal{H}}(\epsilon, \delta)$, 使得对于任意定义在 $\mathcal{X} \times \mathcal{Y}$ 上的分布 $\mathcal{D}$, 当该分布本身为 realizable 的 (即存在 $h^* \in \mathcal{H}$, 使得 $L_{\mathcal{D}}(h^*) = 0$), 及当训练集大小 $m \geq m_{\mathcal{H}}(\epsilon, \delta)$ 时, 有
+- 用反证法. 假设 $\mathcal{H}$ 是 PAC 可学习的, 则存在一个学习算法 $\mathsf{A}$, 使得对于任意 $\epsilon, \delta \in (0, 1)$ (不妨 specify 为 $\epsilon < 1/8, \delta < 1/7$), 存在一个样本复杂度函数 $m_{\mathcal{H}}: (0, 1)^2 \to \mathbb{N}$, 使得对于任意定义在 $\mathcal{X} \times \mathcal{Y}$ 上的分布 $\mathcal{D}$, 当该分布本身为 realizable 的 (即存在 $h^* \in \mathcal{H}$, 使得 $L_{\mathcal{D}}(h^*) = 0$), 及当训练集大小 $m \geq m_{\mathcal{H}}(\epsilon, \delta)$ 时, 有
     $$
-    \mathbb{P}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(\mathcal{A}(S)) \leq \epsilon] \geq 1 - \delta \implies \mathbb{P}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(\mathcal{A}(S)) > 1/8] \geq 6/7
+    \mathbb{P}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(\mathcal{A}(S)) \leq \epsilon] \geq 1 - \delta \implies \mathbb{P}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(\mathcal{A}(S)) < 1/8] > 6/7
     $$
 
-- 然而根据 PAC 的定义, 由于 $\mathcal{X}$ 是无限的, 则对于任意训练集大小 $m$, 均存在一个 '坏' 分布 $\mathcal{D}$, 使得上述算法 $\mathsf{A}$ 在该分布下失败, 即
+- 然而根据 No-Free-Lunch 定理 (Theorem 5.1), 由于 $\mathcal{X}$ 是无限的 (故对任意训练集大小 $m$ 均有 $m < |\mathcal{X}|/2$), 则对于任意训练集大小 $m$, 均存在一个 '坏' 分布 $\mathcal{D}$, 使得上述算法 $\mathsf{A}$ 在该分布下失败, 即
     $$
-    \mathbb{P}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(\mathsf{A}(S)) > 1/8] > 1/7
+    \mathbb{P}_{S \sim \mathcal{D}^m}[L_{\mathcal{D}}(\mathsf{A}(S)) \geq 1/8] \geq 1/7
     $$
 
 - 二者相加将使得概率之和大于 1, 故矛盾, 因此 $\mathcal{H}$ 不是 realizable PAC learnable 的.
@@ -183,7 +183,7 @@ $$
 >   $$
 >   其数值上, 这里定义的 approximation error 只与前文定义的 approximation error 相差一个常数 $\epsilon_\text{Bayes}$, 而 estimation error 则不变. 因此在进行 tradeoff 比较时, 该常数项可以忽略不计. 然而若讨论其绝对数值时, 则需要考虑 Bayes error 的存在.
 >
-> - 若考虑实际, 可能还要额外考虑 optimization error, 即由于算法本身的优化能力有限, 可能无法找到 $\mathcal{H}$ 中最优的 hypothesis $h^*$. 这时的 decomposition 为:
+> - 若考虑实际, 可能还要额外考虑 optimization error, 即由于算法本身的优化能力有限, 可能无法精确求解 ERM 问题, 从而找不到经验风险最优的 $h_S$, 只能输出一个近似解 $\tilde h_S$. 这时的 decomposition 为:
 >   $$
->   L_{\mathcal{D}}(h_S) = \underbrace{L_{\mathcal{D}}(h^*_\text{Bayes})}_{\epsilon_\text{Bayes}} + \underbrace{L_{\mathcal{D}}(h^*) - L_{\mathcal{D}}(h^*_\text{Bayes})}_{\epsilon_\text{app}} + \underbrace{L_{\mathcal{D}}(h_S) - L_{\mathcal{D}}(h^*)}_{\epsilon_\text{est}} + \underbrace{L_{\mathcal{D}}(\tilde h_S) - L_{\mathcal{D}}(h_S)}_{\epsilon_\text{opt}}
+>   L_{\mathcal{D}}(\tilde h_S) = \underbrace{L_{\mathcal{D}}(h^*_\text{Bayes})}_{\epsilon_\text{Bayes}} + \underbrace{L_{\mathcal{D}}(h^*) - L_{\mathcal{D}}(h^*_\text{Bayes})}_{\epsilon_\text{app}} + \underbrace{L_{\mathcal{D}}(h_S) - L_{\mathcal{D}}(h^*)}_{\epsilon_\text{est}} + \underbrace{L_{\mathcal{D}}(\tilde h_S) - L_{\mathcal{D}}(h_S)}_{\epsilon_\text{opt}}
 >   $$
