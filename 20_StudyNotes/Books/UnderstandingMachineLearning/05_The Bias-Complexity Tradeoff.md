@@ -154,3 +154,36 @@ $\square$
 
 ## 5.2 Error Decomposition
 
+对于 ERM 的输出 $h_S \in \argmin_{h \in \mathcal{H}} L_S(h)$, 其 true risk 可以被分解为 approximation error 和 estimation error 之和:
+$$
+L_{\mathcal{D}}(h_S) = \underbrace{L_{\mathcal{D}}(h^*)}_{\epsilon_\text{app}} + \underbrace{(L_{\mathcal{D}}(h_S) - L_{\mathcal{D}}(h^*))}_{\epsilon_\text{est}}
+$$
+
+该式子的成立性本身是 trivial 的, 而其背后的结构是更为重要的. 
+- **Approximation Error** ($\epsilon_\text{app} = L_{\mathcal{D}}(h^*) = \min_{h \in \mathcal{H}} L_{\mathcal{D}}(h)$): 
+  - 含义: $\mathcal{H}$ 的 expressiveness 的理论上限, 是 $\mathcal{H}$ 中最优的 hypothesis 的 true risk.
+  - 其刻画了 **inductive bias** 的大小 (bias-complexity tradeoff 中的 bias).
+  - 具有单调性: 若 $\mathcal{H}_1 \subseteq \mathcal{H}_2$, 则 $\epsilon_\text{app}(\mathcal{H}_1) \geq \epsilon_\text{app}(\mathcal{H}_2)$, 即更大的 hypothesis class 可以更好地拟合数据, 减少 approximation error.
+  - 与 $m$ 无关, 仅与 $\mathcal{H}$ 的选择有关.
+  - 在 realizable 的情况下, $\epsilon_\text{app} = 0$.
+
+    
+- **Estimation Error** ($\epsilon_\text{est} = L_{\mathcal{D}}(h_S) - L_{\mathcal{D}}(h^*)$):
+  - 含义: 由于训练集的有限性, 学习算法只能在有限的训练集上进行学习, 因此其输出的 hypothesis $h_S$ 可能无法达到 $\mathcal{H}$ 中最优的 true risk $h^*$. 
+  - 该误差刻画了学习算法的泛化能力 (bias-complexity tradeoff 中的 complexity).
+
+因此上述的 decomposition 就引出了最重要的 tradeoff: **bias-complexity tradeoff**. $\mathcal{H}$ 的选择越大, approximation error 越小, 但 estimation error 越大; 反之亦然.
+
+
+> [!note]
+>
+> - 理论上还应考虑 Bayes error. 即由于数据条件分布本身的噪声 ($\mathcal{D}(Y|X)$, 即同一个输入 $X$ 可能对应多个标签 $Y$), 即使 $\mathcal{H}$ 是全体函数, 也无法拟合数据. 此时记 $\epsilon_\text{Bayes} = L_{\mathcal{D}}(h^*_\text{Bayes})$, 其中 $h^*_\text{Bayes} = \argmin_{h: \mathcal{X} \to \mathcal{Y}} L_{\mathcal{D}}(h)$, 则此时的 Decomposition 为:
+>   $$
+>   L_{\mathcal{D}}(h_S) = \underbrace{L_{\mathcal{D}}(h^*_\text{Bayes})}_{\epsilon_\text{Bayes}} + \underbrace{L_{\mathcal{D}}(h^*) - L_{\mathcal{D}}(h^*_\text{Bayes})}_{\epsilon_\text{app}} + \underbrace{L_{\mathcal{D}}(h_S) - L_{\mathcal{D}}(h^*)}_{\epsilon_\text{est}}
+>   $$
+>   其数值上, 这里定义的 approximation error 只与前文定义的 approximation error 相差一个常数 $\epsilon_\text{Bayes}$, 而 estimation error 则不变. 因此在进行 tradeoff 比较时, 该常数项可以忽略不计. 然而若讨论其绝对数值时, 则需要考虑 Bayes error 的存在.
+>
+> - 若考虑实际, 可能还要额外考虑 optimization error, 即由于算法本身的优化能力有限, 可能无法找到 $\mathcal{H}$ 中最优的 hypothesis $h^*$. 这时的 decomposition 为:
+>   $$
+>   L_{\mathcal{D}}(h_S) = \underbrace{L_{\mathcal{D}}(h^*_\text{Bayes})}_{\epsilon_\text{Bayes}} + \underbrace{L_{\mathcal{D}}(h^*) - L_{\mathcal{D}}(h^*_\text{Bayes})}_{\epsilon_\text{app}} + \underbrace{L_{\mathcal{D}}(h_S) - L_{\mathcal{D}}(h^*)}_{\epsilon_\text{est}} + \underbrace{L_{\mathcal{D}}(\tilde h_S) - L_{\mathcal{D}}(h_S)}_{\epsilon_\text{opt}}
+>   $$
