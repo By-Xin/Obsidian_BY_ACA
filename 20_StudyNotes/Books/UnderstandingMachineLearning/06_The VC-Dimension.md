@@ -73,3 +73,16 @@ $$
 
 $\square$
 
+## 6.2 The VC-Dimension
+
+本节正式定义 VC-dimension. 
+
+首先回顾在有限维情况下 NFL 的证明过程, 其可以看成是如下的博弈步骤:
+1. Learner: 选择并公开 hypothesis space $\mathcal{H}$, 算法 $\mathcal{A}$, 以及 sample size $m$.
+2. Adversary: 根据 Learner 的算法, 选择一个 distribution $\mathcal{D}$, 并从中采样 $S \sim \mathcal{D}^m$.
+3. Learner: 根据采样的样本集 $S$, 选择一个 hypothesis $h_S = \mathcal{A}(S) \in \mathcal{H}$, 并计算其 true risk $L_{\mathcal{D}}(h_S)$.
+
+而在证明时, 参照的逻辑为:
+- 首先挑选有限 feature space $\mathcal{C} \subseteq \mathcal{X}$, 其大小为 $2m$, 其中训练集 $|S| = m$.
+- 考虑 $\mathcal{C}$ 上的均匀分布, 且给每个分布分配一个真实标注函数 $(x, f(x))$.
+- Adversary 可以从 $\mathcal{C} \mapsto \{0,1\}$ 的全部 $2^\|\mathcal{C}|$ 个标注函数中选择一个
