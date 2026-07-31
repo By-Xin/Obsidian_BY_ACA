@@ -75,14 +75,46 @@ $\square$
 
 ## 6.2 The VC-Dimension
 
-本节正式定义 VC-dimension. 
+***Definition* (Restriction of a Hypothesis Class)**. 考虑从 $\mathcal{X}$ 到 $\{0,1\}$ 的 hypothesis space $\mathcal{H}$. 从 feature space $\mathcal{X}$ 中取出一个 finite set $C = \{c_1, \ldots, c_m\} \subseteq \mathcal{X}$. 对于每一个 $h \in \mathcal{H}$, 其在 $C$ 上的 restriction 可以被表示为一个 binary vector:
+$$
+h(C) = (h(c_1), \ldots, h(c_m)) \in \{0,1\}^m
+$$
+遍历 $\mathcal{H}$ 中所有的 hypothesis, 可以得到一个 binary vector 的集合, 称之为 restriction of $\mathcal{H}$ to $C$:
+$$
+\mathcal{H}_C = \{h(C): h \in \mathcal{H}\} \subseteq \{0,1\}^m
+$$
+表示将 $\mathcal{H}$ 中所有的 hypothesis 限制在一个有限的集合 $C$ 上的所有可能的 labelings. 
 
-首先回顾在有限维情况下 NFL 的证明过程, 其可以看成是如下的博弈步骤:
-1. Learner: 选择并公开 hypothesis space $\mathcal{H}$, 算法 $\mathcal{A}$, 以及 sample size $m$.
-2. Adversary: 根据 Learner 的算法, 选择一个 distribution $\mathcal{D}$, 并从中采样 $S \sim \mathcal{D}^m$.
-3. Learner: 根据采样的样本集 $S$, 选择一个 hypothesis $h_S = \mathcal{A}(S) \in \mathcal{H}$, 并计算其 true risk $L_{\mathcal{D}}(h_S)$.
+$\diamond$
 
-而在证明时, 参照的逻辑为:
-- 首先挑选有限 feature space $\mathcal{C} \subseteq \mathcal{X}$, 其大小为 $2m$, 其中训练集 $|S| = m$.
-- 考虑 $\mathcal{C}$ 上的均匀分布, 且给每个分布分配一个真实标注函数 $(x, f(x))$.
-- Adversary 可以从 $\mathcal{C} \mapsto \{0,1\}$ 的全部 $2^\|\mathcal{C}|$ 个标注函数中选择一个
+一个重要的结论是: 即使 $\mathcal{H}$ 是无限的, 其 restriction $\mathcal{H}_C$ 仍然是有限的. 这是因为:
+
+- $\mathcal{H}_C \subseteq \{0,1\}^{|C|}$. 后者是所有从 $C$ 到 $\{0,1\}$ 的映射的全集, 而 $\mathcal{H}_C$ 是真正能够通过 $\mathcal{H}$ 中的 hypothesis 实现的 labelings 的子集. 因此, 有 $|\mathcal{H}_C| \leq 2^{|C|}$.
+- 此外, $\mathcal{H}$ 中可能存在两个或多个不同的 hypothesis 在 $C$ 上的 restrictions 是相同的 (其不同的 labelings 可能在 $C$ 之外的其他点上才体现出来). 故由于重复点的存在, 也可能进一步减少 $|\mathcal{H}_C|$ 的大小. 
+
+***Definition* (Shattering)**. 给定 $C = \{c_1, \ldots, c_m\} \subseteq \mathcal{X}$, 以及 $\mathcal{H}_C = \{h(C): h \in \mathcal{H}\}$. 如果 $\mathcal{H}_C$ 能够实现 $C$ 上的所有可能的 labelings, 即 $\mathcal{H}_C = \{0,1\}^{|C|}$, 则称 $\mathcal{H}$ shatters $C$:
+$$
+\forall (y_1, \ldots, y_m) \in \{0,1\}^{|C|}, \exists h \in \mathcal{H} \text{ s.t. } h(c_i) = y_i, \forall i = 1, \ldots, m
+$$
+
+对 shattering 的理解如下:
+- 一个 $\mathcal{H}$ 能够 shatter 一个 finite set $C$, 意味着 $\mathcal{H}$ 在 $C$ 上并不会排除 label 的组合可能; 反过来, 若不能够 shatter, 则说明至少有一种 labelling 的组合的结构被排除了.  
+  - 例如, 若 $\mathcal{H} = \{0, 1\}^|C|$, 则 $\mathcal{H}$ 可以实现 $C$ 上的所有 labelings, 此时的 assignment 是没有限制的, 每个 input 的 label 可以被任意, 独立地指定.
+  - 而若比如 threshold functions $h_a(x) = \mathbf{1}\{x \leq a\}$, 则其在 $(c_1, c_2)$ 其中 $c_1 < c_2$ 上, 只能实现三种 restrictions: $\mathcal{H}_C = \{(0,0), (1,0), (1,1)\}$, 而不能实现 $(0,1)$ 的 restriction. 
+
+- 若 $\mathcal{H}$ 能够 shatter $C$, 说明 $\mathcal{H}$ 在 $C$ 上是如此复杂, 以至于其仅凭部分的数据的 label, 无法推断剩余的数据的 label. 对应到具体学习问题中, 由于训练集的有限性, shattering 的存在意味着 $\mathcal{H}$ 在 $C$ 上的泛化能力是无法保证的, $\mathcal{H}$ 中存在着两个 hypothesis, 在已有的训练集上的预测完全相同, 而在训练集之外的预测却完全不同. 
+
+
+***Corollary* (Shattering and NFL)**. 若 $\mathcal{H}$ 能够 shatter $C$, 且 $|C| = 2 |S| = 2m$, 则无论如何选择什么 learning algorithm $A$, 都存在一个完全无噪声, 且 realizable 的分布 $\mathcal{D}$, 使得 $A$ 在 $S \sim \mathcal{D}^m$ 上训练得到的 hypothesis $h_S$ 的泛化误差至少为 $1/8$, w.p. $\geq 1/7$.
+
+> *If someone can explain every phenomenon, his explanations are worthless*
+
+***Definition* (VC-Dimension)**. 对于 hypothesis space $\mathcal{H}$, 其 VC-dimension 定义为 $\mathcal{H}$ 能够 shatter 的最大 finite set $C$ 的大小:
+$$
+\operatorname{VCdim}(\mathcal{H}) = \max\{|C|: C \subseteq \mathcal{X}, \mathcal{H} \text{ shatters }C\}
+$$
+
+- VC-dim 刻画了 $\mathcal{H}$ 的复杂度, 最多在多少个点上能够实现全部的 labelings 组合. 
+- $\operatorname{VCdim}(\mathcal{H}) = d$ 意味着: (1) 至少存在一个 finite set $C$ 的大小为 $d$, 使得 $\mathcal{H}$ 能够 shatter $C$; (2) 不存在任何大小为 $d+1$ 的 finite set $C'$ 能够被 $\mathcal{H}$ shatter.
+
+- 若对于任意大的 finite set $C$, $\mathcal{H}$ 都能够 shatter, 则称 $\operatorname{VCdim}(\mathcal{H}) = \infty$. 显然, 无穷 VC-dim 的 hypothesis space 是 PAC 不可学习的. 
