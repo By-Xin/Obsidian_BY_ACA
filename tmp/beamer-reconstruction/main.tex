@@ -1410,9 +1410,9 @@
       \operatorname*{\textbf{minimize}}_{\mathbf{x}\in P}\quad
       &\Phi(\mathbf{x})\triangleq c(\mathbf{x})
         +\sum_{k=1}^{K}\varphi_k(\mathbf{x})
-        \mathds{1}_{[0,\infty)}\bigl(g_k(\mathbf{x})\bigr)\\[4pt]
+        \mathds{1}_{(0,\infty)}\bigl(g_k(\mathbf{x})\bigr)\\[4pt]
       \operatorname*{\textbf{subject to}}\quad
-      &\sum_{\ell=1}^{L}\varphi_\ell(\mathbf{x})
+      &\sum_{\ell=1}^{L}\phi_\ell(\mathbf{x})
         \mathds{1}_{[0,\infty)}\bigl(h_\ell(\mathbf{x})\bigr)\leq b
         &&{\color{MediumBlue}\text{the functional constraint}}
     \end{aligned}
@@ -1433,7 +1433,7 @@
         +\sum_{k\in\mathcal{K}_{>}(\bar{\mathbf{x}})}\varphi_k(\mathbf{x})\\[2pt]
       \operatorname*{\textbf{subject to}}\quad
       &\mathbf{x}\in P;\quad
-        \sum_{\ell\in\mathcal{L}_{>}(\bar{\mathbf{x}})}\varphi_\ell(\mathbf{x})
+        \sum_{\ell\in\mathcal{L}_{>}(\bar{\mathbf{x}})}\phi_\ell(\mathbf{x})
         \leq b\\[2pt]
       \textbf{and}\quad
       &\left\{
@@ -1457,39 +1457,39 @@
   $\widehat{\mathcal{S}}_{\mathrm{ps}}(\bar{\mathbf{x}})$.
 \end{frame}
 
-% Board work (2026-07-21, 10:08): the smooth unconstrained prototype of the
-% fixed-point definition -- reconstructed from a photograph of the chalkboard.
-\begin{frame}
-  \normalsize
-  \centering
+% % Board work (2026-07-21, 10:08): the smooth unconstrained prototype of the
+% % fixed-point definition -- reconstructed from a photograph of the chalkboard.
+% \begin{frame}
+%   \normalsize
+%   \centering
 
-  $\operatorname*{\textbf{minimize}}\limits_{\mathbf{x}\in\mathbb{R}^n}
-   f(\mathbf{x})
-   \qquad {\footnotesize f:\mathbb{R}^n\to\mathbb{R}\ \text{(scalar-valued)}}$
+%   $\operatorname*{\textbf{minimize}}\limits_{\mathbf{x}\in\mathbb{R}^n}
+%    f(\mathbf{x})
+%    \qquad {\footnotesize f:\mathbb{R}^n\to\mathbb{R}\ \text{(scalar-valued)}}$
 
-  \vspace{0.16cm}
-  $\big\downarrow\ {\scriptstyle\text{loc.\ min},\ f\text{ diff.}}$
+%   \vspace{0.16cm}
+%   $\big\downarrow\ {\scriptstyle\text{loc.\ min},\ f\text{ diff.}}$
 
-  \vspace{0.16cm}
-  $\underbrace{\nabla f(\bar{\mathbf{x}})=\mathbf{0}}_{\text{equation}}
-   \quad\Longleftrightarrow\quad
-   \bar{\mathbf{x}}=\bar{\mathbf{x}}-\nabla f(\bar{\mathbf{x}})$
+%   \vspace{0.16cm}
+%   $\underbrace{\nabla f(\bar{\mathbf{x}})=\mathbf{0}}_{\text{equation}}
+%    \quad\Longleftrightarrow\quad
+%    \bar{\mathbf{x}}=\bar{\mathbf{x}}-\nabla f(\bar{\mathbf{x}})$
 
-  \vspace{0.16cm}
-  $\big\downarrow$
+%   \vspace{0.16cm}
+%   $\big\downarrow$
 
-  \vspace{0.20cm}
-  \[
-    \begin{array}{r@{}c@{}l@{\qquad}l}
-      \boxed{\,\mathbf{x}=F(\mathbf{x})\,},\ \ F(\mathbf{x})=\ &
-        \mathbf{x}-\nabla f(\mathbf{x}) & &
-        {\footnotesize F:\mathbb{R}^n\to\mathbb{R}^n\ \text{(vector-valued)}}\\[12pt]
-      \mathbf{x}=\operatorname{Proj}_{\mathcal{X}}\bigl(\ &
-        \mathbf{x}-\nabla f(\mathbf{x}) & \bigr) &
-        {\footnotesize \mathbf{x}\in\mathcal{X}}
-    \end{array}
-  \]
-\end{frame}
+%   \vspace{0.20cm}
+%   \[
+%     \begin{array}{r@{}c@{}l@{\qquad}l}
+%       \boxed{\,\mathbf{x}=F(\mathbf{x})\,},\ \ F(\mathbf{x})=\ &
+%         \mathbf{x}-\nabla f(\mathbf{x}) & &
+%         {\footnotesize F:\mathbb{R}^n\to\mathbb{R}^n\ \text{(vector-valued)}}\\[12pt]
+%       \mathbf{x}=\operatorname{Proj}_{\mathcal{X}}\bigl(\ &
+%         \mathbf{x}-\nabla f(\mathbf{x}) & \bigr) &
+%         {\footnotesize \mathbf{x}\in\mathcal{X}}
+%     \end{array}
+%   \]
+% \end{frame}
 
 % Original slide 57.
 \begin{frame}
@@ -1501,7 +1501,7 @@
 
   \vspace{0.04cm}
   {\color{MediumBlue}Assume that the functions $\varphi_k$ and
-  $\varphi_\ell$ are nonnegative on $P\cap g_k^{-1}(0)$ and
+  $\phi_\ell$ are nonnegative on $P\cap g_k^{-1}(0)$ and
   $P\cap h_\ell^{-1}(0)$, respectively.}
   \[
     \operatorname*{\textbf{minimize}}_{\mathbf{x}\in P;\,\mathbf{t},\mathbf{s}}
@@ -1522,7 +1522,7 @@
       \end{array}\right.\\[6pt]
       &\left\{\begin{array}{@{}l@{}}
         \text{for all }\ell\in[L]:\\[2pt]
-        \min\bigl(\max(\varphi_\ell(\mathbf{x})-s_\ell,\,-h_\ell(\mathbf{x})),\,
+        \min\bigl(\max(\phi_\ell(\mathbf{x})-s_\ell,\,-h_\ell(\mathbf{x})),\,
           \max(h_\ell(\mathbf{x}),\,-s_\ell)\bigr)\leq 0
       \end{array}\right.
     \end{aligned}
@@ -1548,10 +1548,10 @@
   (\bar{\mathbf{x}});\bar{\mathbf{x}}\bigr)$ with unit length satisfying:
   \[
     \sum_{\ell\in\mathcal{L}_>(\bar{\mathbf{x}})}
-      \varphi_\ell'(\bar{\mathbf{x}};\mathbf{v})\leq -1
+      \phi_\ell'(\bar{\mathbf{x}};\mathbf{v})\leq -1
     \quad\textcolor{MediumRed}{\Bigl[\text{a descent condition for }
       \textstyle\sum_{\ell\in\mathcal{L}_>(\bar{\mathbf{x}})}
-      \varphi_\ell(\bullet)\text{ at }\bar{\mathbf{x}}\Bigr]}.
+      \phi_\ell(\bullet)\text{ at }\bar{\mathbf{x}}\Bigr]}.
   \]
 
   \vspace{0.06cm}
@@ -1632,7 +1632,7 @@
           \text{approx.\ of Heaviside in objective}}\\
       &+\underset{\text{\scriptsize fixed}}{\lambda}\,
         \overbrace{\max\Bigl(\underbrace{\sum_{\ell=1}^{L}
-          \varphi_\ell(\mathbf{x})\theta_\ell^\varphi(h_\ell(\mathbf{x}),\delta)}_{
+          \phi_\ell(\mathbf{x})\theta_\ell^\phi(h_\ell(\mathbf{x}),\delta)}_{
           \text{approx.\ of Heaviside in constraint}}-b,\ 0\Bigr)}^{
           \text{constraint penalization}}
     \end{aligned}
@@ -1659,18 +1659,18 @@
 
   \textbf{(C4)} \textcolor{MediumRed}{descent for exact penalization}: For any
   $\mathbf{x}\in P\cap\mathcal{N}$, where $\mathcal{N}_*$ such that
-  $\sum_{\ell\in\mathcal{L}_>(\mathbf{x})}\varphi_\ell(\mathbf{x})>b$, there
+  $\sum_{\ell\in\mathcal{L}_>(\mathbf{x})}\phi_\ell(\mathbf{x})>b$, there
   exists a vector
   $\bar{\mathbf{v}}\in\mathcal{T}\bigl(\widehat{\mathcal{S}}_{\mathrm{ps}}
   (\mathbf{x});\mathbf{x}\bigr)$ with unit length satisfying:
   \[
     \sum_{\ell\in\mathcal{L}_>(\mathbf{x})}
-      \varphi_\ell'(\mathbf{x};\bar{\mathbf{v}})\leq -1;\quad\text{and}
+      \phi_\ell'(\mathbf{x};\bar{\mathbf{v}})\leq -1;\quad\text{and}
   \]
 
   \textbf{(C5)} \textcolor{MediumRed}{Clarke regularity}: the functions $c$,
   $\{\varphi_k\}_{k\in\mathcal{K}_>(\mathbf{x}^*)}$, and
-  $\{\varphi_\ell\}_{\ell\in\mathcal{L}_>(\mathbf{x}^*)}$ are Clarke regular
+  $\{\phi_\ell\}_{\ell\in\mathcal{L}_>(\mathbf{x}^*)}$ are Clarke regular
   at $\mathbf{x}^*$. For a B-differentiable function $f$, this means that for
   all sequences $\{\mathbf{z}^\nu\}$ converging to $\bar{\mathbf{x}}$, it
   holds that

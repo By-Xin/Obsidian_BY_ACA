@@ -51,7 +51,7 @@ $$
 \begin{aligned}
 \underset{\mathbf{x}\in P}{\operatorname{maximize}}
 \quad
-\Phi(\mathbf{x})
+\theta_{\text{GHS}} (\mathbf{x})
 \triangleq
 c(\mathbf{x})
 +
@@ -189,3 +189,166 @@ $$
 - 由 Bouligand stationary: $f'(\mathbf{\bar{x}}; \mathbf{x} - \mathbf{\bar{x}}) \geq 0$
 - 由 $(\star)$: $f(\mathbf{x}) \geq f(\mathbf{\bar{x}}) + f'(\mathbf{\bar{x}}; \mathbf{x} - \mathbf{\bar{x}}) \geq f(\mathbf{\bar{x}})$
 
+## 3. Paradigm changes: Sources of discontinuity
+
+## 4. Solution Analysis
+
+### Existence of optimal solution
+
+首先讨论解的存在性问题. 如下例子说明, 若不加任何限制, HSCOP 的最优解可能是不可达的.
+
+***Example* (Non-attainable optimal value)**:
+
+首先考虑如下 HSCOP, 其最优解是不可达的.
+$$
+    \begin{aligned}
+      \min_{x_1,x_2}\quad
+      &x_1^2+2(1-x_2)^2+|x_1|_0+\tfrac{1}{2}|x_2|_0\\[2pt]
+      \text{subject to}\quad
+      &|x_1|_0\geq|x_2|_0\ \text{ and }\ -1\leq x_1,x_2\leq 1.
+    \end{aligned}
+$$
+
+分析可得, 该约束问题的可行域为 $\mathcal{X}_{\text{GHS}} = [-1,1]^2 \setminus \{(0, x_2): x_2 \neq 0\}$. 由于 slit $\{(0, x_2): x_2 \neq 0\}$ 的存在, 导致 $\mathcal{X}_{\text{GHS}}$ 不是 closed 的, 因而最优值不可达.
+
+![](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/l0_nonattainable_3d.png)
+
+为保证最优解的存在性, 需要额外条件限制. 一个重要的条件是 **upper semi-continuity**, 其保证了约束的 superlevel sets 是 closed 的.
+
+***Proposition* (Upper semi-continuity)**: 给定连续函数 $\phi_{ij} : \mathbb{R}^n \to \mathbb{R}$, $\psi_{ij}: \mathbb{R}^n \to \mathbb{R}$, 其中 $i \in [I], j\in [J_i]$. 给定点 $\mathbf{\bar{x}} \in \mathbb{R}^n$, 若存在一个 neighborhood $\mathcal{N}(\mathbf{\bar{x}})$, 使得对于任意
+$$
+(i,j) \in  \mathcal{J}_0 := \{(i,j): \phi_{ij}(\mathbf{\bar{x}}) = 0 \geq \psi_{ij}(\mathbf{x}), \forall i,j\},
+$$
+下列条件之一成立:
+- 对于所有 $\mathbf{x} \in \mathcal{N}(\mathbf{\bar{x}})$, 若 $\psi_{ij}(\mathbf{x}) < 0$ , $\phi_{ij}(\mathbf{x}) \geq 0$;
+- 对于所有 $\mathbf{x} \in \mathcal{N}(\mathbf{\bar{x}})$, $\psi_{ij}(\mathbf{x}) \geq 0$.
+
+则函数
+$$
+\mathbf{x} \mapsto  \sum_{j=1}^{J_i} \psi_{ij}(\mathbf{x}) \mathbb{1}_{[0,\infty)}(\phi_{ij}(\mathbf{x}))
+$$
+对于任意固定 $i \in [I]$ 都在 $\mathbf{\bar{x}}$ 处是 upper semi-continuous 的.
+
+$\diamond$
+
+说明: 
+
+- 观察这里的每一个单项 $\psi_{ij}(\mathbf{x}) \mathbb{1}_{[0,\infty)}(\phi_{ij}(\mathbf{x}))$, 回顾其可以表示为:
+    $$
+    \psi_{ij}(\mathbf{x}) \mathbb{1}_{[0,\infty)}(\phi_{ij}(\mathbf{x})) =
+    \begin{cases}
+    \psi_{ij}(\mathbf{x}), & \text{if } \phi_{ij}(\mathbf{x}) \geq 0 \\
+    0, & \text{if } \phi_{ij}(\mathbf{x}) < 0
+    \end{cases}
+    $$
+    而又知, upper semi-continuous 是 $\lim\sup_{\mathbf{x} \to \mathbf{\bar{x}}} f(\mathbf{x}) \leq f(\mathbf{\bar{x}})$, 即允许函数值不低于附近的极限值.  
+
+
+- 因此, 对于 closed Heaviside function, 若 $\psi_{ij}(\mathbf{\bar{x}}) < 0$, 则此时在 $\phi_{ij}(\mathbf{\bar{x}}) = 0$ 左右会存在一个非法的跳跃, 即 $\lim\sup_{\mathbf{x} \to \mathbf{\bar{x}}} \psi_{ij}(\mathbf{x}) \mathbb{1}_{[0,\infty)}(\phi_{ij}(\mathbf{x})) = 0 > \psi_{ij}(\mathbf{\bar{x}})$, 其破坏了 upper semi-continuity. 故要对这类 index $\mathcal{J}_0$ 进行限制排除.
+
+- 集合 $\mathcal{J}_0$ 收集了所有的临界情况. 第一个 bullet 相当于直接去掉了 当 $\psi < 0$ 时 $\phi$ 负半轴的情况; 第二个 bullet 则直接要求 $\psi$ 非负. 故二者分别对应, 保证了 upper semi-continuity.
+
+    ![](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/aa.png)
+
+
+故在此基础上, 讨论 global maximizer 的存在性. 
+
+***Proposition* (Existence of global maximizer)**:
+对于最大化问题:
+$$
+\sup_{\mathbf{x}\in \mathcal{X}_{\text{GHS}}} \theta_{\text{GHS}} (\mathbf{x}) = c(\mathbf{x}) + \sum_{k=1}^{K_0} \psi_{0k}(\mathbf{x}) \mathbf{1}_{[0,\infty)}(\phi_{0k}(\mathbf{x}))
+$$
+假设:
+- $\mathcal{X}_{\text{GHS}} \neq \varnothing$ (not necessarily closed)
+- $c$ 是连续的, 且 $-c$ 在 $\mathcal{X}_{\text{GHS}}$ 上是 coercive 的, 即 $\lim_{\|\mathbf{x}\| \to \infty, \mathbf{x} \in \mathcal{X}_{\text{GHS}}} c(\mathbf{x}) = -\infty$.
+- 最优值有限: $\sup_{\mathbf{x}\in \mathcal{X}_{\text{GHS}}} \theta_{\text{GHS}} (\mathbf{x}) \in (-\infty, \infty)$
+
+若存在可行点列 $\{\mathbf{x}^\nu\} \subseteq \mathcal{X}_{\text{GHS}}$, 其函数值趋近于最优值 $\lim_{\nu \to \infty} \theta_{\text{GHS}} (\mathbf{x}^\nu) = \sup_{\mathbf{x}\in \mathcal{X}_{\text{GHS}}} \theta_{\text{GHS}} (\mathbf{x})$. 则对于任意满足上述 Upper Semi-continuity Proposition 的条件的 accumulation point $\mathbf{x}^\infty$ (即子列收敛极限点, 其存在性定被保证), 都是 $\theta_{\text{GHS}}$ 在 $\mathcal{X}_{\text{GHS}}$ 上的 global maximizer.
+
+
+*Proof Sketch*:
+
+- 由 coercive property, 可行点列 $\{\mathbf{x}^\nu\}$ 是 bounded 的, 而有限维空间中的有界序列定存在收敛子列, 故 $\mathbf{x}^\infty$ 存在性得证. 
+- 由 Upper Semi-continuity Proposition, 保证即使 $\mathcal{X}_{\text{GHS}}$ 不是 closed 的, 也有 $\mathbf{x}^\infty \in \mathcal{X}_{\text{GHS}}$ 可行. 
+- 且目标函数 $\theta_{\text{GHS}}$ 在 $\mathbf{x}^\infty$ 处是 upper semi-continuous 的, 故 supremum 可达, 即
+    $$
+    \theta_{\text{GHS}} (\mathbf{x}^\infty) \geq \lim_{\nu \to \infty} \theta_{\text{GHS}} (\mathbf{x}^\nu) = \sup_{\mathbf{x}\in \mathcal{X}_{\text{GHS}}} \theta_{\text{GHS}} (\mathbf{x}).
+    $$
+
+### Stationarity and local maximizer
+
+
+在讨论完 global maximizer 的存在性后, 进一步讨论何时一个 stationary  point 能够成为 local maximizer. 并且需要如下的权衡: 一方面希望其能够尽量简单地求解, 另一方面又希望其能尽量排除掉一些非 local maximizer 的 stationary point. 这里主要考虑如下两种:
+- *Pseudo B-stationarity* 
+- *Epi-stationarity*
+
+#### Pseudo-Bouligand stationary
+
+回到 GHSOP 问题, 给定一个 feasible point $\mathbf{\bar{x}} \in \mathcal{X}_{\text{GHS}}$, 根据其 Heaviside 对应的激活情况, 可以将下标划分如下:
+$$
+\mathcal{J}_{i>} (\mathbf{\bar{x}}) := \{j: \phi_{ij}(\mathbf{\bar{x}}) > 0\}, \quad 
+\mathcal{J}_{i=} (\mathbf{\bar{x}}) := \{j: \phi_{ij}(\mathbf{\bar{x}}) = 0\}, \\
+\mathcal{J}_{i<} (\mathbf{\bar{x}}) := \{j: \phi_{ij}(\mathbf{\bar{x}}) < 0\}, \quad
+\mathcal{J}_{i\geq} (\mathbf{\bar{x}}) := \{j: \phi_{ij}(\mathbf{\bar{x}}) \geq 0\}.
+$$
+由于是 closed Heaviside function, 故事实上只有 $\mathcal{J}_{i\geq} (\mathbf{\bar{x}})$ 的部分是 active 的, 而 $\mathcal{J}_{i<} (\mathbf{\bar{x}})$ 的部分的 indicator 取 $0$. 
+
+若只保留 active 的部分, 则可以将 GHSOP 问题转化为标准的 NLP 问题, 该过程称为 pulled-out, 其形式为:
+$$
+    \begin{aligned}
+      \operatorname*{\text{maximize}}_{\mathbf{x}\in P}\quad
+      &\theta(\mathbf{x};\bar{\mathbf{x}})\triangleq c(\mathbf{x})
+        +\sum_{j\in\mathcal{J}_{0\geq}(\bar{\mathbf{x}})}\psi_{0j}(\mathbf{x})\\
+      \operatorname*{\text{subject to}}\quad
+      &\left\{
+        \begin{array}{l}
+          \text{for all }i=1,\ldots,I\\[4pt]
+          \mathbf{A}_{i\cdot}\mathbf{x}
+            +\displaystyle\sum_{j\in\mathcal{J}_{i\geq}(\bar{\mathbf{x}})}
+            \psi_{ij}(\mathbf{x})\geq\eta_i
+        \end{array}\right.\\[2pt]
+      \text{and}\quad
+      &\left\{
+        \begin{array}{l}
+          \text{for all }i=0,1,\ldots,I:\\[4pt]
+          \phi_{ij}(\mathbf{x})\geq 0\quad
+            \forall\,j\in\mathcal{J}_{i\geq}(\bar{\mathbf{x}})\\[3pt]
+          \phi_{ij}(\mathbf{x})\leq 0\quad
+            \forall\,j\in\mathcal{J}_{i<}(\bar{\mathbf{x}})
+        \end{array}\right.
+    \end{aligned}
+$$
+
+- 注意, 这里的第二组约束要求, 在 pulled-out 的过程中, 决策变量 $\mathbf{x}$ 不能离开当前 $\bar{\mathbf{x}}$ 的 Heaviside 激活状态, 即 $\mathcal{J}_{i\geq}(\bar{\mathbf{x}})$ 的部分必须保持 $\phi_{ij}(\mathbf{x}) \geq 0$, 而 $\mathcal{J}_{i<}(\bar{\mathbf{x}})$ 的部分必须保持 $\phi_{ij}(\mathbf{x}) \leq 0$.
+- 而且事实上这种自指关系在本质上揭示 pull-out 过程是一个 fixed-point 迭代.
+
+
+***Definition* (Pseudo-Bouligand stationary)**: 称 $\mathbf{\bar{x}} \in \mathcal{X}_{\text{GHS}}$ 是 G-HSCOP 的 pseudo-Bouligand stationary point $\iff$ $\mathbf{\bar{x}}$ 是其 pulled-out NLP 问题的 Bouligand stationary point.
+
+可以证明, 一般而言有如下推导关系:
+$$
+\text{local min} \stackrel{\text{(1)}}{\implies} \text{epi-stationary} \stackrel{\text{(2)}}{\implies} \text{pseudo-B-stationary}
+$$
+
+*Proof Sketch*:
+- (1) : 若 $\mathbf{\bar{x}}$ 是 local min, 则 $(f(\mathbf{\bar{x}}), \mathbf{\bar{x}})$ 是 lifted problem 的 local min, 而 B-stationary 是 local min 的必要条件 (因为 B-Stationary 要求不存在一个可行的切向量 $\mathbf{v}$ 使得函数一阶下降, 而 local min 必然满足这个条件), 故 $\mathbf{\bar{x}}$ 是 epi-stationary.
+- (2) : 首先有观察, pulled-out 问题的 feasible point 必然是原问题的 feasible point. 此时用反证法, 假设 $\mathbf{\bar{x}}$ 是 epi-stationary, 但不是 pseudo-B-stationary, 则存在一个 pulled-out 问题的可行切向量使得 pull-out 函数值下降. 然而根据构造关系, 这个下降方向必然也是原问题的真实下降方向, 这会破坏 epi-stationary 的定义, 故矛盾.
+
+
+若额外满足 $\mathcal{Z} := \text{epi}(f) \cap (\mathcal{X} \times \mathbb{R})$ 在 $(f(\mathbf{\bar{x}}), \mathbf{\bar{x}})$ 处是 locally convex-like 的, 则 (1)  反向成立, 即 local min $\iff$ epi-stationary $\implies$ pseudo-B-stationary.
+
+*Proof Sketch*:
+由 epi-stationary 表示 tangent cone 没有下降方向, 而 locally convex-like 表示每个附近真实下降点都会产生一个向下的 tangent direction, 故 epi-stationary 没有下降放下 $\iff$ 附近没有真实下降点 $\iff$ local min.
+
+
+#### Simplified Bouligand 
+
+考虑如下简化问题:
+$$
+\begin{aligned}
+\min_{\mathbf{x}\in P}\quad \Phi(\mathbf{x}) := c(\mathbf{x}) + \sum_{k=1}^K \varphi_k(\mathbf{x}) \mathbb{1}_{[0,\infty)}(g_k(\mathbf{x})), \\
+\text{subject to}\quad \sum_{\ell=1}^{L} \varphi_\ell(\mathbf{x}) \mathbb{1}_{[0,\infty)}(h_\ell(\mathbf{x})) \leq b, 
+\end{aligned}
+$$
+
+- 相比于 G-HSCOP, 其只有一个标量约束, 去掉了 affine 约束. 并且注意这里改为了最小化问题. 
