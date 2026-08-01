@@ -157,3 +157,35 @@ $$
 
 - 若 $f$ 是 B-differentiable 的, 则 $\mathbf{\bar{x}}$ 是 epigraphical stationary point $\iff$ $\mathbf{\bar{x}}$ 是 B-stationary point. 
 - 若 $f$ 不是 B-differentiable 的, 则 epigraphical stationary point 的定义仍然成立, 而 B-stationary point 的定义则不再适用.
+
+进一步, 如下两个局部几何性质将保证 B-stationary 与 local minimizer 的等价性. 
+
+***Definition* (Locally star-shaped)**: 集合 $\mathcal{X} \subseteq \mathbb{R}^n$ 称为 locally star-shaped, 若对于任意足够靠近 $\mathbf{\bar{x}}$ 的点 $\mathbf{x} \in \mathcal{X}$, 存在与 $\mathbf{x}$ 相关的标量 $\bar{\tau}$, 使得对于任意 $\tau \in [0, \bar{\tau}]$, 有 $\mathbf{\bar{x}} + \tau (\mathbf{x} - \mathbf{\bar{x}}) \in \mathcal{X}$.
+
+- Star-shaped property 是一个弱化的 convexity property:
+  - 只要求从 $\mathbf{\bar{x}}$ 出发到周围的任何 *sufficiently close* 的点 $\mathbf{x}$, 沿着 $\mathbf{\bar{x}}$ 向 $\mathbf{x}$ 走出一小段距离 (而不需要需要全程) 在 $\mathcal{X}$ 内即可. 
+    
+  - 只需要考虑每个 $\mathbf{x}$ 各自和 $\mathbf{\bar{x}}$ 之间的关系, 而不需要考虑 $\mathbf{x}$ 之间的关系.
+     - 注意, 这里的 $\mathbf{x}$ 不是在任意邻域内取到的, 而是在 $\mathcal{X}$ 内的, 且足够靠近 $\mathbf{\bar{x}}$ 的点. 例如考虑 $\mathcal{X}=\left\{(s,0):s\geq0\right\}\cup\left\{(0,s): s\geq0\right\}$ 即坐标轴的两条半轴, 则 $\mathbf{\bar{x}}=(0,0)$ 是 locally star-shaped 的, 但不是 convex 的. 其只考虑两条射线即可, 并不是稠密的. 
+     ![star_shaped_not_convex](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/star_shaped_not_convex.png) 
+
+>  这个 star 其实主要想说的是这种放射形的感觉, 不是那种五角星六芒星 (笑) ![starburst](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/starburst.png)
+
+
+***Definition* (Locally convex-like)**: 集合 $\mathcal{X} \subseteq \mathbb{R}^n$ 称为  在 $\mathbf{\bar{x}}$ 处 locally convex-like, 若存在 $\mathbf{\bar{x}} \in \mathcal{X}$ 的邻域 $\mathcal{N}(\mathbf{\bar{x}})$, 使得 $\mathcal{X} \cap \mathcal{N}(\mathbf{\bar{x}}) \subseteq \mathbf{\bar{x}} + \mathcal{T}_{\mathcal{X}}(\mathbf{\bar{x}})$.
+- locally convex-like property 是一个弱化的 star-shaped property, 其甚至不要求 $\mathbf{\bar{x}}$ 到 $\mathbf{x}$ 能够连续的走出一小段距离, 而只要求 $\mathbf{x}$ 在 $\mathbf{\bar{x}}$ 的 tangent cone 内即可.
+
+    ![convex_like_not_star_shaped](https://raw.githubusercontent.com/By-Xin/Blog-figs/main/convex_like_not_star_shaped.png)
+
+
+对于 reference point $\mathbf{\bar{x}} \in \mathcal{X}$, 若 $\mathcal{X}$ 是 convex-like 的, 且 $f$ 是 B-differentiable 的且 
+$$
+f(\mathbf{x}) \geq f(\mathbf{\bar{x}}) + f'(\mathbf{\bar{x}}; \mathbf{x} - \mathbf{\bar{x}}) \qquad  (\star)
+$$ 
+对任意 sufficiently close 的 $\mathbf{x} \in \mathcal{X}$ 成立, 则 $\mathbf{\bar{x}}$ 是 local minimizer $\iff$ $\mathbf{\bar{x}}$ 是 B-stationary point.
+
+*Proof Sketch*: 
+- 由 locally convex-like: $\mathbf{x} - \mathbf{\bar{x}} \in \mathcal{T}_{\mathcal{X}}(\mathbf{\bar{x}})$
+- 由 Bouligand stationary: $f'(\mathbf{\bar{x}}; \mathbf{x} - \mathbf{\bar{x}}) \geq 0$
+- 由 $(\star)$: $f(\mathbf{x}) \geq f(\mathbf{\bar{x}}) + f'(\mathbf{\bar{x}}; \mathbf{x} - \mathbf{\bar{x}}) \geq f(\mathbf{\bar{x}})$
+
