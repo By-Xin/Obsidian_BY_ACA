@@ -96,17 +96,17 @@
   \vspace{0.16cm}
   \small
   \begin{flushleft}
-    \textbf{Chapter I:} Introduction\\[3pt]
-    \textbf{Chapter II:} Paradigm Changes: Sources of Discontinuity\\[3pt]
-    \textbf{Chapter III:} Some Prerequisites\\[3pt]
-    \textbf{Chapter IV:} Solution Analysis: The Nonlinear Programming Approach\\[3pt]
-    \textbf{Chapter V:} Affine Heaviside Composite Problems\\[3pt]
-    \textbf{Chapter VI:} Integer Programming Based Algorithms\\[3pt]
+    \hyperlink{chapter-introduction}{\textbf{Chapter I:} Introduction}\\[3pt]
+    \hyperlink{chapter-paradigm}{\textbf{Chapter II:} Paradigm Changes: Sources of Discontinuity}\\[3pt]
+    \hyperlink{chapter-prerequisites}{\textbf{Chapter III:} Some Prerequisites}\\[3pt]
+    \hyperlink{chapter-solution-analysis}{\textbf{Chapter IV:} Solution Analysis: The Nonlinear Programming Approach}\\[3pt]
+    \hyperlink{chapter-affine}{\textbf{Chapter V:} Affine Heaviside Composite Problems}\\[3pt]
+    \hyperlink{chapter-ip-algorithms}{\textbf{Chapter VI:} Integer Programming Based Algorithms}\\[3pt]
     \textbf{Chapter VII:} Extended Problems\\[3pt]
     \textbf{Chapter VIII:} Fractional and Doubly Composite Problems\\[3pt]
     \textbf{Chapter IX:} Numerical Implementation and Results
       \textcolor{MediumBlue}{(Junyi Liu)}\\[3pt]
-    \textbf{Chapter X:} Case Studies \textcolor{MediumBlue}{(Junyi Liu)}
+    \hyperlink{chapter-case-studies}{\textbf{Chapter X:} Case Studies \textcolor{MediumBlue}{(Junyi Liu)}}
   \end{flushleft}
 \end{frame}
 
@@ -165,6 +165,7 @@
 \section{Chapter I: Introduction}
 
 \begin{frame}[plain]
+  \hypertarget{chapter-introduction}{}
   \centering
   \vfill
   {\usebeamercolor[fg]{structure}\usebeamerfont{title}Chapter I\par}
@@ -498,6 +499,7 @@
 \section{Chapter II: Prerequisites, a second course in optimization}
 
 \begin{frame}[plain]
+  \hypertarget{chapter-prerequisites}{}
   \centering
   \vfill
   {\usebeamercolor[fg]{structure}\usebeamerfont{title}Chapter II\par}
@@ -784,6 +786,7 @@
 \section{Chapter III: Paradigm changes -- Sources of discontinuity}
 
 \begin{frame}[plain]
+  \hypertarget{chapter-paradigm}{}
   \centering
   \vfill
   {\usebeamercolor[fg]{structure}\usebeamerfont{title}Chapter III\par}
@@ -1140,6 +1143,7 @@
 \section{Chapter IV: Solution analysis}
 
 \begin{frame}[plain]
+  \hypertarget{chapter-solution-analysis}{}
   \centering
   \vfill
   {\usebeamercolor[fg]{structure}\usebeamerfont{title}Chapter IV\par}
@@ -1651,7 +1655,64 @@
   \]
 \end{frame}
 
-% Original slide 63.  (Slide 62 not yet photographed.)
+% Original slide 62.
+\begin{frame}
+  \footnotesize
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+
+  \textbf{5 conditions:} on the limit
+  $\mathbf{x}^*=\displaystyle\lim_{\nu\to\infty}\mathbf{x}^\nu$ for fixed
+  $\lambda>\mathrm{Lip}_c+K\,\mathrm{Lip}_\varphi$
+
+  \vspace{0.13cm}
+  \textbf{(C1)} \textcolor{MediumRed}{a pointwise sign condition:}
+  $\exists$ neighborhood $\mathcal{N}_*$ such that on
+  $P\cap\mathcal{N}_*$, the functions
+  $\{\varphi_k\}_{k\in\mathcal{K}_=(\mathbf{x}^*)}$ and
+  $\{\phi_\ell\}_{\ell\in\mathcal{L}_=(\mathbf{x}^*)}$ are nonnegative;
+
+  \vspace{0.13cm}
+  \textbf{(C2)} \textcolor{MediumRed}{satisfied by a convex PA function:}
+  \[
+    \begin{gathered}
+      \left.
+      \begin{array}{@{}c@{\quad}l@{}}
+        g_k'(\mathbf{x}^*;\mathbf{v})\leq 0
+          & \forall\,k\in\mathcal{K}_=(\mathbf{x}^*)\\
+        \mathbf{v}\in\mathcal{T}(P;\mathbf{x}^*) &
+      \end{array}
+      \right\}\\[-1pt]
+      \Longrightarrow\quad g_k'(\mathbf{x};\mathbf{v})\leq 0
+        \quad\text{for all }k\in\mathcal{K}_=(\mathbf{x}^*)
+        \text{ and all }\mathbf{x}\in\mathcal{N}_*\\[4pt]
+      \left.
+      \begin{array}{@{}c@{\quad}l@{}}
+        h_\ell'(\mathbf{x}^*;\mathbf{v})\leq 0
+          & \forall\,\ell\in\mathcal{L}_=(\mathbf{x}^*)\\
+        \mathbf{v}\in\mathcal{T}(P;\mathbf{x}^*) &
+      \end{array}
+      \right\}\\[-1pt]
+      \Longrightarrow\quad h_\ell'(\mathbf{x};\mathbf{v})\leq 0
+        \quad\text{for all }\ell\in\mathcal{L}_=(\mathbf{x}^*)
+        \text{ and all }\mathbf{x}\in\mathcal{N}_*.
+    \end{gathered}
+  \]
+
+  \vspace{0.06cm}
+  \textbf{(C3)} \textcolor{MediumRed}{functional consistency:} For all
+  $k\in\mathcal{K}_=(\mathbf{x}^*)$ and
+  $\ell\in\mathcal{L}_=(\mathbf{x}^*)$, the limits hold:
+  \[
+    \lim_{\nu\to\infty}
+      \theta_k^\varphi\bigl(g_k(\mathbf{x}^\nu),\delta_\nu\bigr)=0
+    \qquad\text{and}\qquad
+    \lim_{\nu\to\infty}
+      \theta_\ell^\phi\bigl(h_\ell(\mathbf{x}^\nu),\delta_\nu\bigr)=0
+  \]
+\end{frame}
+
+% Original slide 63.
 \begin{frame}
   \footnotesize
   \setlength{\abovedisplayskip}{4pt}
@@ -1688,14 +1749,17 @@
   solution of the Heaviside optimization problem.
 \end{frame}
 
-% Chapter V divider: subtitle awaiting user confirmation (the section-title
-% slide falls in the not-yet-photographed range 64--67).
-\section{Chapter V}
+% Chapter V divider: title restored from the front-matter directory.
+\section{Chapter V: Affine Heaviside Composite Problems}
 
 \begin{frame}[plain]
+  \hypertarget{chapter-affine}{}
   \centering
   \vfill
   {\usebeamercolor[fg]{structure}\usebeamerfont{title}Chapter V\par}
+  \vspace{0.34cm}
+  {\usebeamercolor[fg]{structure}\usebeamerfont{subtitle}\mdseries\large
+    Affine Heaviside Composite Problems\par}
   \vfill
 \end{frame}
 
@@ -1883,6 +1947,7 @@
 
 % Original slide 74.  (Slide 73 not yet photographed.)
 \begin{frame}[plain]
+  \hypertarget{chapter-ip-algorithms}{}
   \centering
   \vfill
   {\usebeamercolor[fg]{structure}\usebeamerfont{title}Chapter VI\par}
@@ -2494,6 +2559,7 @@
 
 % Case-studies PDF page 1 -- title, shown as a part divider.
 \begin{frame}[plain]
+  \hypertarget{chapter-case-studies}{}
   \centering
   \vfill
   {\usebeamercolor[fg]{structure}\large\bfseries
