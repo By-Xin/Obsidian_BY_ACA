@@ -174,3 +174,21 @@ $$
     $$
     m \geq \frac{\log(|\mathcal{H}|/\delta)}{\epsilon}
     $$
+
+
+## Generalization Gap
+
+ 当 realization assumption 不成立时, 数据集本身也可能包含噪声, 即给定完全相同的 feature $\mathbf{x}$, 其对应的 label $y$ 仍然可能不同. 则此时, 即使全局最优的 predictor 也无法得到 0 的 true risk, 即 $\inf_{h} L_{\mathcal{D}}(h) > 0$. 
+
+ 因此在 ERM 学习中, 我们只考虑相较于最优 predictor 的相对 risk, 即
+$$
+L_{\mathcal{D}}(h_S) - \inf_{h} L_{\mathcal{D}}(h) = \underbrace{L_{\mathcal{D}}(h_S) - \inf_{h \in \mathcal{H}} L_{\mathcal{D}}(h)}_{\text{excess risk}} + \underbrace{\inf_{h \in \mathcal{H}} L_{\mathcal{D}}(h) - \inf_{h} L_{\mathcal{D}}(h)}_{\text{approximation error}}
+$$
+- excess risk 表示当前训练集求出的 predictor 相较于 hypothesis space 中最优 predictor 的 true risk 差距 
+- approximation error 表示 hypothesis space 本身的设立相较于全局最优 predictor 的 true risk 差距
+
+而 excess risk 可以进一步分解为 generalization gap 与 empirical risk, 即
+$$
+L_{\mathcal{D}}(h_S) - \inf_{h \in \mathcal{H}} L_{\mathcal{D}}(h) = \underbrace{L_{\mathcal{D}}(h_S) - L_S(h_S)}_{\text{generalization gap}} + \underbrace{L_S(h_S) - L_S(h^\star)}_{\text{empirical risk} \leq 0} + \underbrace{L_S(h^\star) - L_{\mathcal{D}}(h^\star)}_{\text{concentration}}
+$$
+其中 $h^\star = \arg\min_{h \in \mathcal{H}} L_{\mathcal{D}}(h)$ 是 population 里 $\mathcal{H}$ 中最优的 predictor, 即 $h^\star = \arg\min_{h \in \mathcal{H}} L_{\mathcal{D}}(h)$. 
