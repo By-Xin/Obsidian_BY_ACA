@@ -1,0 +1,21 @@
+# Normalize all text files to LF line endings in the repo
+# (prevents Obsidian/editors from creating fake "whole-file changed" diffs)
+* text=auto eol=lf
+
+# Explicitly treat binary formats as binary (never normalize)
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.bmp binary
+*.ico binary
+*.zip binary
+*.gz binary
+*.tar binary
+*.bin binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
