@@ -342,7 +342,11 @@
         \item The first one is obvious, since $\mP_H$ projects onto $\ker(\mJ)$, thus $\mJ \mP_H = 0$. \emph{Any primal movement caused by the perturbation of predicted cost will not change the active constraints' values (in first-order approximation).}
         \item The second is less obvious.
 
-        Consider a special cost perturbation $d\hat{\vc} \in \range(\mJ^\top)$, i.e., $d\hat{\vc} = \mJ^\top d\vy$ for some $d\vy$. Then the KKT (\eqref{eq:reduced_kkt}) gives $\nabla \phi(\vz^*) + \hat{\vc} + \mJ^\top (\vy^* + d\vy) = 0$, thus the optimal solution does not change; we only need to adjust the Lagrange multiplier $\vy^*$ to balance the new cost perturbation. Thus, $d\vz = 0$.
+        Consider a special cost perturbation $d\hat{\vc} \in \range(\mJ^\top)$, i.e., $d\hat{\vc} = \mJ^\top d\vy$ for some $d\vy$. Then the KKT (\eqref{eq:reduced_kkt}) gives
+        \begin{equation}\label{eq:kktabsorb}
+            \nabla \phi(\vz^*) + \hat{\vc} + \mJ^\top (\vy^* + d\vy) = 0,
+        \end{equation}
+        thus the optimal solution does not change; we only need to adjust the Lagrange multiplier $\vy^*$ to balance the new cost perturbation. Thus, $d\vz = 0$.
 
         Meanwhile, \eqref{eq:dz_dhatc_final} gives $d\vz = -\mP_H d\hat{\vc} = -\mP_H \mJ^\top d\vy = 0$, thus $\mP_H \mJ^\top = 0$.
 
@@ -371,7 +375,7 @@
 
     \break
 
-    \begin{corollary}[Normal Filtering and Normal Invariance]
+    \begin{corollary}[Normal Filtering and Normal Invariance]\label{cor:normal_invariance}
         Let $\mathcal{N} = \range(\mJ^\top)$ be the normal space of the tangent space $\mathcal{T}$. For any $\vdelta_N \in \mathcal{N}$,
         \begin{equation}\label{eq:normal_invariance}
             \mP_H \vdelta_N = 0 .
@@ -543,7 +547,7 @@
     \break
 
     It solves with some tricks as follows. Combining the two gives the reduced system:
-    \begin{equation}
+    \begin{equation}\label{eq:jhjdy}
         \boxed{
             \mJ \mH^{-1} \mJ^\top d\vy = \mJ \mH^{-1} \ve
         }
@@ -553,7 +557,7 @@
             \mJ \mH^{-1} \mJ^\top \vv = \vr
     \end{equation}
     Then once $\vv = d\vy$ is solved, recall that $\vg = \mP_H \ve$ (\eqref{eq:regret_gradient}), $d\vz = - \mP_H d\hat{\vc}$ (\eqref{eq:dz_dhatc_final}), and $d\hat{\vc} = -\ve$ (\eqref{eq:ve_perturbation}). These three equations give $\vg = d\vz$. Further by $d\vz = \vx - \mH^{-1} \mJ^\top \vv$ (\eqref{eq:dz_dy_ve}), it gives
-    \begin{equation}
+    \begin{equation}\label{eq:gdz}
         \boxed{
             \vg = d\vz = \vx - \mH^{-1} \mJ^\top \vv
         }
@@ -561,6 +565,94 @@
 
 
 \end{frame}
+
+\begin{frame}[allowframebreaks]{LP: Quadratic Smoothing and Normal Injection}
+    LP is problematic. Consider
+    \begin{equation}
+        \vz^* \in \arg\min_{\vz} \hat{\vc}^\top \vz, \quad \text{s.t. } \mA \vz = \vb, \mG \vz \leq \vh.
+    \end{equation}
+    \begin{itemize}
+        \item Recall the previous analysis is based on $\mH = \nabla^2 \phi(\vz^*)$. However, for LP, $\mH=0$.
+        \item Since LP's optimum usually lies on some vertex, thus the solution map $\hat{\vc} \mapsto \vz^*(\hat{\vc})$ is piecewise constant, and the regret gradient $\frac{\partial R}{\partial \hat{\vc}} = \frac{\partial R}{\partial \vz^*} \frac{\partial \vz^*}{\partial \hat{\vc}} = 0$ almost everywhere.
+    \end{itemize}
+
+    Thus, here use quadratic smoothing:
+    \begin{equation}
+        \vz^* \in \arg\min_{\vz} \frac{\lambda}{2} \|\vz\|_2^2 + \hat{\vc}^\top \vz, \quad \text{s.t. } \mA \vz = \vb, \mG \vz \leq \vh.
+    \end{equation}
+    Then $\phi(\vz) = \frac{\lambda}{2} \|\vz\|_2^2$, and $\mH = \nabla^2 \phi(\vz^*) = \lambda \mI$ is positive definite.
+
+    \newpage
+
+    Based on this smoothing, the previous algorithm can be applied (recall $\vv =  d\vy$):
+
+    \begin{align}
+        &(\eqref{eq:jhjdy}) \quad  \mJ\mH^{-1}\mJ^\top \vv = \mJ\mH^{-1}\ve &&\implies \mJ\mJ^\top \vv = \mJ\ve \quad \label{eq:jjvje}\\
+        &(\eqref{eq:gdz})\quad \vg = d\vz = \vx - \mH^{-1}\mJ^\top\vv &&\implies \vg =  \frac{1}{\lambda}(\ve - \mJ^\top \vv) \label{eq:ve_jtv}
+    \end{align}
+\begin{block}{\small{Interpretation of $\mJ\mJ^\top \vv = \mJ\ve$}}
+    \begin{itemize}
+        \item When $\mJ$ is full row rank, \eqref{eq:jjvje} gives $\vv = (\mJ\mJ^\top)^{-1}\mJ\ve$, then $\underline{\mJ^\top \vv} = \mJ^\top (\mJ\mJ^\top)^{-1}\mJ\ve := \mPi_{\mathcal{N}} \ve := \underline{\ve_{\mathcal{N}}}$,
+        where $\mPi_{\mathcal{N}} = \mJ^\top (\mJ \mJ^\top)^{-1}\mJ$ is the projection onto the normal space $\mathcal{N} = \range(\mJ^\top)$, and $\ve_{\mathcal{N}}$ is the normal component of $\ve$.
+
+        \item Accordingly, $\mPi_{\mathcal{T}} = \mI - \mPi_{\mathcal{N}}$ is the projection onto the tangent space $\mathcal{T} = \ker(\mJ)$. This can also be seen from \eqref{eq:jjvje} that $\mJ\ve - \mJ\mJ^\top \vv = \mJ(\ve - \mJ^\top \vv) = 0,$
+        thus $\underline{\ve - \mJ^\top \vv} = \ve - \mJ^\top (\mJ\mJ^\top)^{-1}\mJ\ve = \mPi_{\mathcal{T}} \ve := \underline{\ve_{\mathcal{T}}} \in \ker(\mJ)$.
+        \item Therefore, $\ve \equiv \mPi_{\mathcal{T}} \ve + \mPi_{\mathcal{N}} \ve := \ve_{\mathcal{T}} + \ve_{\mathcal{N}}$. And thus \eqref{eq:ve_jtv} equivalents to $\vg = \frac{1}{\lambda}(\ve - \ve_{\mathcal{N}}) = \frac{1}{\lambda}\ve_{\mathcal{T}}$, which gives:
+        \begin{equation}
+            \underbrace{\vg}_{\text{tangent regret grad}} = \underbrace{\lambda^{-1} \ve}_{\text{scaled MSE grad}}  - \underbrace{\lambda^{-1} \ve_{\mathcal{N}}}_{\text{scaled normal component}}
+        \end{equation}
+    \end{itemize}
+
+
+\end{block}
+
+
+
+    \newpage
+
+    However, even after smoothing, the regret gradient $\vg$ may still be weak and nearly constant over large regions.
+    \begin{block}{One possible understanding:}
+        \begin{itemize}
+            \item  $\dim{\mathcal{T}} = \dim{\ker(\mJ)} = n - k$ (given $\mJ \in \R^{k\times n}$ full row rank), and $\dim{\mathcal{N}} = \dim{\range(\mJ^\top)} = k$. Recall that $k$ is the number of independent active constraints, and for LP's where usually optimum lies on some vertex, $k$ is usually large, and thus $\dim{\mathcal{T}} \ll \dim{\mathcal{N}}$.
+            \item Then, heuristically, $\mathbb{E}(\|\ve_{\mathcal{T}}\|^2) \propto \dim{\mathcal{T}} \ll \dim{\mathcal{N}} \propto \mathbb{E}(\|\ve_{\mathcal{N}}\|^2)$, thus $\|\ve_{\mathcal{T}}\| \ll \|\ve_{\mathcal{N}}\|$, and thus $\vg = \frac{1}{\lambda}\ve_{\mathcal{T}}$ is weak.
+        \end{itemize}
+
+    \end{block}
+
+    \break
+
+    To mitigate this, consider
+    \begin{equation}
+        \vg_{\text{inj}} := \vg + \beta \cdot \frac{\|\vg\|}{\|\lambda^{-1} \ve_{\mathcal{N}}\|} \cdot \lambda^{-1} \ve_{\mathcal{N}} = \frac{1}{\lambda}\ve_{\mathcal{T}} + \beta \cdot \frac{\|\vg\|}{\|\ve_{\mathcal{N}}\|} \cdot \ve_{\mathcal{N}}.
+    \end{equation}
+
+    \begin{block}{Another viewpoint:}
+        \begin{itemize}
+        \item From \eqref{eq:kktabsorb}, any normal perturbation of the predicted cost $\hat{\vc}$ will not change the optimal solution, and will be absorbed by the Lagrange multiplier $\vy^*$.
+        \item Yet according to the complementary slackness, a constraint is active iff $\vy^*_i > 0$, or equivalently, $\vy^*_i = 0$ iff the constraint is inactive.
+        \item  Thus, a change in the normal direction will change the Lagrange multiplier $\vy^*$, and thus the active set may change.
+        \item This gives LP a chance to escape from the current active set, and thus escape from the current vertex, and explore other vertices.
+        \end{itemize}
+
+    \end{block}
+
+
+
+\end{frame}
+
+%------------------------------------------------
+
+\section{Experiments}
+
+\begin{frame}[plain,noframenumbering]
+    \sectionpage
+\end{frame}
+
+\input{experiments.tex}
+
+
+
+
 
 %------------------------------------------------
 
