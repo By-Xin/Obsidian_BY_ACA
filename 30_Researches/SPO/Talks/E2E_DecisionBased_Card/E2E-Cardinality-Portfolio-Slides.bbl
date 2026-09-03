@@ -1,0 +1,254 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{ElmachtoubGrigas2021SPO}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=72760cf91be43b7e1173e52ad2ec220a}{%
+           family={Elmachtoub},
+           familyi={E\bibinitperiod},
+           given={Adam\bibnamedelima N.},
+           giveni={A\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+        {{hash=16bb9e78aff555f22b13c959b6e5fbe4}{%
+           family={Grigas},
+           familyi={G\bibinitperiod},
+           given={Paul},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{5bfb2026397a29247bcd040100a45599}
+      \strng{fullhash}{5bfb2026397a29247bcd040100a45599}
+      \strng{fullhashraw}{5bfb2026397a29247bcd040100a45599}
+      \strng{bibnamehash}{5bfb2026397a29247bcd040100a45599}
+      \strng{authorbibnamehash}{5bfb2026397a29247bcd040100a45599}
+      \strng{authornamehash}{5bfb2026397a29247bcd040100a45599}
+      \strng{authorfullhash}{5bfb2026397a29247bcd040100a45599}
+      \strng{authorfullhashraw}{5bfb2026397a29247bcd040100a45599}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Management Science}
+      \field{number}{1}
+      \field{title}{Smart ``Predict, then Optimize''}
+      \field{volume}{68}
+      \field{year}{2021}
+      \field{pages}{9\bibrangedash 26}
+      \range{pages}{18}
+    \endentry
+    \entry{FamaFrench2015FiveFactor}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=cf1dad75742cba1f00261a0ee70e7ba2}{%
+           family={Fama},
+           familyi={F\bibinitperiod},
+           given={Eugene\bibnamedelima F.},
+           giveni={E\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
+        {{hash=4ca55f4db61ae3245d066a218dca72c8}{%
+           family={French},
+           familyi={F\bibinitperiod},
+           given={Kenneth\bibnamedelima R.},
+           giveni={K\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \strng{namehash}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{fullhash}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{fullhashraw}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{bibnamehash}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{authorbibnamehash}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{authornamehash}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{authorfullhash}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \strng{authorfullhashraw}{ac5c181ffbfa45c593cd5483bcb59bd3}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Financial Economics}
+      \field{number}{1}
+      \field{title}{A Five-factor Asset Pricing Model}
+      \field{volume}{116}
+      \field{year}{2015}
+      \field{pages}{1\bibrangedash 22}
+      \range{pages}{22}
+    \endentry
+    \entry{CuiZhengZhuSun2013Relaxations}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=ee80ee9732d177f7c5452f8ca5b78a42}{%
+           family={Cui},
+           familyi={C\bibinitperiod},
+           given={Xiangyu},
+           giveni={X\bibinitperiod}}}%
+        {{hash=13e2c2e0e2c8e0acbaed5ede2268b193}{%
+           family={Zheng},
+           familyi={Z\bibinitperiod},
+           given={Xiaoling},
+           giveni={X\bibinitperiod}}}%
+        {{hash=0e44593a7680e4a5aa840a9fe64f2659}{%
+           family={Zhu},
+           familyi={Z\bibinitperiod},
+           given={Shushang},
+           giveni={S\bibinitperiod}}}%
+        {{hash=1003bdc86336d38192279bce840d8588}{%
+           family={Sun},
+           familyi={S\bibinitperiod},
+           given={Xiaoling},
+           giveni={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{ac5c728baed41a9cb893b370dfad158c}
+      \strng{fullhash}{2de7fe45c69a61eb21518fb3dd5925b7}
+      \strng{fullhashraw}{2de7fe45c69a61eb21518fb3dd5925b7}
+      \strng{bibnamehash}{2de7fe45c69a61eb21518fb3dd5925b7}
+      \strng{authorbibnamehash}{2de7fe45c69a61eb21518fb3dd5925b7}
+      \strng{authornamehash}{ac5c728baed41a9cb893b370dfad158c}
+      \strng{authorfullhash}{2de7fe45c69a61eb21518fb3dd5925b7}
+      \strng{authorfullhashraw}{2de7fe45c69a61eb21518fb3dd5925b7}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Global Optimization}
+      \field{number}{4}
+      \field{title}{Convex Relaxations and {MIQCQP} Reformulations for a Class of Cardinality-constrained Portfolio Selection Problems}
+      \field{volume}{56}
+      \field{year}{2013}
+      \field{pages}{1409\bibrangedash 1423}
+      \range{pages}{15}
+    \endentry
+    \entry{WiegeleZhao2022SDP}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=1cd3603a9dfbb623151650ef43805563}{%
+           family={Wiegele},
+           familyi={W\bibinitperiod},
+           given={Angelika},
+           giveni={A\bibinitperiod}}}%
+        {{hash=fc9df660d0643dba8f10d6132d7264c0}{%
+           family={Zhao},
+           familyi={Z\bibinitperiod},
+           given={Shun},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{fullhash}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{fullhashraw}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{bibnamehash}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{authorbibnamehash}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{authornamehash}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{authorfullhash}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \strng{authorfullhashraw}{0c1ceca03ff37b1d2f9e5eacfdd31470}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Operations Research Proceedings 2021}
+      \field{title}{Tight {SDP} Relaxations for Cardinality-constrained Problems}
+      \field{year}{2022}
+      \field{pages}{167\bibrangedash 172}
+      \range{pages}{6}
+    \endentry
+    \entry{AgrawalAmosEtAl2019Layers}{inproceedings}{}{}
+      \name{author}{6}{}{%
+        {{hash=a01da305d6760b61e7a044009347e400}{%
+           family={Agrawal},
+           familyi={A\bibinitperiod},
+           given={Akshay},
+           giveni={A\bibinitperiod}}}%
+        {{hash=783779089b4b78ed86b990f3397d0abb}{%
+           family={Amos},
+           familyi={A\bibinitperiod},
+           given={Brandon},
+           giveni={B\bibinitperiod}}}%
+        {{hash=05d60e84db408eae57c88cbd2f3de051}{%
+           family={Barratt},
+           familyi={B\bibinitperiod},
+           given={Shane},
+           giveni={S\bibinitperiod}}}%
+        {{hash=ec94d94cc487dd71939a90cbeaaf47d0}{%
+           family={Boyd},
+           familyi={B\bibinitperiod},
+           given={Stephen},
+           giveni={S\bibinitperiod}}}%
+        {{hash=d50bdcda78beb231a5057a4372dac2fd}{%
+           family={Diamond},
+           familyi={D\bibinitperiod},
+           given={Steven},
+           giveni={S\bibinitperiod}}}%
+        {{hash=0288715a83a3349e44f9292c5c2149f7}{%
+           family={Kolter},
+           familyi={K\bibinitperiod},
+           given={J.\bibnamedelimi Zico},
+           giveni={J\bibinitperiod\bibinitdelim Z\bibinitperiod}}}%
+      }
+      \strng{namehash}{1bd4fa79a599220ad95416c72b7b66b1}
+      \strng{fullhash}{36ca76dae6243cba5552395020bc03db}
+      \strng{fullhashraw}{36ca76dae6243cba5552395020bc03db}
+      \strng{bibnamehash}{36ca76dae6243cba5552395020bc03db}
+      \strng{authorbibnamehash}{36ca76dae6243cba5552395020bc03db}
+      \strng{authornamehash}{1bd4fa79a599220ad95416c72b7b66b1}
+      \strng{authorfullhash}{36ca76dae6243cba5552395020bc03db}
+      \strng{authorfullhashraw}{36ca76dae6243cba5552395020bc03db}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Advances in Neural Information Processing Systems}
+      \field{title}{Differentiable Convex Optimization Layers}
+      \field{volume}{32}
+      \field{year}{2019}
+      \field{pages}{9562\bibrangedash 9574}
+      \range{pages}{13}
+    \endentry
+    \entry{PolitisRomano1991CBB}{incollection}{}{}
+      \name{author}{2}{}{%
+        {{hash=316247c93f9ac61484ddbcbbf2b77150}{%
+           family={Politis},
+           familyi={P\bibinitperiod},
+           given={Dimitris\bibnamedelima N.},
+           giveni={D\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+        {{hash=043cf59d11cb3a7265c4f148bff2975d}{%
+           family={Romano},
+           familyi={R\bibinitperiod},
+           given={Joseph\bibnamedelima P.},
+           giveni={J\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Wiley}%
+      }
+      \strng{namehash}{759ce237c059bc725267ac98f4109171}
+      \strng{fullhash}{759ce237c059bc725267ac98f4109171}
+      \strng{fullhashraw}{759ce237c059bc725267ac98f4109171}
+      \strng{bibnamehash}{759ce237c059bc725267ac98f4109171}
+      \strng{authorbibnamehash}{759ce237c059bc725267ac98f4109171}
+      \strng{authornamehash}{759ce237c059bc725267ac98f4109171}
+      \strng{authorfullhash}{759ce237c059bc725267ac98f4109171}
+      \strng{authorfullhashraw}{759ce237c059bc725267ac98f4109171}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Exploring the Limits of Bootstrap}
+      \field{title}{A Circular Block-resampling Procedure for Stationary Data}
+      \field{year}{1991}
+      \field{pages}{263\bibrangedash 270}
+      \range{pages}{8}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
