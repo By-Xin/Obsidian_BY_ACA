@@ -14,3 +14,6 @@
 
 # Rendered pages used only for visual QA
 tmp/
+
+# One-off frame-break experiments
+test_break.*
