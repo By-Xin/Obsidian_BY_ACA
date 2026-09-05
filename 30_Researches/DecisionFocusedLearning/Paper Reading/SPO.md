@@ -163,12 +163,12 @@ $$
 
 - 对于最初的 SPO 定义, 其中一个比较麻烦的地方在于 $\max_{\mathbf{w} \in W^\star(\hat{\mathbf{c}})} \mathbf{c}^\top \mathbf{w}$ 的求解困难, 因为本身还内含了一个 $\arg\min$ 的约束. 
   - 注意到, 对于 $\mathbf{w} \in W^\star(\hat{\mathbf{c}})\subseteq \mathcal{S}$, 有 $\hat{\mathbf{c}}^\top \mathbf{w} = z^\star(\hat{\mathbf{c}})$. 且对任意 $\mathbf{w} \in \mathcal{S}$, 有 $\hat{\mathbf{c}}^\top \mathbf{w} \geq z^\star(\hat{\mathbf{c}})$. 因此, $W^\star(\hat{\mathbf{c}})$ 等价于 $\mathcal{S} \cap \{\mathbf{w} \mid \hat{\mathbf{c}}^\top \mathbf{w} \leq z^\star(\hat{\mathbf{c}})\}$. 故 $\max_{\mathbf{w} \in W^\star(\hat{\mathbf{c}})} \mathbf{c}^\top \mathbf{w}$ 可以改写为:
-        $$
-        \begin{aligned}
-        & \max_{\mathbf{w}} \mathbf{c}^\top \mathbf{w} \quad \text{s.t.}~ \mathbf{w} \in W^\star(\hat{\mathbf{c}}) \\
-        \iff &\max_{\mathbf{w}} \mathbf{c}^\top \mathbf{w} \quad \text{s.t.}~ \mathbf{w} \in \mathcal{S},~ \hat{\mathbf{c}}^\top \mathbf{w} \leq z^\star(\hat{\mathbf{c}}) \qquad (1)
-        \end{aligned}
-        $$
+      $$
+      \begin{aligned}
+      & \max_{\mathbf{w}} \mathbf{c}^\top \mathbf{w} \quad \text{s.t.}~ \mathbf{w} \in W^\star(\hat{\mathbf{c}}) \\
+      \iff &\max_{\mathbf{w}} \mathbf{c}^\top \mathbf{w} \quad \text{s.t.}~ \mathbf{w} \in \mathcal{S},~ \hat{\mathbf{c}}^\top \mathbf{w} \leq z^\star(\hat{\mathbf{c}}) \qquad (1)
+      \end{aligned}
+      $$
 - 对上述等价变形 $(1)$, 其可以通过 Lagrangian duality 来进行求解. 其 Lagrangian 为
   $$
   \mathcal{L}(\mathbf{w}, \alpha) = \mathbf{c}^\top \mathbf{w} - \alpha (\hat{\mathbf{c}}^\top \mathbf{w} - z^\star(\hat{\mathbf{c}})), \quad \alpha \geq 0
@@ -184,7 +184,7 @@ $$
   $$
   \max_{\mathbf{w} \in W^\star(\hat{\mathbf{c}})} \mathbf{c}^\top \mathbf{w} = \inf_{\alpha \geq 0} q(\alpha).
   $$
-  - B-L 定理本身考虑的是: 关于约束优化问题 $p = \inf_{\mathbf{x}} f(\mathbf{x}) \quad \text{s.t.}~ \mathbf{g}(\mathbf{x}) = [g_1(\mathbf{x}), \ldots, g_m(\mathbf{x})]^\top \leq 0, $
+  - B-L 定理本身考虑的是: 关于约束优化问题 $p = \inf_{\mathbf{x}} f(\mathbf{x}) \quad \text{s.t.}~ \mathbf{g}(\mathbf{x}) = [g_1(\mathbf{x}), \ldots, g_m(\mathbf{x})]^\top \leq 0,$
     考虑其 value function: 对于给定 $\mathbf{b} \in \mathbb{R}^m$, 定义 $v(\mathbf{b}) := \inf_{\mathbf{g}(\mathbf{x}) \leq \mathbf{b}} f(\mathbf{x})$. 若假设 $f,g_i$ 是 closed function (即其 epigraph 是 closed set), 且存在 $\hat{\lambda}_0 \geq 0$, $\hat{\boldsymbol{\lambda}} \in \mathbb{R}^m_+$, 使得 $\hat{\lambda}_0 f(\mathbf{x}) + \hat{\boldsymbol{\lambda}}^\top \mathbf{g}(\mathbf{x})$ 具有 compact level sets (对于任意实数 $r$, $\{\mathbf{x} \mid \hat{\lambda}_0 f(\mathbf{x}) + \hat{\boldsymbol{\lambda}}^\top \mathbf{g}(\mathbf{x}) \leq r\}$ 是 compact), 则只要 $v(\mathbf{b})$ 是 finite 的, 其 infimum 就是 attainable 的. 此外, 若进一步 $f, g_i$ 是 convex, 且 dual 是 finite, 则 strong duality 成立.
   - 可以逐一验证, 在当前的 SPO loss 的定义中确实服从上述条件. 具体细节暂时省略. 
 
