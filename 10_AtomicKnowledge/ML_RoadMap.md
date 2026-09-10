@@ -1,4 +1,6 @@
-# Categories of Machine Learning
+# Machine Learning RoadMap（ML 知识图谱 MOC）
+
+> 本页是机器学习领域的导航图（Map of Content）。其中大量 `[[...]]` 链接指向**尚未创建的原子笔记**，即待补充清单——在 Obsidian 中点击即可新建。链接目标均为裸文件名，不受目录调整影响。
 
 ## 1. From Statistical Learning Aspect
 ### 1.1 [[Frequencist]]
