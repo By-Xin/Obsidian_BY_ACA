@@ -229,9 +229,13 @@ $$
 $$
 
 
-## Primal-Dual Series
+## Primal-Dual Hybrid Gradient (PDHG) and its Variants
 
-### Primal-Dual Hybrid Gradient (PDHG)
+### PDHG (Chambolle-Pock)
+
+> [!quote]
+> References
+> - A. Chambolle and T. Pock (2011) A first-order primal-dual algorithm for convex problems with applications to imaging. J. Math. Imaging Vision 40 (1), pp. 120–145.
 
 PDHG is a primal-dual algorithm to solve the saddle point problem. We start from maybe the most simple case, the LP problem:
 $$
@@ -259,7 +263,7 @@ $$
 $$
 
 - Intuitively, given Lagrangian multipliers $\bm{y}^k$, we calculate the $\min_{\bm{x} \geq 0} \mathcal{L}(\bm{x}, \bm{y}^k)$; then given the primal variable $\bm{x}^{k+1}$, we calculate the $\max_{\bm{y}} \mathcal{L}(\bm{x}^{k+1}, \bm{y})$. Proximal regularization is added to stabilize the update.
-- However, since the primal and dual variables are tightly coupled, such saddle point dynamics may cause oscillation and divergence. 
+- However, since the primal and dual variables are tightly coupled ($\nabla_x \mathcal{L} = f(\bm{y}), \nabla_y \mathcal{L} = f(\bm{x})$), such saddle point dynamics may cause oscillation and divergence. 
 
 ***Chambolle-Pock PDHG***. To stabilize the update, Chambolle and Pock proposed to add an extrapolation step to the primal variable $\bm{x}$, denote an extrapolated variable $\bar{\bm{x}}^{k+1} = \bm{x}^{k+1} + (\bm{x}^{k+1} - \bm{x}^k)$, and then update the dual variable $\bm{y}$ by $\bar{\bm{x}}^{k+1}$ instead of $\bm{x}^{k+1}$:
 $$
@@ -270,3 +274,69 @@ $$
 \right\} = \bm{y}^k - \sigma (A \bar{\bm{x}}^{k+1} - \bm{b}).
 \end{aligned}
 $$
+
+- Here, we call $\bar{\bm{x}}$ an extrapolation point for disentangle. Since $\bm{x}, \bm{y}$ are so closely related, the idea is to use $\bm{x^{k+1}}- \bm{x}$ to first predict the moving direction, to get a predicition, or potential of the next step $\bm{\bar{x}}$; then use this predicted point to update $\bm{y}$. 
+- Such extrapolation can be viewed as a correction, kind of like rather than letting the primal-dual chasing after each other, use this extrapolation to mark out the real direction.
+
+### Restart PDHG (rPDHG)
+
+### PDHG for LP
+
+> [!quote]
+> References
+> - D. Applegate, M. Díaz, O. Hinder, H. Lu, M. Lubin, B. O’Donoghue, and W. Schudy (2021) Practical large-scale linear programming using primal-dual hybrid gradient. Proc. NeurIPS 34, pp. 20243–20257. 
+
+***Motivation***. A key pervasive issue of first-order methods is *tailing-off effect*: convergence is fast at first, but then slows down at high-precision regime. PDLP wants to utilize PDHG for high-precision LP solving.
+
+Consider problem:
+$$
+\begin{aligned}
+\min_{\bm{x} \in \mathbb{R}^n} \quad &\bm{c}^\top \bm{x} \\
+\text{s.t. }\quad \bm{G}_{m_1\times n}\bm{x} &\geq \bm{h}_{m_1}, \\
+\quad \bm{A}_{m_2\times n}\bm{x} &= \bm{b}_{m_2}, \\
+\quad \bm{l}_{n} \leq \bm{x} &\leq \bm{u}_{n}.
+\end{aligned}
+$$
+The corresponding Lagrangian function is:
+$$
+\begin{aligned}
+\mathcal{L}(\bm{x}, \bm{y}) &= \bm{c}^\top \bm{x} - \bm{y_1}^\top (\bm{G}\bm{x} - \bm{h}) - \bm{y_2}^\top (\bm{A}\bm{x} - \bm{b}) \\
+& := \bm{c}^\top \bm{x} - \bm{y}^\top \bm{K} \bm{x} +\bm{q}^\top \bm{y},
+\end{aligned}
+$$
+where $\bm{K}^\top = \begin{bmatrix} \bm{G}^\top & \bm{A}^\top \end{bmatrix}$, $\bm{q}^\top = \begin{bmatrix} \bm{h}^\top & \bm{b}^\top \end{bmatrix}$,
+and with $\mathcal{X} := \{\bm{x} \in \mathbb{R}^n \mid \bm{l} \leq \bm{x} \leq \bm{u}\}$, $\mathcal{Y} := \{\bm{y} \in \mathbb{R}^{m_1 + m_2} \mid \bm{y_1} \geq 0\}$
+$$
+\min_{\bm{x} \in \mathcal{X}} \max_{\bm{y} \in \mathcal{Y}} \mathcal{L}(\bm{x}, \bm{y}) = \min_{\bm{x} \in \mathcal{X}} \max_{\bm{y} \in \mathcal{Y}} \left\{ \bm{c}^\top \bm{x} - \bm{y}^\top \bm{K} \bm{x} +\bm{q}^\top \bm{y} \right\}.
+$$
+
+
+
+
+### Barrier Primal-Dual Hybrid Gradient (BPDHG)
+
+> [!quote]
+> References
+> - Zhou, Yingxin, Stefano Cipolla, and Phan T. Vuong. "A Barrier Primal Dual Hybrid Gradient Method for Solving Linear Programming Problems." arXiv preprint arXiv:2608.26667 (2026).
+
+Consider the same LP problem as PDHG: $\min_{\bm{x} \in \mathbb{R}^n} \bm{c}^\top \bm{x} \text{ s.t. } \bm{A}\bm{x} = \bm{b}, \bm{x} \geq 0$. The corresponding Lagrangian function (explicitly consider $\bm{x} \geq 0$) is:
+$$
+\mathcal{L}(\bm{x}, \bm{y}) = \bm{c}^\top \bm{x} - \bm{y}^\top (\bm{A}\bm{x} - \bm{b})  - \bm{s}^\top \bm{x}.
+$$
+The KKT condition is:
+$$
+\begin{aligned}
+\nabla_{\bm{x}} \mathcal{L} &= \bm{c} - \bm{A}^\top \bm{y} - \bm{s} = 0, \\
+\bm{A}\bm{x} &= \bm{b}, \quad \bm{x} \geq 0, \\
+\bm{s} &\geq 0, \\
+\bm{X}\bm{s} &:= \text{diag}(\bm{x}) \bm{s} = \bm{0}.
+\end{aligned}
+$$
+
+
+
+***Motivation***. A problem for PDHG is that, for its primal-update $\bm{x}^{k+1} = \max\{\bm{x}^k + \tau (\bm{A}^\top \bm{y}^k - \bm{c}), 0\}$, the projection (negative-truncation) will cause a phenomenon: if some element is oscillating around $0$, then the value will oscillate between small positive and zero. 
+
+Such fluctuation may be problematic. Recall that, for the original problem the complementary slackness condition $\bm{X}\bm{s} = \bm{0}$ may give one of the following cases:
+- $x^\star_i = 0$ and $s^\star_i > 0$: In a neighborhood of the optimal point, $x_i^k - \tau s_i^k < 0$, and will give a stationary 0. 
+- $x^\star_i = 0$ and $s^\star_i = 0$: This is a degenerate case, a possible perspective. In this regime, $x_i^k - \tau s_i^k$ may have unstable sign, and thus may oscillate between small positive and zero.
