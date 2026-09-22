@@ -339,4 +339,4 @@ $$
 
 Such fluctuation may be problematic. Recall that, for the original problem the complementary slackness condition $\bm{X}\bm{s} = \bm{0}$ may give one of the following cases:
 - $x^\star_i = 0$ and $s^\star_i > 0$: In a neighborhood of the optimal point, $x_i^k - \tau s_i^k < 0$, and will give a stationary 0. 
-- $x^\star_i = 0$ and $s^\star_i = 0$: This is a degenerate case, a possible perspective. In this regime, $x_i^k - \tau s_i^k$ may have unstable sign, and thus may oscillate between small positive and zero.
+- $x^\star_i = 0$ and $s^\star_i = 0$: This is a degenerate case, a possible perspective. In this regime, $x_i^k - \tau s_i^k$ may have unstable sign, and thus may oscillate between small positive and zero. 
