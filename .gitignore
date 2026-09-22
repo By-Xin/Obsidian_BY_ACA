@@ -1,11 +1,26 @@
-# Workbench - 工作中的项目，不上传
-30_Workbench/
-
 # macOS
 .DS_Store
 
 # Obsidian
 .obsidian/
 
+# System junk
+debug.log
 
-
+# LaTeX build artifacts
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.xdv
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.synctex.gz
+*-SAVE-ERROR

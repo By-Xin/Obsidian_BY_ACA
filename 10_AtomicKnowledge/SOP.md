@@ -107,9 +107,6 @@ ByAca/
 ├── cs.IT_InfoTheory/                 # 信息论
 ├── cs.DS_Algorithms/                 # 算法
 ├── econ.EM_Econometrics/             # 计量经济学
-│
-│ ══════════════ 其他 ══════════════
-└── _Misc/                            # 杂项（临时存放）
 ```
 
 ### 分类体系对照表
@@ -129,7 +126,8 @@ ByAca/
 | `cs.IT_InfoTheory` | 信息论 | 熵、KL散度 |
 | `cs.DS_Algorithms` | 算法 | 数据结构、复杂度 |
 | `econ.EM_Econometrics` | 计量经济学 | 面板数据、因果推断 |
-| `_Misc` | 杂项 | 临时存放 |
+
+> 难以归类的内容先放仓库根的 `00_Inbox/`，定期清理后归位。
 
 ---
 
@@ -288,7 +286,7 @@ related_concepts:
   │
   ├─ 综述/多概念整合？   → 20_StudyNotes/Topics/
   │
-  └─ 难以归类？          → _Misc/
+  └─ 难以归类？          → 00_Inbox/（仓库根，定期清理后归位）
 ```
 
 ### 常见边界案例
@@ -439,8 +437,6 @@ related_concepts:
 - [ ] 目录规模 5~30 篇
 
 ### 仓库级
-- [ ] INDEX.md 已更新
-- [ ] `_Misc/` 定期清理
 - [ ] 无孤立文件
 
 ---
@@ -449,9 +445,9 @@ related_concepts:
 
 | 周期 | 任务 |
 |------|------|
-| 每次添加 | 更新 README, 添加链接 |
+| 每次添加 | 添加双链 |
 | 每周 | 检查重复, 补充 YAML |
-| 每月 | 更新 INDEX, 清理 _Misc |
+| 每月 | 清理 00_Inbox |
 
 ---
 

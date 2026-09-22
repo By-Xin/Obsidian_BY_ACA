@@ -15,44 +15,20 @@ related_concepts:
 
 > 概率论基础理论
 
-## 📁 文件夹结构
+## 📚 领域概述
 
-```
-math.PR_Probability/
-├── Exponential_Family.md
-├── Central_Limit_Theorem.md
-└── Convergence_in_Statistics.md
-```
-
-## 🎯 核心概念
-
-### 概率论基础
-
-- **[[Exponential_Family]]** - 指数族分布
-- **[[Central_Limit_Theorem]]** - 中心极限定理
-  - Lindeberg-Levy CLT
-  - Lindeberg-Feller CLT
-  - Lyapunov CLT
-- **[[Convergence_in_Statistics]]** - 收敛性
-  - 均方收敛 (Mean Square Convergence)
-  - 几乎必然收敛 (Almost Sure Convergence)
-  - 依概率收敛 (Convergence in Probability)
-  - 依分布收敛 (Convergence in Distribution)
+本目录收录概率论核心概念笔记，包括指数族分布、极限定理、收敛理论，以及随机变量生成（见 `Random_Variable_Generation/` 子目录）。
 
 ## 🔗 相关领域
 
-- [[math.ST_Statistics]] - 数理统计
-- [[Law_of_Large_Numbers]] - 大数定律
-- [[stat.ME_Methodology]] - 统计方法论
+- `math.RA_RealAnalysis/` — 测度论基础
+- `stat.IN_Inference/` — 统计推断
+- `stat.TS_TimeSeries/` — 随机过程与时间序列
+- `ml.TH_Theory/` — 学习理论
 
-## 📌 学习路径
+## 📌 待补充主题
 
-1. **分布理论**: 从指数族分布开始
-2. **极限定理**: 学习中心极限定理及其变体
-3. **收敛理论**: 理解不同类型的收敛及其关系
-
----
-
-*最后更新: 2026-01-17*
-
-
+- [ ] 大数定律的完整表述与证明
+- [ ] 马尔可夫链
+- [ ] MCMC 方法
+- [ ] 常见分布族速查

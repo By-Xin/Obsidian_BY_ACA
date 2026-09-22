@@ -4,29 +4,20 @@
 
 ## 📚 领域概述
 
-优化理论研究如何在约束条件下找到目标函数的最优解，是机器学习和统计学习的核心数学工具。
+优化理论研究如何在约束条件下找到目标函数的最优解，是机器学习和统计学习的核心数学工具。目前笔记以函数正则性（可微性、连续性条件）与常用不等式为主。
 
-## 📁 当前笔记
+## 🔗 相关领域
 
-| 文件名 | 主题 | 相关概念 |
-|------|------|----------|
-| `Convex_Optimization.md` | 凸优化 | 凸函数、凸集、最优性条件 |
-| `Lagrange_Duality.md` | 拉格朗日对偶 | 对偶问题、KKT 条件 |
-| `Ck_Functions.md` | $C^k$ 函数 | 可微性、Hölder 条件 |
-| `Holder_Continuous.md` | Hölder 连续 | 连续性强度、正则性 |
-| `Lipschitz_Continuous.md` | Lipschitz 连续 | 有界变化率、光滑性分析 |
-| `Inequalities.md` | 不等式速查表 | 纯代数、分析、概率集中不等式 |
-
-## 🔗 跨目录关联
-
-- `math.LA_LinearAlgebra/` - 线性代数基础
-- `ml.TH_MachineLearning/02_Methods/` - 机器学习优化算法
-- `ml.TH_MachineLearning/03_DeepLearning/` - 深度学习优化
+- `math.LA_LinearAlgebra/` — 线性代数基础
+- `math.RA_RealAnalysis/` — 分析学基础
+- `ml.AL_Algorithms/` — 机器学习优化算法
+- `ml.DL_DeepLearning/` — 深度学习优化
 
 ## 📌 待补充主题
 
+- [ ] 凸优化与最优性条件
 - [ ] KKT 条件详解
-- [ ] 梯度下降与变体
+- [ ] 拉格朗日对偶
 - [ ] 近端梯度法 (Proximal Gradient)
 - [ ] 牛顿法与拟牛顿法
 - [ ] 随机优化
