@@ -1,7 +1,7 @@
 # ByAca 知识库整理规范 SOP
 
 > Standard Operating Procedure for Organizing the ByAca Knowledge Base  
-> Version 5.0 | 最后更新: 2026-01-17
+> Version 6.0 | 最后更新: 2026-09-22
 
 ---
 
@@ -28,13 +28,20 @@
 ```
 ByAca/
 ├── 00_Dailies/              # 每日笔记 (时间线)
+├── 00_Inbox/                # 收件箱 (难归类内容, 定期清理归位)
 ├── 10_AtomicKnowledge/      # 原子知识 (单一概念, 可复用)
-├── 20_StudyNotes/           # 学习笔记 (课程、书籍、专题、论文)
-├── 30_Workbench/            # 工作台 (进行中的项目)
+├── 20_StudyNotes/           # 学习笔记 (课程、书籍、报告; 课程作业在 Lectures/{课程}/Assignments/)
+├── 30_Research/             # 研究区 (Literature=他人工作整理; Projects=自己的研究产出)
 ├── 40_Toolbox/              # 工具箱 (方法论、最佳实践)
-├── 90_Archives/             # 归档 (已完成/待处理)
-└── 99_Assets/               # 资源 (模板、图片、脚本)
+├── 90_Archives/             # 归档 (已完成项目, 不再挂"待处理"区)
+└── 99_Assets/               # 资源 (模板唯一母本、图片、脚本)
 ```
+
+### Git 与大文件规则
+
+- **LaTeX 编译产物不入库**：`.aux/.log/.fls/...` 已在根 `.gitignore`，编译时无需手工清理。
+- **大二进制不入 git**：`*.zip`、`*.mkv`、批量截图等尽量放 vault 外或删除；论文 PDF 除外（按需保留）。
+- **Beamer 模板唯一母本**在 `99_Assets/Beamer_SimplePlus_Template/`，项目内 `.sty` 副本为 vendored 编译依赖，只读。
 
 ### 内容分流原则
 
@@ -42,15 +49,16 @@ ByAca/
 |---------|---------|------|
 | **单一概念** | `10_AtomicKnowledge/` | 原子化、可链接、可复用、50-300行 |
 | **课程笔记** | `20_StudyNotes/Lectures/` | 按课程组织、线性结构 |
+| **课程作业** | `20_StudyNotes/Lectures/{课程}/Assignments/` | 与课程笔记同目录，按 Hw 编号 |
 | **书籍笔记** | `20_StudyNotes/Books/` | 按书籍章节组织 |
-| **专题综述** | `20_StudyNotes/Topics/` | 多概念整合、全景视角、500+行 |
-| **论文阅读** | `20_StudyNotes/Papers/` | 单篇论文的阅读笔记 |
-| **项目文档** | `30_Workbench/` | 进行中的研究/代码 |
+| **报告/Talk 笔记** | `20_StudyNotes/Talks/` | 单场 talk 的整理 |
+| **论文阅读** | `30_Research/Literature/` | 单篇论文的阅读笔记、领域综述 |
+| **研究项目产出** | `30_Research/Projects/` | 自己的推导、slides、实验记录，每项目一个目录带 README |
 | **方法论** | `40_Toolbox/` | 可复用的工作流程 |
 
-### Atomic vs Topics 的区分
+### Atomic vs 综述的区分
 
-| | 10_AtomicKnowledge | 20_StudyNotes/Topics |
+| | 10_AtomicKnowledge | 30_Research/Literature (综述) |
 |---|---|---|
 | **粒度** | 单一核心概念 | 多概念综合 |
 | **目的** | 知识单元、可链接 | 领域概览、导航地图 |
@@ -139,26 +147,16 @@ ByAca/
 │   └── {BookName}/           # 按书籍分目录
 │       └── Chapter_X.md
 │
-├── Lectures/                 # 课程笔记
+├── Lectures/                 # 课程笔记 + 课程作业
 │   └── {CourseName}/         # 按课程分目录
-│       └── Lecture_X.md
+│       ├── Lecture_X.md
+│       └── Assignments/      # 作业源文件 (Hw1/, Hw2/, ...)
 │
-├── Topics/                   # 专题综述 (Survey/Review)
-│   └── {Topic_Name}.md       # 多概念整合的综合性文档
-│
-├── Papers/                   # 论文阅读笔记
-│   └── {Paper_Title}.md      # 单篇论文的阅读记录
-│
-└── Paper_Reading_List.md     # 论文阅读清单
+└── Talks/                    # 报告/Talk 笔记
+    └── {Talk_Name}.md
 ```
 
-### Topics vs Papers 的区分
-
-| | Topics (专题) | Papers (论文) |
-|---|---|---|
-| **内容** | 领域综述、多论文整合 | 单篇论文阅读笔记 |
-| **来源** | 自己整理或 Survey 论文 | 具体一篇论文 |
-| **示例** | `Latent_Space_LLM_Survey_2024.md` | `Mitigating_LLM_Hallucinations_via_Conformal_Abstention.md` |
+> **注**：专题综述和论文阅读笔记不再放 20_StudyNotes——论文精读、领域综述、文献清单统一在 `30_Research/Literature/`（如 DFL 的 Paper Reading、`Latent_Space_LLM_Survey_2024.md`）。两者主题相关时用双链互引。
 
 ---
 
@@ -284,7 +282,7 @@ related_concepts:
   │
   ├─ 计量经济学？        → econ.EM_Econometrics/
   │
-  ├─ 综述/多概念整合？   → 20_StudyNotes/Topics/
+  ├─ 综述/论文阅读？     → 30_Research/Literature/
   │
   └─ 难以归类？          → 00_Inbox/（仓库根，定期清理后归位）
 ```
@@ -466,11 +464,12 @@ related_concepts:
 不需要，保持兼容性。
 
 ### Q: 综述类内容放哪里？
-放在 `20_StudyNotes/Topics/`，不要放在 `10_AtomicKnowledge/`。
+放在 `30_Research/Literature/`，不要放在 `10_AtomicKnowledge/`。
 
 ---
 
 **版本历史**
+- v6.0 (2026-09-22): 与 reorg 后实际结构对齐——30_Workbench→30_Research/{Literature,Projects}；Topics/Papers 并入 30_Research/Literature；新增 Talks/、课程作业 Assignments/、大文件与 LaTeX 产物入库规则
 - v5.0 (2026-01-17): 合并 SOP 和 SOP_for_AI，统一为单一文档
 - v4.0 (2026-01-17): 扩展为全局知识库 SOP，添加 20_StudyNotes 结构说明
 - v3.1 (2026-01-17): 添加 AI 协作 SOP 和笔记模板

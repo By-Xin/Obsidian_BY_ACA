@@ -1,0 +1,2476 @@
+\documentclass[11pt,a4paper,openany]{ctexrep}
+
+\usepackage[a4paper,margin=24mm,headheight=16pt]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{booktabs,longtable,tabularx,array,multirow}
+\usepackage{pdflscape}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,patterns,positioning,fit,shapes.geometric}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{microtype}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!45!black,
+  citecolor=green!35!black,
+  urlcolor=blue!55!black,
+  pdftitle={DOR Lecture 2: Convex Geometry Foundations for Deterministic Optimization},
+  pdfauthor={Integrated lecture note based on course slides and five standard texts}
+}
+
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.35em}
+\setstretch{1.08}
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{DOR - Deterministic Models}
+\fancyhead[R]{Lecture 2: Convex Geometry Foundations}
+\fancyfoot[C]{\thepage}
+
+\definecolor{deepblue}{RGB}{32,72,120}
+\definecolor{deepgreen}{RGB}{25,105,75}
+\definecolor{warmorange}{RGB}{170,88,26}
+\definecolor{softgray}{RGB}{246,247,249}
+\definecolor{softblue}{RGB}{239,246,255}
+\definecolor{softgreen}{RGB}{239,250,245}
+\definecolor{softyellow}{RGB}{255,249,230}
+\definecolor{softred}{RGB}{255,240,240}
+\definecolor{softpurple}{RGB}{247,241,255}
+
+\newtheorem{theorem}{定理}[chapter]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{example}[theorem]{例}
+\newtheorem{remark}[theorem]{注}
+
+\newtcolorbox{keybox}[1][]{
+  enhanced,breakable,colback=softblue,colframe=deepblue,
+  boxrule=0.8pt,arc=1mm,left=2mm,right=2mm,top=1mm,bottom=1mm,
+  title={#1},fonttitle=\bfseries
+}
+\newtcolorbox{intuitionbox}[1][]{
+  enhanced,breakable,colback=softgreen,colframe=deepgreen,
+  boxrule=0.8pt,arc=1mm,left=2mm,right=2mm,top=1mm,bottom=1mm,
+  title={#1},fonttitle=\bfseries
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced,breakable,colback=softyellow,colframe=warmorange,
+  boxrule=0.8pt,arc=1mm,left=2mm,right=2mm,top=1mm,bottom=1mm,
+  title={#1},fonttitle=\bfseries
+}
+\newtcolorbox{sourcebox}[1][]{
+  enhanced,breakable,colback=softgray,colframe=black!45,
+  boxrule=0.6pt,arc=1mm,left=2mm,right=2mm,top=1mm,bottom=1mm,
+  title={#1},fonttitle=\bfseries
+}
+\newtcolorbox{proofmap}[1][]{
+  enhanced,breakable,colback=white,colframe=purple!55!black,
+  boxrule=0.7pt,arc=1mm,left=2mm,right=2mm,top=1mm,bottom=1mm,
+  title={#1},fonttitle=\bfseries
+}
+\newtcolorbox{deepdivebox}[1][]{
+  enhanced,breakable,colback=softpurple,colframe=purple!60!black,
+  boxrule=0.8pt,arc=1mm,left=2mm,right=2mm,top=1mm,bottom=1mm,
+  title={#1},fonttitle=\bfseries
+}
+\newtcolorbox{exercisebox}[1][]{
+  enhanced,breakable,colback=white,colframe=teal!60!black,
+  boxrule=0.7pt,arc=1mm,left=2mm,right=2mm,top=1mm,bottom=1mm,
+  title={#1},fonttitle=\bfseries
+}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\cl}{\operatorname{cl}}
+\newcommand{\interior}{\operatorname{int}}
+\newcommand{\ri}{\operatorname{ri}}
+\newcommand{\aff}{\operatorname{aff}}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\cone}{\operatorname{cone}}
+\newcommand{\rec}{\operatorname{rec}}
+\newcommand{\dist}{\operatorname{dist}}
+\newcommand{\proj}{\operatorname{proj}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\lin}{\operatorname{lin}}
+\newcommand{\ext}{\operatorname{ext}}
+\newcommand{\argmin}{\operatorname*{arg\,min}}
+\newcommand{\argmax}{\operatorname*{arg\,max}}
+\newcommand{\epi}{\operatorname{epi}}
+\newcommand{\dom}{\operatorname{dom}}
+\newcommand{\rbd}{\operatorname{rbd}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\spanop}{\operatorname{span}}
+\newcommand{\bd}{\operatorname{bd}}
+\newcommand{\inner}[2]{\langle #1,#2\rangle}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\transpose}{\mathsf{T}}
+\newcommand{\eps}{\varepsilon}
+
+\title{\Huge DOR Lecture 2\\[0.4em]
+\LARGE Convex Geometry Foundations for Deterministic Optimization\\[0.8em]
+\large 凸几何、分离定理、Farkas 引理与多面体结构}
+\author{Integrated lecture note\\
+\small based on G. Wan's course slides and five standard references}
+\date{September 2026 -- Deepened five-text synthesis}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+本讲义围绕确定性优化中最核心的一组几何工具构造：凸集、凸包、拓扑性质、投影、分离与支撑、Farkas 引理、凸锥与极性，以及线性规划可行域的极点/极方向结构。它不按课堂 slides 的页序逐页复述，而是采用一条更接近经典教材的逻辑链：
+\[
+\boxed{\begin{gathered}
+\text{Optimization}\to\text{Convexity}\to\text{Topology \& Existence}\to\text{Projection}\\
+\to\text{Separation}\to\text{Alternative Theorems}\to\text{Cones}\to\text{Polyhedral Geometry}
+\end{gathered}}
+\]
+材料主要交叉整合 Boyd--Vandenberghe、Ben-Tal--Nemirovski、Bertsimas--Tsitsiklis、Luenberger--Ye 与 Nesterov 五本标准教材，并以课程 Lecture 2(1) 的知识范围为边界。目标不是只记忆定义，而是建立“为什么这些定理彼此相连、为什么它们最终解释线性规划”的完整结构。
+\end{abstract}
+
+\tableofcontents
+\clearpage
+
+\chapter*{阅读指南与来源说明}
+\addcontentsline{toc}{chapter}{阅读指南与来源说明}
+
+这份 note 有三个层次。第一层是课堂必须掌握的定义与定理；第二层是证明的核心机制；第三层是这些几何结果如何变成优化中的可行性证书、最优性结构和算法基础。若时间有限，优先阅读每节的 \textbf{Key idea} 框、定理陈述和章末总结。
+
+\begin{sourcebox}[五本参考书在本讲中的角色]
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{Boyd and Vandenberghe}: 以现代凸优化的统一语言组织凸集、分离超平面、对偶锥和投影，尤其适合建立“凸优化 = 可验证的几何结构”的直觉。重点对应 Chapter 2, \S2.1--2.6, \S5.8, \S8.1。\cite{boyd}
+  \item \textbf{Ben-Tal and Nemirovski}: Appendix B 给出非常系统的有限维凸分析基础，特别是相对内部、Carath\'eodory、一般分离定理、极性/双锥和多面集的内外表示。\cite{bental}
+  \item \textbf{Bertsimas and Tsitsiklis}: 最适合把抽象凸几何与 LP 的基本可行解、极点、退化、极射线和 resolution theorem 对接。重点对应 Chapters 2 and 4。\cite{bertsimas}
+  \item \textbf{Luenberger and Ye}: 用经典 OR/LP 语言连接标准形、basic feasible solution、Farkas 引理、凸几何与锥规划。重点对应 Chapter 2, Chapter 6 和 Appendix B。\cite{luenberger}
+  \item \textbf{Nesterov}: 从算法型凸优化的视角深化 set-constrained optimality、Euclidean projection、distance function、supporting/separation、normal/tangent cones，并把这些几何对象直接写成一阶最优性条件。重点对应 \S2.2.3 与 \S3.1.4--3.1.7。\cite{nesterov}
+\end{itemize}
+\end{sourcebox}
+
+\begin{warningbox}[符号约定：避免不同教材的 ``star'' 冲突]
+不同教材对 polar cone 与 dual cone 的记号并不统一。本讲义采用：
+\[
+K^{\vee}:=\{y:\inner{y}{x}\ge 0,\ \forall x\in K\}\qquad\text{(dual cone)},
+\]
+\[
+K^{\circ}:=\{y:\inner{y}{x}\le 0,\ \forall x\in K\}\qquad\text{(polar cone, for cones)}.
+\]
+因此对任意锥 $K$，有 $K^{\circ}=-K^{\vee}$。Boyd 通常用 $K^*$ 表示 dual cone，而课程 slides 用 $S^*$ 表示 polar cone；做题时必须先看作者的定义，不能只看符号。\cite[\S2.6]{boyd}\cite[Appendix B.2.7]{bental}
+\end{warningbox}
+
+\begin{deepdivebox}[本次深化版相对上一版的新增主线]
+Nesterov 带来的最有价值增量并不是“再多几个定义”，而是把前面的凸几何直接接到算法型最优性语言：
+\[
+\text{projection VI}\Rightarrow\text{nonexpansive projection}\Rightarrow
+\nabla\tfrac12\dist^2=x-P_C(x),
+\]
+以及
+\[
+T_C(x)^\circ=N_C(x),\qquad
+-\nabla f(x^*)\in N_C(x^*).
+\]
+因此本版将 projection、supporting hyperplane、normal cone、first-order optimality 写成同一个几何结构的不同表现，并进一步补入 support function、faces、polyhedral projection、lineality 与一般 Minkowski--Weyl 形式。
+\end{deepdivebox}
+
+\chapter{从优化问题到凸结构}
+
+\section{一般约束优化模型}
+考虑
+\begin{equation}
+\min_{x\in S} f(x),
+\label{eq:general-opt}
+\end{equation}
+其中 $S\subseteq\R^n$ 是可行域，$f:\R^n\to\R$ 是目标函数。
+
+\begin{definition}[可行解]
+若 $x^*\in S$，则称 $x^*$ 为 \emph{feasible solution}。
+\end{definition}
+
+令
+\[
+B_\eps(x^*)=\{x\in\R^n:\norm{x-x^*}_2<\eps\}.
+\]
+
+\begin{definition}[局部与全局最优]
+$x^*\in S$ 称为局部极小点，如果存在 $\eps>0$ 使
+\[
+f(x^*)\le f(x),\qquad \forall x\in S\cap B_\eps(x^*).
+\]
+若对 $x\ne x^*$ 有严格不等式，则称为严格局部极小点。若
+\[
+f(x^*)\le f(x),\qquad \forall x\in S,
+\]
+则 $x^*$ 是全局极小点。
+\end{definition}
+
+课程中还使用 ``strong/isolated local optimum''，即某个邻域中 $x^*$ 是唯一的局部最优解。这个概念比 ``strict local optimum'' 更强；一般非凸问题中二者并不等价。
+
+\begin{keybox}[为什么要尽快进入凸优化？]
+一般非凸优化的局部最优与全局最优可能完全不同；而凸优化最重要的结构性好处是：\textbf{局部最优自动是全局最优}。因此凸性不是“画图好看”的性质，而是把局部信息提升为全局结论的机制。\cite[Ch.~1--4]{boyd}
+\end{keybox}
+
+\section{线性规划与标准形}
+线性规划的一般形式可写为
+\[
+\min c^\transpose x\quad\text{s.t.}\quad x\in P,
+\]
+其中 $P$ 是一个 polyhedral set。最经典的标准形是
+\begin{equation}
+\min c^\transpose x\quad\text{s.t.}\quad Ax=b,\qquad x\ge 0,
+\label{eq:lp-standard}
+\end{equation}
+其中 $A\in\R^{m\times n}$，通常假设 $\rank(A)=m<n$。
+
+一般 LP 可通过如下基本变换转为标准形：
+\begin{itemize}[leftmargin=2em]
+  \item $a^\transpose x\le b$ 加 slack variable $s\ge0$：$a^\transpose x+s=b$；
+  \item $a^\transpose x\ge b$ 减 surplus variable $s\ge0$：$a^\transpose x-s=b$；
+  \item 自由变量 $x_j\in\R$ 写成 $x_j=x_j^+-x_j^-$，$x_j^+,x_j^-\ge0$；
+  \item 最大化转换为最小化：$\max c^\transpose x=-\min(-c^\transpose x)$。
+\end{itemize}
+这也是为什么后面只研究 $Ax=b,x\ge0$ 不会失去一般性。\cite[Ch.~1--2]{bertsimas}\cite[Ch.~2]{luenberger}
+
+\section{凸优化问题}
+\begin{definition}[凸优化的集合形式]
+若 $S$ 是非空凸集，$f$ 是定义在 $S$ 上的凸函数，则
+\[
+\min\{f(x):x\in S\}
+\]
+称为凸优化问题。
+\end{definition}
+
+一个最基础的事实是：若 $f$ 为凸函数且 $S$ 为凸集，则每个局部极小点都是全局极小点。证明只有一行核心思想：若存在更好的全局点 $y$，则从局部点 $x^*$ 朝 $y$ 走一小段仍在 $S$ 中，凸性会立即产生比 $x^*$ 更小的函数值，从而与局部最优矛盾。
+
+\begin{theorem}[凸问题中局部最优即全局最优]
+设 $C$ 为凸集，$f:C\to\R$ 为凸函数。如果 $x^*\in C$ 是局部极小点，则 $x^*$ 是全局极小点。
+\end{theorem}
+\begin{proof}
+反设存在 $y\in C$ 使 $f(y)<f(x^*)$。对 $t\in(0,1)$ 定义
+\[
+ x_t=(1-t)x^*+ty\in C.
+\]
+凸性给出
+\[
+ f(x_t)\le (1-t)f(x^*)+t f(y)<f(x^*).
+\]
+当 $t\downarrow0$ 时 $x_t\to x^*$，于是任意小邻域中都存在更好的可行点，与局部最优矛盾。
+\end{proof}
+
+\begin{corollary}[严格凸性与唯一性]
+若 $f$ 在凸集 $C$ 上严格凸，则 $f$ 在 $C$ 上至多有一个全局极小点。
+\end{corollary}
+\begin{proof}
+若存在两个不同最优点 $x_1,x_2$，则对 $0<t<1$，严格凸性给出
+\[
+f((1-t)x_1+tx_2)<(1-t)f(x_1)+tf(x_2)=f^*,
+\]
+矛盾。
+\end{proof}
+
+\section{Level set 与 epigraph：把函数问题转成集合问题}
+Nesterov 与 Boyd 都反复使用一个重要策略：\textbf{研究凸函数时，尽量把问题转换为凸集合的几何。}
+
+\begin{definition}[Sublevel set 与 epigraph]
+对函数 $f$，定义
+\[
+L_f(\beta)=\{x:f(x)\le \beta\},\qquad
+\epi f=\{(x,t): f(x)\le t\}.
+\]
+\end{definition}
+
+\begin{proposition}
+若 $f$ 为凸函数，则每个 sublevel set $L_f(\beta)$ 都是凸集，且 $\epi f$ 是凸集。反过来，$f$ 为凸函数当且仅当 $\epi f$ 为凸集。
+\end{proposition}
+
+\begin{intuitionbox}[为什么 epigraph 很重要？]
+函数不等式
+\[
+ f(x)\le t
+\]
+可以被看成高一维空间中的集合 membership。后面支持超平面、subgradient、KKT 与 Fenchel duality 都可以理解为“对 epigraph 做 separation”。Nesterov 在 nonsmooth convex analysis 中把这条路线发挥得非常彻底。\cite[\S3.1]{nesterov}
+\end{intuitionbox}
+
+\begin{warningbox}[“凸问题可解”需要精确理解]
+凸性提供强大的全局结构，但不能简单等同于“任何凸问题都容易数值求解”。实际可计算性还依赖问题的表示形式、维数、是否能有效计算函数/梯度/分离 oracle、条件数等。现代凸优化教材强调的是：大量重要凸问题可以被可靠、系统地建模和求解，而不是所有抽象凸问题都自动简单。\cite[Ch.~1]{boyd}\cite[Lecture~1]{bental}
+\end{warningbox}
+
+\chapter{凸集：所有后续理论的语言}
+
+\section{仿射集、凸集与凸组合}
+
+\begin{definition}[仿射组合与仿射包]
+给定 $x_1,\dots,x_k\in\R^n$，若系数满足 $\sum_i\theta_i=1$，则
+\[
+\sum_{i=1}^k\theta_i x_i
+\]
+称为仿射组合。集合 $S$ 的所有仿射组合构成其仿射包 $\aff(S)$。
+\end{definition}
+
+\begin{definition}[凸集]
+集合 $C\subseteq\R^n$ 是凸的，如果对任意 $x,y\in C$ 和任意 $\theta\in[0,1]$，
+\[
+\theta x+(1-\theta)y\in C.
+\]
+\end{definition}
+
+\begin{definition}[凸组合]
+若 $\theta_i\ge0$ 且 $\sum_{i=1}^k\theta_i=1$，则
+\[
+x=\sum_{i=1}^k\theta_i x_i
+\]
+称为 $x_1,\dots,x_k$ 的凸组合。
+\end{definition}
+
+\begin{proposition}
+集合 $C$ 是凸集，当且仅当它包含其任意有限多个点的所有凸组合。
+\end{proposition}
+
+\begin{intuitionbox}[几何直觉]
+两点版定义说“任意两点之间的线段都留在集合内”；有限点版说“任意有限混合都留在集合内”。优化里后者更有用，因为它直接连接概率混合、资源配比、投资组合以及极点表示。
+\end{intuitionbox}
+
+\section{凸包与最小凸扩张}
+
+\begin{definition}[凸包]
+\[
+\conv(S)=\left\{\sum_{i=1}^k\lambda_i x_i:
+ x_i\in S,\ \lambda_i\ge0,\ \sum_{i=1}^k\lambda_i=1,\ k<\infty\right\}.
+\]
+\end{definition}
+
+\begin{proposition}
+$\conv(S)$ 是包含 $S$ 的最小凸集；等价地，它是所有包含 $S$ 的凸集的交。
+\end{proposition}
+
+这个“最小性”以后会反复出现：凸包将离散点集变成连续可行域，而多面体理论会告诉我们，在某些条件下又可以反过来用有限极点重建整个集合。
+
+
+\subsection{Affine hull、convex hull 与 conic hull 的统一比较}
+给定 $S\subseteq\R^n$，三种 hull 分别由三种系数规则产生：
+\[
+\begin{array}{c|c|c}
+\text{对象} & \text{表示} & \text{系数条件}\\ \hline
+\aff(S) & \sum_i \lambda_i x_i & \sum_i\lambda_i=1\\
+\conv(S) & \sum_i \lambda_i x_i & \lambda_i\ge0,\ \sum_i\lambda_i=1\\
+\cone(S) & \sum_i \mu_i x_i & \mu_i\ge0
+\end{array}
+\]
+这里 $\cone(S)$ 是包含 $S$ 的最小凸锥。三个对象分别对应“允许正负权重但总和为一”、“概率/混合权重”、“纯非负缩放与叠加”。
+
+\begin{proposition}[Conic Carath\'eodory]
+若 $x\in\cone(S)\subseteq\R^n$，则 $x$ 可写成 $S$ 中至多 $n$ 个点的非负线性组合；更精确地，只需要至多 $\dim\spanop(S)$ 个生成向量。
+\end{proposition}
+\begin{proof}[证明思路]
+从一个使用最少生成向量的 conic representation 出发。若使用向量数超过其线性张成空间维数，则存在非平凡线性依赖。沿依赖方向调整非负系数，直到至少一个系数降为零而保持表示不变，与最少性矛盾。这个证明与 Carath\'eodory 的凸组合证明完全同构，只是不再需要约束 $\sum_i\lambda_i=1$。
+\end{proof}
+
+\begin{keybox}[与 BFS/Farkas 的直接联系]
+标准形约束 $Ax=b,x\ge0$ 等价于“$b$ 属于 $A$ 的列向量生成的锥”。Conic Carath\'eodory 因而预示：如果系统可行，就可以用少量列生成 $b$；BFS 理论把“少量”进一步精确到由 $\rank(A)$ 控制的基结构。
+\end{keybox}
+
+\section{常见凸集}
+
+\subsection{超平面与半空间}
+给定 $a\ne0$，
+\[
+H=\{x:a^\transpose x=b\}
+\]
+是超平面，$a$ 是法向量。闭半空间为
+\[
+H_- = \{x:a^\transpose x\le b\},\qquad
+H_+ = \{x:a^\transpose x\ge b\}.
+\]
+超平面是仿射集，半空间是凸集。后面所有 separation theorem 本质上都是在寻找一个线性函数 $a^\transpose x$，使两个集合在其不同水平上被区分。
+
+\subsection{球、范数球与椭球}
+欧氏球
+\[
+B(c,r)=\{x:\norm{x-c}_2\le r\}
+\]
+是凸集。更一般地，任意范数 $\norm{\cdot}$ 的 norm ball
+\[
+\{x:\norm{x-c}\le r\}
+\]
+都是凸集。
+
+椭球的标准形式是
+\[
+E=\{x:(x-c)^\transpose P^{-1}(x-c)\le1\},\qquad P\succ0.
+\]
+它也可以写成仿射像 $E=\{c+Au:\norm{u}_2\le1\}$，其中 $A$ 非奇异。\cite[\S2.2]{boyd}
+
+\begin{warningbox}[两个常见的课堂记号陷阱]
+\textbf{(1) $0<p<1$ 的 $\ell_p$ 不是范数。} 它不满足三角不等式，只是 quasi-norm；其单位“球”一般不是凸集。真正的 $\ell_p$ norm 要求 $p\ge1$。
+
+\textbf{(2) $x^\transpose Qx+2b^\transpose x+c\le0$ 且 $Q\succeq0$ 并不自动意味着“有界椭球”。} 当 $Q\succ0$ 且配平方后右侧半径为正时才得到 proper ellipsoid；若 $Q$ 奇异，可能得到柱体、低维退化椭球、无界集或空集。
+\end{warningbox}
+
+\subsection{多面集与多胞形}
+\begin{definition}[多面集]
+有限个闭半空间和超平面的交称为 polyhedron（本讲也称 polyhedral set）：
+\[
+P=\{x:Ax\le b,\ Cx=d\}.
+\]
+\end{definition}
+
+多面集自动是闭凸集。若它有界，则通常称为 polytope。不同教材对 ``polytope/polyhedron'' 的命名存在少量差异，本讲采用现代凸优化最常见的约定：\textbf{polyhedron 可无界，polytope 有界}。
+
+\subsection{单纯形}
+若 $v_0,\dots,v_k$ 仿射无关，即
+\[
+v_1-v_0,\dots,v_k-v_0
+\]
+线性无关，则
+\[
+\conv\{v_0,\dots,v_k\}
+\]
+是一个 $k$-dimensional simplex。线段、三角形、四面体分别是 $1,2,3$ 维 simplex。
+
+\subsection{凸锥的预览}
+若 $x\in K\Rightarrow \lambda x\in K$ 对所有 $\lambda\ge0$ 成立，则 $K$ 是锥。若还满足凸性，则为凸锥。典型例子：
+\[
+\R_+^n,\qquad
+\mathcal Q^{n+1}=\{(x,t):\norm{x}_2\le t\},\qquad
+\mathbb S_+^n=\{X=X^\transpose:X\succeq0\}.
+\]
+第二个是 second-order/Lorentz cone，第三个是 positive semidefinite cone；它们是现代 conic optimization 的基础。\cite[\S2.2,\S2.6]{boyd}\cite[Lecture~1--3]{bental}
+
+\section{保持凸性的运算}
+若 $C,C_1,C_2$ 是凸集，则下列运算保持凸性：
+\begin{itemize}[leftmargin=2em]
+  \item 任意交集 $\bigcap_\alpha C_\alpha$；
+  \item 仿射像 $AC+b$；
+  \item 仿射原像 $\{x:Ax+b\in C\}$；
+  \item Minkowski 和 $C_1+C_2=\{x_1+x_2:x_i\in C_i\}$；
+  \item 笛卡尔积 $C_1\times C_2$；
+  \item 投影（projection）到一组坐标。
+\end{itemize}
+注意：并集 $C_1\cup C_2$ 一般不保持凸性。
+
+这套“凸集 calculus”非常重要：实际建模中很少直接用定义逐点验证复杂集合的凸性，通常是从基本凸集出发，用保持凸性的运算构造。\cite[\S2.3]{boyd}
+
+
+\subsection{凸性保持与闭性保持必须分开讨论}
+“结果仍凸”通常容易；“结果仍闭”则更加微妙。几个值得单独记住的事实是：
+\begin{itemize}[leftmargin=2em]
+  \item 任意族闭集的交仍闭，因此 closed convex sets 的交同时保持闭与凸；
+  \item 两个 closed convex sets 的 Minkowski 和不一定自动闭，但若其中一个集合 compact，则和集闭；
+  \item 连续映射的\emph{原像}保持闭性，因此 affine inverse image of a closed set 是闭的；
+  \item 连续映射的\emph{像}并不一般保持闭性，故“closed convex $\Rightarrow$ affine image closed”不是无条件规则；
+  \item polyhedron 的线性投影却仍是 polyhedron，因此在多面几何中投影具有额外的闭性与有限描述结构，这可以由 Fourier--Motzkin elimination 证明。
+\end{itemize}
+Nesterov 在 \S2.2.3 特别强调了 set operations 中闭性需要额外条件，并给出 sum、conic hull、convex hull 等操作失去闭性的反例。\cite[\S2.2.3]{nesterov}
+
+\begin{warningbox}[一个非常常见的逻辑错误]
+不要把
+\[
+\text{``affine image preserves convexity''}
+\]
+误记成
+\[
+\text{``affine image preserves closedness''}.
+\]
+前者永远正确，后者对一般闭凸集需要附加条件；但对于 polyhedra，投影/线性像仍为 polyhedron，这是更特殊、更强的结构定理。
+\end{warningbox}
+
+\chapter{Carath\'eodory 定理：高维凸组合可以很稀疏}
+
+\section{定理陈述}
+
+\begin{theorem}[Carath\'eodory]
+设 $S\subseteq\R^n$，若 $x\in\conv(S)$，则 $x$ 可以写成 $S$ 中至多 $n+1$ 个点的凸组合。更精确地，若 $\dim\aff(\conv S)=m$，则只需至多 $m+1$ 个点。
+\end{theorem}
+
+\begin{intuitionbox}[为什么这是一个“降维”定理？]
+定义 $x\in\conv(S)$ 时允许使用任意有限多个点。但在 $m$ 维仿射空间里，超过 $m+1$ 个点必然出现仿射依赖，因此总能调整权重，让至少一个系数降到零而不改变 $x$。重复这个过程，就得到稀疏表示。
+\end{intuitionbox}
+
+\section{系数消元证明}
+假设
+\[
+x=\sum_{i=1}^N\lambda_i x_i,
+\qquad
+\lambda_i>0,\quad \sum_i\lambda_i=1,
+\]
+并选取一个使用点数最少的表示。若 $N>m+1$，则 $x_i$ 仿射相关，因此存在不全为零的 $\delta_i$ 使
+\[
+\sum_{i=1}^N\delta_i x_i=0,
+\qquad
+\sum_{i=1}^N\delta_i=0.
+\]
+于是对任意 $t$，
+\[
+x=\sum_{i=1}^N(\lambda_i+t\delta_i)x_i,
+\qquad
+\sum_i(\lambda_i+t\delta_i)=1.
+\]
+选择 $t$ 直到某个系数刚好变成零，同时所有系数仍非负，就得到使用更少点的凸组合，与最小性矛盾。因此 $N\le m+1$。这个证明是 Ben-Tal--Nemirovski Appendix B 中最标准的版本之一。\cite[Appendix~B.2.1]{bental}
+
+\begin{keybox}[在 OR/LP 中的意义]
+Carath\'eodory 定理告诉我们：高维凸包中的点虽然可能有很多生成点，但真正需要的“活跃成分”数量受维数控制。LP 中“一个基本解最多只有 $m$ 个正变量”的思想，与这种线性依赖消元机制高度同源。
+\end{keybox}
+
+
+\section{三个值得记住的加强与解释}
+\begin{enumerate}[leftmargin=2.2em]
+  \item \textbf{真正控制数量的是 affine dimension，不是 ambient dimension。} 若 $S$ 位于一个 $m$ 维仿射子空间中，即使环境空间是 $\R^{1000}$，也只需 $m+1$ 个点。
+  \item \textbf{最小表示必然仿射无关。} 若一个 convex representation 使用最少数量的正权重生成点，则这些生成点一定仿射无关；否则可以继续消元。
+  \item \textbf{Carath\'eodory 是“稀疏性”的几何来源。} 在概率分布、混合策略、moment problems 与 LP 中，经常出现“看似需要很多支撑点，但存在稀疏等价表示”的现象。
+\end{enumerate}
+
+\begin{deepdivebox}[与 Radon/Helly 的关系（拓展阅读，不作为本讲核心要求）]
+Ben-Tal--Nemirovski 把 Carath\'eodory、Radon 与 Helly 连续排列在 Appendix B.2。三者都由有限维线性/仿射依赖驱动：Carath\'eodory 控制 convex representation 的支撑数，Radon 说明 $n+2$ 个点可分成两个凸包相交的子集，Helly 则把无限/大量凸集的整体交问题降到最多 $n+1$ 个集合的局部交问题。它们共同体现“维数限制组合复杂度”的思想。\cite[Appendix~B.2.1--B.2.3]{bental}
+\end{deepdivebox}
+
+\chapter{拓扑基础：闭、内部、边界、相对内部与紧性}
+
+\section{为什么凸几何需要一点拓扑？}
+很多重要结论不是只靠代数就能成立。例如，“离集合最近的点一定存在”需要闭性与紧性；“严格分离”需要集合之间有正距离；“低维凸集的内部”必须用相对内部才能正确描述。
+
+\section{基本概念}
+
+\begin{definition}[内部、闭包与边界]
+对 $S\subseteq\R^n$：
+\begin{align*}
+\interior(S)&=\{x:\exists\eps>0,\ B_\eps(x)\subseteq S\},\\
+\cl(S)&=\{x:\forall\eps>0,\ B_\eps(x)\cap S\ne\varnothing\},\\
+\partial S&=\cl(S)\setminus\interior(S)\qquad\text{(对闭集即 }S\setminus\interior(S)\text{)}.
+\end{align*}
+$S$ 开当且仅当 $S=\interior(S)$；闭当且仅当 $S=\cl(S)$。
+\end{definition}
+
+在有限维欧氏空间中，$S$ 紧（compact）当且仅当 $S$ 闭且有界（Heine--Borel）。
+
+\section{相对内部是更自然的凸分析概念}
+一个低维凸集在 $\R^n$ 中可能没有通常意义下的内部。例如平面 $x_3=0$ 中的二维正方形，作为 $\R^3$ 的子集其内部为空。于是定义
+\[
+\ri(S)=\{x\in S:\exists r>0,\ B_r(x)\cap\aff(S)\subseteq S\}.
+\]
+
+\begin{keybox}[为什么相对内部非常重要？]
+一般 separation theorem 最自然的条件不是 ``$S\cap T=\varnothing$''，而是
+\[
+\ri(S)\cap\ri(T)=\varnothing.
+\]
+这样可以正确处理两个低维集合在同一个超平面上接触、重叠或仅边界相交的情况。Ben-Tal--Nemirovski 对此给出了特别干净的有限维表述。\cite[Appendix~B.1.6, B.2.6]{bental}
+\end{keybox}
+
+对非空凸集 $C$，有若干重要性质：
+\[
+\ri(C)\ne\varnothing,
+\qquad
+\cl(\ri C)=\cl C,
+\qquad
+\ri(\cl C)=\ri C
+\]
+（在适当有限维条件下）。若 $x\in\ri C$ 且 $y\in\cl C$，则从 $x$ 朝 $y$ 的开线段仍位于 $\ri C$。
+
+
+\begin{theorem}[Relative-interior segment theorem]
+若 $C\subseteq\R^n$ 非空凸，$x\in\ri C$，$y\in\cl C$，则
+\[
+(1-t)x+ty\in\ri C,\qquad 0\le t<1.
+\]
+换言之：从相对内部点向任意闭包点走，只要还没有真正走到端点，就仍在相对内部。
+\end{theorem}
+
+\begin{proofmap}[为什么这条结果值得掌握？]
+它是大量相对内部 calculus 的核心：把低维凸集搬到 $\aff C$ 中看，$x\in\ri C$ 意味着 $x$ 周围在该仿射空间里有一个小球。凸性允许把这个小球与 $y$ 做凸组合，产生围绕 $(1-t)x+ty$ 的一个缩小小球。
+\end{proofmap}
+
+定义 relative boundary
+\[
+\rbd C:=\cl C\setminus\ri C.
+\]
+当 $\aff C=\R^n$ 时，$\ri C=\interior C$ 且 $\rbd C=\partial C$；当 $C$ 低维时，相对概念才保留真正的“内部/边界”几何。
+
+\section{闭性、紧性、完整直线：三个不同的问题}
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{closed} 负责“极限不逃走”；
+  \item \textbf{bounded} 负责“序列不会跑到无穷远”；
+  \item \textbf{compact = closed + bounded} 在有限维中让连续目标达到极值；
+  \item \textbf{contains a line} 则是另一种几何性质，它控制 polyhedron 是否可能拥有 extreme point。
+\end{itemize}
+这些概念常被混为一谈，但在后续定理中扮演的角色完全不同。
+
+\chapter{Weierstrass 定理与最优解存在性}
+
+\section{最基本的存在性定理}
+
+\begin{theorem}[Weierstrass]
+若 $S\subseteq\R^n$ 非空且紧，$f:S\to\R$ 连续，则 $f$ 在 $S$ 上达到最小值和最大值。特别地，存在 $x^*\in S$ 使
+\[
+f(x^*)=\min_{x\in S}f(x).
+\]
+\end{theorem}
+
+\begin{proof}[证明思路]
+令 $\alpha=\inf_{x\in S}f(x)$。选取序列 $x_k\in S$ 使 $f(x_k)\downarrow\alpha$。因为 $S$ 紧，$\{x_k\}$ 有收敛子列 $x_{k_j}\to x^*\in S$。由连续性，
+\[
+f(x^*)=\lim_{j\to\infty}f(x_{k_j})=\alpha.
+\]
+故最小值被达到。
+\end{proof}
+
+\begin{intuitionbox}[它解决的是什么问题？]
+``infimum 有限'' 并不等于 ``minimum 存在''。Weierstrass 给出一个非常强的 sufficient condition：\textbf{紧可行域 + 连续目标函数}。后面的最近点定理就是把距离函数放进这个模板。
+\end{intuitionbox}
+
+\section{LP 中的一个重要对照}
+LP 的可行域往往不紧，因为可能无界；但若线性目标在非空 polyhedron 上有有限最优值，则仍然可以达到最优值。这个更强的结论来自多面体结构，而不是单纯依赖 Weierstrass。后面会看到：有限最优值可以在极点上取得。\cite[Ch.~2, Ch.~4]{bertsimas}
+
+
+\section{存在性的三种常见机制}
+优化中“最优解存在”通常通过三条不同路线证明：
+\begin{enumerate}[leftmargin=2.2em]
+  \item \textbf{compact feasible set}: 直接应用 Weierstrass；
+  \item \textbf{compact sublevel set}: 即使可行域无界，只要某个相关 sublevel set
+  \[
+  \{x\in C:f(x)\le f(x_0)\}
+  \]
+  非空且 compact，仍可把问题限制到该 compact set；
+  \item \textbf{polyhedral structure}: 对 LP，有限最优值可以借助 extreme-point/recession 结构证明达到，不要求原可行域有界。
+\end{enumerate}
+
+\begin{theorem}[强凸函数在闭凸集上的存在唯一性]
+设 $Q$ 非空闭凸，$f$ 在 $Q$ 上 $\mu$-strongly convex，$\mu>0$，且连续/可微满足通常有限维条件，则
+\[
+\min_{x\in Q}f(x)
+\]
+有唯一解。
+\end{theorem}
+\begin{proof}[Nesterov 的 sublevel-set 思路]
+任取 $x_0\in Q$。强凸性使 $f$ 至少以二次速度增长，因此 sublevel set
+\[
+\bar Q=\{x\in Q:f(x)\le f(x_0)\}
+\]
+有界；又因 $Q$ 闭且 $f$ 连续，$\bar Q$ 闭，故 compact。Weierstrass 给出存在性；强凸性再给出唯一性。\cite[\S2.2.3, Thm.~2.2.10]{nesterov}
+\end{proof}
+
+\chapter{投影：从最短距离到分离超平面}
+
+\section{投影到闭凸集}
+给定非空闭集 $C\subseteq\R^n$ 与点 $y$，定义
+\[
+\dist(y,C)=\inf_{x\in C}\norm{y-x}_2.
+\]
+若 $x^*\in C$ 满足
+\[
+\norm{y-x^*}_2=\dist(y,C),
+\]
+则称 $x^*$ 为 $y$ 在 $C$ 上的 Euclidean projection。
+
+\begin{theorem}[闭凸集上的投影存在且唯一]
+若 $C$ 非空、闭、凸，则对每个 $y\in\R^n$，存在唯一 $x^*\in C$ 使 $\norm{y-x^*}_2$ 最小。
+\end{theorem}
+
+\begin{proof}[存在性]
+任取 $x_0\in C$，只需在
+\[
+C\cap\{x:\norm{x-y}_2\le\norm{x_0-y}_2\}
+\]
+上最小化距离。该集合非空、闭、有界，因此紧。距离函数连续，由 Weierstrass 得到最小点。
+\end{proof}
+
+\begin{proof}[唯一性]
+若 $x_1,x_2$ 都是最近点，距离均为 $d$。凸性给出 $\bar x=(x_1+x_2)/2\in C$。利用严格凸的平方范数恒等式：
+\[
+\norm{y-\bar x}_2^2
+=\frac12\norm{y-x_1}_2^2+\frac12\norm{y-x_2}_2^2
+-\frac14\norm{x_1-x_2}_2^2.
+\]
+若 $x_1\ne x_2$，右侧严格小于 $d^2$，矛盾。因此 $x_1=x_2$。
+\end{proof}
+
+\section{投影的变分不等式刻画}
+
+\begin{theorem}[Projection variational inequality]
+对非空闭凸集 $C$，$x^*=\proj_C(y)$ 当且仅当
+\begin{equation}
+\inner{y-x^*}{x-x^*}\le0,
+\qquad \forall x\in C.
+\label{eq:proj-vi}
+\end{equation}
+\end{theorem}
+
+\begin{proof}[充分性]
+对任意 $x\in C$，
+\begin{align*}
+\norm{y-x}_2^2
+&=\norm{(y-x^*)-(x-x^*)}_2^2\\
+&=\norm{y-x^*}_2^2+\norm{x-x^*}_2^2
+-2\inner{y-x^*}{x-x^*}\\
+&\ge\norm{y-x^*}_2^2.
+\end{align*}
+故 $x^*$ 最近。
+\end{proof}
+
+\begin{proof}[必要性]
+对任意 $x\in C$ 与 $t\in(0,1]$，凸性给出
+\[
+x_t=x^*+t(x-x^*)\in C.
+\]
+最优性意味着 $\norm{y-x_t}_2^2\ge\norm{y-x^*}_2^2$。展开并除以 $t>0$：
+\[
+-2\inner{y-x^*}{x-x^*}+t\norm{x-x^*}_2^2\ge0.
+\]
+令 $t\downarrow0$ 即得 \eqref{eq:proj-vi}。
+\end{proof}
+
+\begin{intuitionbox}[几何意义]
+向量 $y-x^*$ 与从 $x^*$ 指向任何可行点 $x$ 的方向夹角至少为 $90^\circ$。因此 $y-x^*$ 正好给出一个“向外法向量”。这就是为什么最近点定理几乎立刻产生分离超平面。
+\end{intuitionbox}
+
+\section{法锥的语言（非常值得提前认识）}
+定义闭凸集在 $x^*\in C$ 的法锥
+\[
+N_C(x^*)=\{v:\inner{v}{x-x^*}\le0,\ \forall x\in C\}.
+\]
+则投影条件可写成
+\[
+y-x^*\in N_C(x^*).
+\]
+这句式以后会在 KKT 条件、投影算法、变分不等式里不断出现。
+
+
+\section{投影算子的稳定性：nonexpansive 与 Pythagorean inequality}
+Nesterov 在 set-constrained optimization 的处理中把 projection 当成一个核心算子，而不只是一个存在性工具。\cite[\S2.2.3]{nesterov}
+
+\begin{theorem}[Firm nonexpansiveness]
+设 $P_C(y)=\proj_C(y)$。对任意 $y_1,y_2\in\R^n$，
+\[
+\norm{P_C(y_1)-P_C(y_2)}_2^2
+\le
+\inner{P_C(y_1)-P_C(y_2)}{y_1-y_2}.
+\]
+从而
+\[
+\norm{P_C(y_1)-P_C(y_2)}_2\le \norm{y_1-y_2}_2.
+\]
+即投影是 $1$-Lipschitz / nonexpansive。
+\end{theorem}
+\begin{proof}
+分别把 projection VI 用于 $(y_1,P_C(y_1))$ 并取可行点 $P_C(y_2)$，以及用于 $(y_2,P_C(y_2))$ 并取可行点 $P_C(y_1)$；两式相加即可得到第一式，再用 Cauchy--Schwarz 得到 nonexpansiveness。
+\end{proof}
+
+\begin{corollary}[Pythagorean-type inequality]
+若 $x\in C$，则
+\[
+\norm{x-P_C(y)}_2^2+\norm{P_C(y)-y}_2^2
+\le \norm{x-y}_2^2.
+\]
+若 $C$ 是仿射子空间，投影方向与子空间正交，以上不等式退化为等式，即真正的勾股定理。
+\end{corollary}
+
+\section{Squared distance function 是一个光滑凸函数}
+定义
+\[
+\rho_C(y):=\frac12\dist(y,C)^2
+=\frac12\norm{y-P_C(y)}_2^2.
+\]
+
+\begin{theorem}[Nesterov: squared distance 的光滑性]
+若 $C$ 非空闭凸，则 $\rho_C$ 凸且处处可微，并且
+\[
+\nabla \rho_C(y)=y-P_C(y).
+\]
+此外，$\nabla\rho_C$ 是 $1$-Lipschitz。
+\end{theorem}
+这个结果把几何对象“到集合的距离”变成了一个非常规整的 smooth convex function。后续 penalty methods、proximal methods、projection algorithms 都会反复利用这一点。\cite[\S2.2.3, Lem.~2.2.9]{nesterov}
+
+
+\subsection{两个必须会算的 projection}
+\begin{example}[投影到半空间]
+令
+\[
+H=\{x:a^\transpose x\le b\},\qquad a\ne0.
+\]
+则
+\[
+P_H(y)=y-\frac{(a^\transpose y-b)_+}{\norm a_2^2}a,
+\qquad (t)_+=\max\{t,0\}.
+\]
+若 $y\in H$，公式显然给 $P_H(y)=y$；若 $a^\transpose y>b$，最近点必在边界且修正方向平行于法向量 $a$。
+\end{example}
+
+\begin{example}[投影到非负正交锥]
+对 $C=\R_+^n$，projection 按坐标截断：
+\[
+[P_C(y)]_i=\max\{y_i,0\}.
+\]
+相应的 normal cone 在 $x\ge0$ 处为
+\[
+N_C(x)=\{v: v_i=0\text{ if }x_i>0,\; v_i\le0\text{ if }x_i=0\}.
+\]
+因此 $y-P_C(y)$ 正好落在 $N_C(P_C(y))$ 中。这个坐标级例子是 complementary slackness 几何直觉的雏形。
+\end{example}
+
+\section{Tangent cone、normal cone 与极性}
+为把 projection/separation 进一步统一，定义在 $x\in C$ 处的切锥（一种标准有限维版本）
+\[
+T_C(x)=\cl\cone(C-x)
+=\cl\{t(y-x):t\ge0,\ y\in C\}.
+\]
+采用本讲的 normal-cone 符号约定
+\[
+N_C(x)=\{v:\inner{v}{y-x}\le0,\ \forall y\in C\}.
+\]
+于是
+\[
+\boxed{N_C(x)=T_C(x)^\circ},
+\]
+即法锥就是切锥的 polar cone。Nesterov 也建立 tangent/normal cones 的对偶关系，但其 normal cone 使用相反号约定；阅读不同教材时必须检查符号。\cite[\S3.1.7]{nesterov}
+
+\begin{deepdivebox}[几何语言的统一]
+\begin{align*}
+y-P_C(y)\in N_C(P_C(y))
+&\quad\Longleftrightarrow\quad \text{projection},\\
+a\in N_C(x^*)
+&\quad\Longleftrightarrow\quad \text{$a$ 定义在 $x^*$ 的 supporting hyperplane},\\
+-\nabla f(x^*)\in N_C(x^*)
+&\quad\Longleftrightarrow\quad \text{constrained first-order optimality}.
+\end{align*}
+三个看似不同的概念其实是同一个 normal-cone statement。
+\end{deepdivebox}
+
+\section{约束凸优化的一阶最优性条件}
+\begin{theorem}[Nesterov: variational inequality optimality]
+设 $Q$ 非空闭凸，$f$ 为可微凸函数。则 $x^*\in Q$ 是
+\[
+\min_{x\in Q} f(x)
+\]
+的全局最优解，当且仅当
+\[
+\inner{\nabla f(x^*)}{x-x^*}\ge0,
+\qquad \forall x\in Q.
+\]
+等价地，
+\[
+-\nabla f(x^*)\in N_Q(x^*).
+\]
+\end{theorem}
+\begin{proof}
+若 VI 成立，由凸函数的一阶下界
+\[
+f(x)\ge f(x^*)+\inner{\nabla f(x^*)}{x-x^*}\ge f(x^*).
+\]
+反之若存在 $x\in Q$ 使该内积为负，则沿线段 $x^*+t(x-x^*)$ 做足够小的正步长，方向导数为负，得到更小函数值，与最优性矛盾。\cite[\S2.2.3, Thm.~2.2.9]{nesterov}
+\end{proof}
+
+\begin{corollary}[Projection fixed-point characterization]
+对任意 $\gamma>0$，
+\[
+x^*\text{ optimal}
+\quad\Longleftrightarrow\quad
+P_Q\!\left(x^*-\gamma\nabla f(x^*)\right)=x^*.
+\]
+这说明最优点是“gradient step 后再投影”映射的不动点，是 projected-gradient 方法的几何起点。\cite[\S2.2.3, Thm.~2.2.12]{nesterov}
+\end{corollary}
+
+\chapter{分离理论：用一个线性函数区分集合}
+
+\section{分离的几种强度}
+给定两个非空集合 $S,T\subseteq\R^n$ 和非零 $a$。最稳妥的做法不是记忆 ``proper/strict/strong'' 的名字，而是直接看数值关系。
+
+\begin{definition}[弱分离]
+若存在 $a\ne0$ 使
+\[
+\sup_{x\in S}a^\transpose x\le
+\inf_{y\in T}a^\transpose y,
+\]
+则某个超平面 $a^\transpose x=b$ 可以把两集合放在相反闭半空间中。
+\end{definition}
+
+\begin{definition}[强分离]
+若存在 $a\ne0$ 使
+\[
+\sup_{x\in S}a^\transpose x<
+\inf_{y\in T}a^\transpose y,
+\]
+则两集合之间存在正的线性间隙，称为 strong separation。
+\end{definition}
+
+\begin{warningbox}[术语差异]
+课程 slides 区分 improper/proper/strict/strong；Ben-Tal--Nemirovski 用 ``separation'' 与 ``strong separation'' 的定义更紧凑；Boyd 对 ``strictly separates'' 的使用也有自己的约定。因此考试时建议写出不等式，而不要只写术语。
+\end{warningbox}
+
+\section{点与闭凸集的严格分离}
+
+\begin{theorem}[Point--set strict separation]
+若 $C\subseteq\R^n$ 非空、闭、凸，且 $y\notin C$，则存在 $a\ne0$ 与 $\alpha$ 使
+\[
+a^\transpose y>\alpha\ge a^\transpose x,
+\qquad \forall x\in C.
+\]
+\end{theorem}
+
+\begin{proof}
+令 $x^*=\proj_C(y)$，并取 $a=y-x^*$。由投影变分不等式，
+\[
+(y-x^*)^\transpose(x-x^*)\le0,
+\]
+所以
+\[
+a^\transpose x\le a^\transpose x^*=: \alpha.
+\]
+另一方面
+\[
+a^\transpose y-\alpha
+=(y-x^*)^\transpose(y-x^*)
+=\norm{y-x^*}_2^2>0.
+\]
+因此严格分离成立。
+\end{proof}
+
+这个证明非常重要，因为它明确给出 separator 的构造：\textbf{法向量就是“外点 - 投影点”}。Bertsimas--Tsitsiklis 的几何证明也沿着最近点/Weierstrass 的路线展开。\cite[\S4.7]{bertsimas}\cite[\S2.5, \S8.1]{boyd}
+
+\section{两个凸集的分离}
+
+\begin{theorem}[有限维 separation theorem]
+若 $S,T\subseteq\R^n$ 非空凸集，则它们可被 proper separation 当且仅当
+\[
+\ri(S)\cap\ri(T)=\varnothing.
+\]
+若
+\[
+\dist(S,T)>0,
+\]
+则可以强分离；反之，强分离也意味着正距离。特别地，若 $S,T$ 非空、闭、凸、不相交，且其中一个紧，则可以强分离。\cite[Appendix~B.2.6]{bental}
+\end{theorem}
+
+一个很有力的证明套路是考虑差集
+\[
+D=S-T=\{x-y:x\in S,y\in T\}.
+\]
+因为 $S,T$ 凸，所以 $D$ 凸；若 $S\cap T=\varnothing$，则 $0\notin D$。于是把“两个集合分离”转化成“点 $0$ 与凸集 $D$ 分离”。
+
+\begin{keybox}[差集技巧]
+\[
+\boxed{\text{separate }S,T\quad\Longleftrightarrow\quad\text{separate }0\text{ and }S-T}
+\]
+这是凸分析中最值得记住的构造之一：复杂的双集合问题，经常可以通过 Minkowski difference 转为 point--set 问题。
+\end{keybox}
+
+
+\subsection{当最短距离被达到时，separator 可以显式写出来}
+设 $C,D$ 非空闭凸，且存在最近点对 $(c^*,d^*)$ 使
+\[
+\norm{c^*-d^*}_2=\dist(C,D)>0.
+\]
+令
+\[
+a=d^*-c^*.
+\]
+对 $C$ 固定 $d^*$ 看 projection，得到
+\[
+a^\transpose(x-c^*)\le0,\qquad \forall x\in C;
+\]
+对 $D$ 固定 $c^*$ 看 projection，得到
+\[
+a^\transpose(y-d^*)\ge0,\qquad \forall y\in D.
+\]
+因此
+\[
+\sup_{x\in C}a^\transpose x\le a^\transpose c^*
+< a^\transpose d^*\le \inf_{y\in D}a^\transpose y,
+\]
+且中间 gap 正好是
+\[
+a^\transpose(d^*-c^*)=\norm{d^*-c^*}_2^2>0.
+\]
+这给出 strong separation 的最直观构造。若一个集合 compact、另一个 closed，则最短距离 pair 存在，从而立即得到课程 slides 中的 strong-separation corollary。
+
+\section{支撑超平面}
+
+\begin{definition}[Supporting hyperplane]
+若 $x^*\in\partial C$，超平面
+\[
+H=\{x:a^\transpose(x-x^*)=0\},\quad a\ne0,
+\]
+满足
+\[
+a^\transpose(x-x^*)\le0,\qquad\forall x\in C,
+\]
+则称 $H$ 在 $x^*$ 处支撑 $C$。
+\end{definition}
+
+\begin{theorem}[Supporting hyperplane theorem]
+若 $C$ 是非空凸集，且 $x^*$ 是其合适意义下的边界点（对闭凸集取 $x^*\in\partial C$），则存在支撑超平面经过 $x^*$。
+\end{theorem}
+
+一个标准证明是取外部点序列 $y_k\notin C$，$y_k\to x^*$；对每个 $y_k$ 与 $C$ 做分离，规范化法向量 $a_k$，再利用单位球紧性取收敛子列 $a_{k_j}\to a$，极限即得到支撑法向量。
+
+\begin{corollary}[闭凸集是半空间的交]
+每个闭凸集 $C$ 都可以表示为所有包含它的闭半空间之交。
+\end{corollary}
+
+这条结论说明：即使一个闭凸集的边界是曲的，它仍然可以被理解成“无限多个线性不等式”的共同解集。多面集只是其中只需有限个半空间的特殊情形。\cite[\S2.5]{boyd}
+
+
+\section{Support function：把一个集合编码成所有线性优化问题}
+\begin{definition}[Support function]
+对非空集合 $C$，定义
+\[
+\sigma_C(a):=\sup_{x\in C} a^\transpose x.
+\]
+它回答：“沿法向量 $a$ 的方向，集合能走多远？”
+\end{definition}
+
+对闭凸集，support function 几乎完整编码集合：
+\[
+C=\bigcap_{a\in\R^n}\{x:a^\transpose x\le\sigma_C(a)\}.
+\]
+因此对闭凸集 $C,D$，
+\[
+C\subseteq D\quad\Longleftrightarrow\quad
+\sigma_C(a)\le\sigma_D(a),\ \forall a,
+\]
+而 $\sigma_C=\sigma_D$ 则推出 $C=D$。Nesterov 用 separation theorem 给出了这一类 support-function inclusion test。\cite[\S3.1.4]{nesterov}
+
+
+几个常用 support functions：
+\begin{align*}
+\sigma_{B(c,r)}(a)&=a^\transpose c+r\norm a_2,\\
+\sigma_{\Delta_n}(a)&=\max_i a_i,\\
+\sigma_{[\ell,u]}(a)&=\sum_{i=1}^n \max\{a_i\ell_i,a_i u_i\}.
+\end{align*}
+对一个闭凸锥 $K$，support function 更极端：
+\[
+\sigma_K(a)=
+\begin{cases}
+0,& a\in K^\circ,\\
++\infty,& a\notin K^\circ,
+\end{cases}
+\]
+因为一旦存在 $x\in K$ 使 $a^\transpose x>0$，沿 $tx$、$t\to\infty$ 就把 support 推到 $+\infty$。
+
+\section{Supporting face 与 exposed face}
+给定 $a\ne0$，若 $\sigma_C(a)<+\infty$，定义
+\[
+F_C(a)=\argmax_{x\in C}a^\transpose x.
+\]
+这是超平面
+\[
+a^\transpose x=\sigma_C(a)
+\]
+与 $C$ 的接触集合，称为 exposed face。若 $F_C(a)=\{x^*\}$，则 $x^*$ 是 exposed point，当然也是 extreme point；反之，一般 convex set 的 extreme point 不一定 exposed，但对 polyhedra，每个 face 都可以由有限 active constraints / 某个线性目标暴露出来。
+
+\begin{keybox}[这解释了为什么线性优化总在 face 上]
+最小化 $c^\transpose x$ 等价于最大化 $(-c)^\transpose x$。所有最优点组成的集合就是一个 exposed face：
+\[
+F^*=\argmin_{x\in C}c^\transpose x.
+\]
+LP 的“角点最优”并不是说最优集只能是角点，而是说最优 exposed face 在 pointed polyhedron 中含有 extreme point。
+\end{keybox}
+
+\chapter{Farkas 引理：不可行性也有证书}
+
+\section{从“找解”到“找不可行证书”}
+考虑标准形可行性系统
+\begin{equation}
+Ax=b,
+\qquad x\ge0.
+\label{eq:farkas-primal}
+\end{equation}
+如果找到一个 $x$，当然就证明可行。若系统不可行，怎样用有限数据证明“没有任何 $x$”呢？Farkas 引理回答：存在一个线性函数，把 $b$ 与由 $A$ 的列生成的锥分开。
+
+\begin{theorem}[Farkas lemma, standard equality form]
+给定 $A\in\R^{m\times n}$ 与 $b\in\R^m$，以下两者恰有一个成立：
+\begin{enumerate}[label=(\alph*)]
+  \item 存在 $x\ge0$ 使 $Ax=b$；
+  \item 存在 $y\in\R^m$ 使
+  \[
+  A^\transpose y\ge0,
+  \qquad b^\transpose y<0.
+  \]
+\end{enumerate}
+\end{theorem}
+
+\begin{proofmap}[为什么两套系统不可能同时有解？]
+若同时存在 $x\ge0$ 与 $y$ 满足 $Ax=b$、$A^\transpose y\ge0$、$b^\transpose y<0$，则
+\[
+b^\transpose y=(Ax)^\transpose y=x^\transpose A^\transpose y\ge0,
+\]
+与 $b^\transpose y<0$ 矛盾。Farkas 的真正内容不是“互斥”，而是更强的“\textbf{互斥且穷尽}”：primal infeasible 时 certificate 必然存在。
+\end{proofmap}
+
+符号反向可以得到课程 slides 中的等价形式，例如 $A^\transpose y=c,y\ge0$ 与另一个严格不等式系统的 alternatives。关键不是死记某一版，而是会把一种形式通过增广变量、乘 $-1$、引入 slack 变成另一种。
+
+
+\begin{lemma}[有限生成锥是闭的]
+给定有限向量 $a_1,\ldots,a_n\in\R^m$，
+\[
+K=\cone\{a_1,\ldots,a_n\}
+\]
+是闭凸锥。
+\end{lemma}
+\begin{proof}[一个与 Carath\'eodory 同源的证明]
+凸性显然。设 $z_k\in K$ 且 $z_k\to z$。由 conic Carath\'eodory，每个 $z_k$ 可以用至多 $m$ 个线性无关生成元表示。有限个生成元子集只有有限多种，因此取子列后可假设所有 $z_k$ 都由同一组线性无关列 $A_I$ 表示：
+\[
+z_k=A_I\lambda^{(k)},\qquad \lambda^{(k)}\ge0.
+\]
+因为 $A_I$ 满列秩，存在 left inverse $L$ 使 $LA_I=I$，所以
+\[
+\lambda^{(k)}=Lz_k\to Lz=: \lambda\ge0.
+\]
+故 $z=A_I\lambda\in K$。于是 $K$ 闭。
+\end{proof}
+
+定义由 $A$ 的列生成的有限生成锥
+\[
+K=\{Ax:x\ge0\}=\cone\{a_1,\dots,a_n\}.
+\]
+系统 \eqref{eq:farkas-primal} 可行当且仅当 $b\in K$。
+
+若不可行，则 $b\notin K$。有限生成锥 $K$ 是闭凸集，因此存在分离向量 $y$ 使
+\[
+y^\transpose b<y^\transpose z,
+\qquad\forall z\in K.
+\]
+因为 $0\in K$，得到 $y^\transpose b<0$。又因为 $\lambda a_j\in K$ 对任意 $\lambda\ge0$，若某个 $y^\transpose a_j<0$，让 $\lambda\to\infty$ 会破坏分离不等式；因此 $y^\transpose a_j\ge0$ 对所有 $j$，即
+\[
+A^\transpose y\ge0.
+\]
+这就是不可行证书。\cite[\S4.6--4.7]{bertsimas}\cite[\S2.6]{luenberger}
+
+\begin{intuitionbox}[certificate 的思想]
+Farkas 引理不是只在告诉你“两个系统互斥”。它提供了一个非常现代的计算思想：
+\begin{itemize}
+  \item primal solution $x$ 是 \textbf{feasibility certificate}；
+  \item multiplier $y$ 是 \textbf{infeasibility certificate}。
+\end{itemize}
+优化、对偶、复杂性理论中大量“可验证证明”都建立在这种 alternative theorem 结构上。
+\end{intuitionbox}
+
+\section{常见变体}
+Farkas 的常用变体包括：
+\begin{align*}
+Ax&<0
+&&\text{vs.}&& A^\transpose y=0,\ y\ge0,\ y\ne0
+&&\text{(Gordan)},\\
+Ax&\le0,\ x\ge0,\ c^\transpose x>0
+&&\text{vs.}&& A^\transpose y\ge c,\ y\ge0,\\
+Ax&\le0,\ Bx=0,\ c^\transpose x>0
+&&\text{vs.}&& A^\transpose y+B^\transpose z=c
+&&\text{(带等式约束的版本)}.
+\end{align*}
+这些都是 ``theorems of alternatives''：一个系统有解，另一个系统就没有解；且二者之一必有解。Boyd 把它们系统地放在 duality 与 feasibility 的框架下讨论。\cite[\S5.8]{boyd}
+
+
+\subsection{Alternatives 的“翻译表”}
+下表给出几种最常见形式。符号可能因教材而反向，但几何内容相同。
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Primal/feasibility system} & \textbf{Alternative certificate system}\\
+\midrule
+$Ax=b,\ x\ge0$ & $A^\transpose y\ge0,\ b^\transpose y<0$\\
+$Ax\le0,\ c^\transpose x>0$ & $A^\transpose y=c,\ y\ge0$\\
+$Ax<0$ & $A^\transpose y=0,\ y\ge0,\ y\ne0$ (Gordan)\\
+$Ax\ge0,\ Ax\ne0$ & $A^\transpose y=0,\ y>0$ (Stiemke-type form)\\
+$Ax\le0,\ Bx=0,\ c^\transpose x>0$ & suitable multipliers $y,z$ with $A^\transpose y+B^\transpose z=c$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+Luenberger--Ye 的 Chapter 2 把 Farkas/Gordan 等放在“alternative systems”框架中；Boyd 的 \S5.8 则把它们放在 feasibility/duality 中统一解释。\cite[Ch.~2]{luenberger}\cite[\S5.8]{boyd}
+
+\section{一个小例子：证书如何一眼证明不可行}
+考虑
+\[
+\begin{cases}
+x_1+x_2=-1,\\
+x_1,x_2\ge0.
+\end{cases}
+\]
+显然左边非负而右边为负，因此不可行。令 $A=[1\ 1]$、$b=-1$。取 $y=1$，则
+\[
+A^\transpose y=\begin{bmatrix}1\\1\end{bmatrix}\ge0,
+\qquad b^\transpose y=-1<0.
+\]
+于是 $y$ 就是一个 Farkas certificate。更一般地，certificate 的价值在于：\textbf{验证它只需做一次矩阵乘法和符号检查，而不需要穷举所有 $x$。}
+
+\section{Farkas = cone membership 的二择一定理}
+令
+\[
+K=\cone\{a_1,\ldots,a_n\}=\{Ax:x\ge0\}.
+\]
+则标准 Farkas 引理可压缩为：
+\[
+\boxed{b\in K}
+\quad\text{or}\quad
+\boxed{\exists y\in K^\vee:\ y^\transpose b<0},
+\]
+且两者恰有一个成立。这样写以后，Farkas 与 dual cone / separation 的关系完全透明：如果 $b$ 不在闭凸锥中，就存在一个 dual-cone vector 把它严格分到另一边。
+
+\section{Farkas 与 LP 对偶的关系}
+有两条经典逻辑路线：
+\[
+\text{Simplex}\Rightarrow\text{LP duality}\Rightarrow\text{Farkas},
+\]
+或更几何地
+\[
+\text{Separation}\Rightarrow\text{Farkas}\Rightarrow\text{LP duality}.
+\]
+Bertsimas--Tsitsiklis 特别强调第二条路线更基础、更易推广到一般凸优化。\cite[\S4.7]{bertsimas}
+
+
+\begin{deepdivebox}[从 Farkas 到强对偶：一条值得会讲的证明路线]
+考虑 primal
+\[
+\min\{c^\transpose x:Ax\ge b\}
+\]
+及其 dual
+\[
+\max\{b^\transpose y:A^\transpose y=c,\ y\ge0\}.
+\]
+若 $x^*$ 是 primal optimum，则任何可行方向 $d$ 都不能让 $c^\transpose d<0$。把“active constraints 允许的方向”写成一个线性系统，再用 Farkas 可证明 $c$ 是 active constraint normals 的非负组合：
+\[
+c=A_I^\transpose y_I,\qquad y_I\ge0.
+\]
+把 inactive constraints 的 multiplier 设为零，就得到 dual feasible $y$，且 complementary slackness 导致
+\[
+b^\transpose y=c^\transpose x^*.
+\]
+于是 strong duality 成立。这个证明展示了一个核心思想：\textbf{最优性意味着不存在下降可行方向；theorem of alternatives 把“方向不存在”转换成“乘子存在”。}
+\cite[\S4.7]{bertsimas}
+\end{deepdivebox}
+
+\chapter{凸锥、对偶锥与极锥}
+
+\section{锥与凸锥}
+
+\begin{definition}[Cone]
+$K\subseteq\R^n$ 是锥，如果
+\[
+x\in K,\ \lambda\ge0\quad\Longrightarrow\quad\lambda x\in K.
+\]
+若再满足凸性，则称 convex cone。
+\end{definition}
+
+凸锥等价于对任意 $x_1,x_2\in K$ 与 $\lambda_1,\lambda_2\ge0$，
+\[
+\lambda_1x_1+\lambda_2x_2\in K.
+\]
+也就是说，凸锥对所有 conic combinations 封闭。
+
+\section{pointed, solid, proper}
+一个凸锥 $K$：
+\begin{itemize}[leftmargin=2em]
+  \item 若 $K\cap(-K)=\{0\}$，称为 pointed（不含直线）；
+  \item 若 $\interior K\ne\varnothing$，称为 solid/full-dimensional；
+  \item 若闭、凸、pointed 且有非空内部，常称 proper cone。
+\end{itemize}
+这些性质决定了锥能否定义一个良好的广义偏序以及其 dual cone 的内部结构。
+
+
+定义锥的 lineality space
+\[
+\lin(K):=K\cap(-K).
+\]
+它是 $K$ 中所有可以正反两个方向无限移动的方向集合。于是
+\[
+K\text{ pointed}\quad\Longleftrightarrow\quad \lin(K)=\{0\}.
+\]
+对一般 polyhedron，lineality 将在 recession cone 中再次出现。
+
+\section{Dual cone}
+
+\begin{definition}[Dual cone]
+\[
+K^{\vee}=\{y:\inner{y}{x}\ge0,\ \forall x\in K\}.
+\]
+\end{definition}
+无论原来的 $K$ 是否凸，$K^{\vee}$ 都是闭凸锥，因为它是半空间
+\[
+\{y:y^\transpose x\ge0\}
+\]
+的交。
+
+\begin{theorem}[Bipolar for closed convex cones]
+若 $K$ 是闭凸锥，则
+\[
+(K^{\vee})^{\vee}=K.
+\]
+更一般地，对任意锥 $K$，双对偶给出其闭凸锥包。
+\end{theorem}
+
+证明的核心依然是 separation：若 $z\notin K$，把点 $z$ 与闭凸锥 $K$ 分离，分离法向量属于 $K^{\vee}$，从而 $z\notin(K^{\vee})^{\vee}$。
+
+
+\begin{theorem}[Dual cone 的 interior/pointed 对偶性]
+设 $K$ 为闭凸锥。
+\begin{enumerate}[label=(\roman*),leftmargin=2.2em]
+  \item $K$ pointed $\Longleftrightarrow \interior(K^\vee)\ne\varnothing$；
+  \item $\interior K\ne\varnothing \Longleftrightarrow K^\vee$ pointed；
+  \item 若 $K$ pointed，则
+  \[
+  y\in\interior K^\vee
+  \quad\Longleftrightarrow\quad
+  y^\transpose x>0\quad\forall x\in K\setminus\{0\}.
+  \]
+\end{enumerate}
+\end{theorem}
+这些性质解释了为什么 proper cone 的 dual 仍是 proper cone。Ben-Tal--Nemirovski 把这视为锥对偶的基本结构。\cite[Lecture~1; Appendix~B.2.7]{bental}
+
+\begin{proofmap}[证明直觉]
+若 $K$ 含一条直线 $\{td:t\in\R\}$，则任何 $y\in K^\vee$ 必须同时满足 $y^\transpose d\ge0$ 和 $-y^\transpose d\ge0$，所以 $y^\transpose d=0$；整个 dual cone 被压在一个超平面里，不可能有 interior。反方向则用 separation/bipolar reasoning。
+\end{proofmap}
+
+\section{Polar cone}
+本讲对锥定义
+\[
+K^\circ=\{y:y^\transpose x\le0,\ \forall x\in K\}=-K^{\vee}.
+\]
+于是
+\[
+(K^\circ)^\circ=K
+\]
+对闭凸锥成立。
+
+\begin{warningbox}[一般 convex set 的 polar 与 polar cone 不同]
+Ben-Tal--Nemirovski 对包含原点的一般闭凸集 $C$ 使用
+\[
+C^\circ=\{y:y^\transpose x\le1,\ \forall x\in C\},
+\]
+而对锥由于正齐次性，常数 $1$ 自动塌缩为 $0$。所以看到 ``polar'' 一定要先确认对象是一般 convex set 还是 cone。\cite[Appendix~B.2.7]{bental}
+\end{warningbox}
+
+\section{重要自对偶锥}
+在标准 Euclidean/Frobenius 内积下：
+\begin{align*}
+(\R_+^n)^{\vee}&=\R_+^n,\\
+(\mathcal Q^{n+1})^{\vee}&=\mathcal Q^{n+1},\\
+(\mathbb S_+^n)^{\vee}&=\mathbb S_+^n.
+\end{align*}
+这解释了 LP、SOCP、SDP 之间的统一性：它们都可以看成“线性目标 + 仿射约束 + 锥约束”。\cite[\S2.6]{boyd}\cite[Lecture~1--3]{bental}\cite[Ch.~6]{luenberger}
+
+
+\subsection{三个自对偶例子的证明思路}
+\textbf{Nonnegative orthant.} 若 $y^\transpose x\ge0$ 对所有 $x\ge0$，依次取 $x=e_i$ 得 $y_i\ge0$，故 dual 仍为 $\R_+^n$。
+
+\textbf{Second-order cone.} 对 $K=\{(x,t):\norm{x}_2\le t\}$，若 $(u,v)\in K$，则对任意 $(x,t)\in K$，Cauchy--Schwarz 给出
+\[
+u^\transpose x+vt\ge-\norm{u}_2\norm{x}_2+vt\ge(v-\norm{u}_2)t\ge0.
+\]
+反向通过选择 $x=-t u/\norm{u}$ 逼出 $v\ge\norm{u}$。
+
+\textbf{PSD cone.} 若 $X,Y\succeq0$，则
+\[
+\langle X,Y\rangle=\operatorname{tr}(XY)\ge0.
+\]
+反过来，若对所有 $Y\succeq0$ 都有 $\operatorname{tr}(XY)\ge0$，取 $Y=vv^\transpose$ 得
+\[
+v^\transpose Xv=\operatorname{tr}(Xvv^\transpose)\ge0\quad\forall v,
+\]
+所以 $X\succeq0$。这就是 PSD cone 的 self-duality。\cite[Appendix~A.8]{bental}
+
+\chapter{多面几何：H-representation 与 V-representation}
+
+\section{两种描述方式}
+多面集有两种根本不同的描述视角。
+
+\textbf{外部/H-representation:}
+\[
+P=\{x:Ax\le b,\ Cx=d\},
+\]
+把集合看成有限个半空间的交。
+
+\textbf{内部/V-representation:}
+把集合看成有限个“顶点”与“无界方向”的组合：
+\[
+P=\conv(V)+\cone(R)
+\]
+（若存在 lineality 还需相应处理）。Minkowski--Weyl theorem 说这两类表示本质上等价。Ben-Tal--Nemirovski 将其称为 polyhedral set 的 inner/outer descriptions。\cite[Appendix~B.2.9]{bental}
+
+
+\section{Face、facet、vertex：多面体的层级结构}
+\begin{definition}[Face]
+设 $P$ 为 convex set。若存在 $a\ne0$ 使
+\[
+F=P\cap\{x:a^\transpose x=\sigma_P(a)\},
+\]
+则 $F$ 是一个 exposed face。对 polyhedron，所有 face 都可以由 active linear constraints 描述，因此所有 face 都是 exposed。
+\end{definition}
+
+在 full-dimensional polyhedron 中：
+\begin{itemize}[leftmargin=2em]
+  \item dimension $0$ 的 face 是 vertex/extreme point；
+  \item dimension $1$ 的 face 是 edge；
+  \item dimension $n-1$ 的 proper face 是 facet。
+\end{itemize}
+若某 face 由独立 active equalities $A_Ix=b_I$ 切出，则在适当非冗余/affine-hull 表述下，其维数由
+\[
+\dim F=\dim\aff(P)-\rank(A_I|_{\aff(P)})
+\]
+控制。直观上，每增加一个独立 active constraint，就减少一个自由度。
+
+\section{Polyhedral projection 与 Fourier--Motzkin elimination}
+一个对后续建模很重要但 slides 没有展开的事实是：\textbf{polyhedron 的线性投影仍然是 polyhedron。}
+设
+\[
+Y=\{(x,u):Ax+Bu\le c\}.
+\]
+则
+\[
+X=\{x:\exists u,\ Ax+Bu\le c\}
+\]
+仍可由有限个线性不等式描述。消去一个标量变量 $u$ 时，把不等式分成
+\[
+u\le \alpha_i(x),\qquad u\ge \beta_j(x),\qquad \text{以及不含 }u\text{ 的约束},
+\]
+然后用所有 pairwise 条件
+\[
+\beta_j(x)\le\alpha_i(x)
+\]
+替代 $u$。重复消元即得到 Fourier--Motzkin elimination。Ben-Tal--Nemirovski 用这一点证明 polyhedrally representable set 仍是 polyhedral。\cite[Appendix~B.2.4]{bental}
+
+\begin{warningbox}[理论上漂亮，计算上可能爆炸]
+Fourier--Motzkin 每消去一个变量都可能把约束数近似平方，因此它主要是结构定理工具，而不是大规模 LP 的实际求解算法。
+\end{warningbox}
+
+\section{极点：不能被进一步平均的点}
+
+\begin{definition}[Extreme point]
+设 $C$ 非空凸。若
+\[
+x=\theta y+(1-\theta)z,\quad y,z\in C,\quad0<\theta<1
+\]
+必然推出 $y=z=x$，则 $x$ 是 $C$ 的 extreme point。
+\end{definition}
+
+极点是凸集里“不可再分”的点。对三角形是顶点；对圆盘，整个圆周都是极点；对半空间没有极点。
+
+\section{多面集的 active-constraint characterization}
+设
+\[
+P=\{x:a_i^\transpose x\le b_i,\ i=1,\dots,m\}.
+\]
+在 $x^*$ 处 active 的约束是满足 $a_i^\transpose x^*=b_i$ 的约束。
+
+\begin{theorem}[Extreme point / vertex test]
+$x^*$ 是 $P$ 的极点，当且仅当在 $x^*$ 处存在 $n$ 个线性无关的 active constraint normals。
+\end{theorem}
+
+\begin{proofmap}[证明机制]
+若 active normals 不能张成 $\R^n$，则存在非零方向 $d$ 同时正交于所有 active normals。取足够小的 $\eps>0$，$x^*\pm\eps d$ 都仍满足所有约束，于是
+\[
+x^*=\frac12(x^*+\eps d)+\frac12(x^*-\eps d),
+\]
+与极点矛盾。
+
+反之，若有 $n$ 个线性无关 active normals，任何把 $x^*$ 写成两个可行点平均的表示都会迫使这两个点同时满足这 $n$ 个等式；线性无关性使该交点唯一，只能等于 $x^*$。
+\end{proofmap}
+
+这个 characterization 是一般 polyhedron 中极点与线性代数的桥梁。\par\noindent\cite[Ch.~2]{bertsimas}\;\cite[Appendix~B.2.8]{bental}
+
+
+\section{极点、唯一 active-system 解与可行方向}
+上述定理还有两个完全等价的视角。设 $I(x^*)$ 为 active constraints index set，则：
+\begin{enumerate}[leftmargin=2.2em]
+  \item $x^*$ 是 extreme point；
+  \item active normals $\{a_i:i\in I(x^*)\}$ 张成整个有效方向空间；
+  \item 不存在非零 $d$ 使 $x^*\pm\eps d$ 对足够小 $\eps>0$ 都可行；
+  \item $x^*$ 是某个足够多独立 active equations 的唯一解。
+\end{enumerate}
+这四种语言分别是：凸组合、线性代数、局部可行方向、方程组唯一性。考试证明题往往只是要求在这四种语言之间翻译。
+
+\chapter{Basic Feasible Solution：极点的代数版本}
+
+\section{标准形可行域}
+考虑
+\[
+P=\{x\in\R^n:Ax=b,\ x\ge0\},
+\qquad \rank(A)=m<n.
+\]
+从 $A$ 的列中选 $m$ 个线性无关列组成可逆矩阵 $B$，其余列组成 $N$。写
+\[
+A=[B\ N],\qquad x=\begin{bmatrix}x_B\\x_N\end{bmatrix}.
+\]
+令非基变量 $x_N=0$，则
+\[
+Bx_B=b\quad\Longrightarrow\quad x_B=B^{-1}b.
+\]
+若 $B^{-1}b\ge0$，则
+\[
+x=\begin{bmatrix}B^{-1}b\\0\end{bmatrix}
+\]
+是 basic feasible solution (BFS)。\cite[Ch.~2]{luenberger}
+
+\section{极点 = 顶点 = BFS}
+
+\begin{theorem}[LP 几何的核心等价]
+对标准形 polyhedron $P=\{x:Ax=b,x\ge0\}$，
+\[
+\boxed{x\text{ is an extreme point}}
+\quad\Longleftrightarrow\quad
+\boxed{x\text{ is a BFS}}.
+\]
+更一般的 polyhedron 中，Bertsimas--Tsitsiklis 证明了 vertex、extreme point、BFS（按其一般化定义）三者等价。\cite[Ch.~2, Thm.~2.3]{bertsimas}
+\end{theorem}
+
+\begin{proof}[BFS $\Rightarrow$ extreme]
+设
+\[
+x=\begin{bmatrix}B^{-1}b\\0\end{bmatrix}
+=\theta y+(1-\theta)z,
+\quad 0<\theta<1,
+\quad y,z\in P.
+\]
+因为 $y,z\ge0$，而 $x_N=0$，必有 $y_N=z_N=0$。又 $By_B=Bz_B=b$，故由 $B$ 可逆，
+\[
+y_B=z_B=B^{-1}b.
+\]
+因此 $x=y=z$。
+\end{proof}
+
+\begin{proof}[extreme $\Rightarrow$ BFS]
+设 $x$ 的正分量对应列 $a_1,\dots,a_k$。若这些列线性相关，则存在非零 $d$ 只支撑在这些分量上，使
+\[
+Ad=0.
+\]
+因 $x_i>0$，取足够小 $\eps>0$，可保证 $x\pm\eps d\ge0$，且
+\[
+A(x\pm\eps d)=b.
+\]
+于是 $x$ 是两个不同可行点的平均，与 extreme 矛盾。因此正分量对应列线性无关，数量 $k\le m$；再补充 $m-k$ 个列形成基 $B$，即得到 BFS 表示。
+\end{proof}
+
+\section{退化}
+若 BFS 中某个 basic variable 等于零，则该 BFS 称为 degenerate。退化意味着同一个极点可能对应多个不同 bases，是 simplex 方法可能 cycling 的根源之一。
+
+
+如果 $A$ 有 $n$ 列、rank $m$，候选 bases 最多有
+\[
+\binom{n}{m}
+\]
+个，因此标准形 polyhedron 的 extreme points 数量有限，并且不超过该数量；但退化时多个 bases 可以对应同一个 extreme point，所以实际极点数可能远小于 $\binom{n}{m}$。
+
+\begin{example}[概率 simplex]
+\[
+\Delta_n=\{x\in\R^n:x\ge0,\ \mathbf 1^\transpose x=1\}.
+\]
+这里只有一个 equality，所以 $m=1$。每个 basis 选取一个列，BFS 为
+\[
+e_1,\ldots,e_n.
+\]
+因此
+\[
+\ext(\Delta_n)=\{e_1,\ldots,e_n\},\qquad
+\Delta_n=\conv\{e_1,\ldots,e_n\}.
+\]
+这也是“概率分布是纯策略/原子分布的凸组合”的最基本几何模型。
+\end{example}
+
+\begin{keybox}[几何与代数翻译表]
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+几何语言 & 线性代数/LP 语言\\
+\midrule
+极点 / vertex & basic feasible solution\\
+$n$ 个独立 active constraints & 基矩阵非奇异\\
+沿边移动 & 改变一个非基变量并调整基变量\\
+退化顶点 & 某些 basic variables 为零\\
+无界边 & recession/extreme direction\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{keybox}
+
+\chapter{极点存在性与 LP 的“角点最优”原理}
+
+\section{一般多面集何时有极点？}
+一般 polyhedron 可能没有极点，例如整个超平面或半空间都可能没有 vertex。Bertsimas--Tsitsiklis 给出一个重要判据：对非空 polyhedron，
+\[
+\boxed{\text{存在极点}}
+\quad\Longleftrightarrow\quad
+\boxed{\text{不包含完整直线}}.
+\]
+若 $P$ 包含 $x+\lambda d$ 对所有 $\lambda\in\R$，则任何点都能沿 $\pm d$ 两边移动，因此不可能是极点。\cite[Ch.~2, \S2.5]{bertsimas}
+
+对标准形集合 $P=\{x:Ax=b,x\ge0\}$，若 $P\ne\varnothing$，它不可能包含非零完整直线：若 $x\pm td\ge0$ 对所有 $t\in\R$，则只能 $d=0$。因此标准形非空可行域必有极点/BFS。
+
+
+\begin{proofmap}[为什么“无直线”会逼出极点？]
+对一般 polyhedron $P=\{x:a_i^\transpose x\le b_i\}$，若 active normals 在每个点都不能张成有效空间，则在每个点都存在双向可行的非零方向。通过选择一个使 active set 最大的点并继续沿这样的方向移动，可以激活更多约束；有限步后要么得到足够多独立 active constraints（即 extreme point），要么构造出一条完整 line。Bertsimas--Tsitsiklis 将此整理为：
+\[
+P\ne\varnothing:\quad
+P\text{ has an extreme point}
+\Longleftrightarrow
+P\text{ contains no line}.
+\]
+\cite[Ch.~2, \S2.5]{bertsimas}
+\end{proofmap}
+
+\section{从任意可行点压缩到 BFS}
+这也可以直接构造证明。设 $x\in P$ 有 $k$ 个正分量。若对应的 $k$ 个列线性相关，取非零依赖向量 $d$ 使 $Ad=0$，然后沿 $x-\alpha d$ 移动，选择
+\[
+\alpha=\min_{d_i>0}\frac{x_i}{d_i},
+\]
+使至少一个正分量恰好降为零，同时保持非负与 $Ax=b$。反复操作，直到正分量对应的列线性无关，就得到 BFS。课程 slides 中的 existence proof 与 Luenberger--Ye 的 fundamental theorem 都采用了这个消元思想。\cite[Ch.~2]{luenberger}
+
+\section{线性目标为什么可以在极点上优化？}
+
+\begin{theorem}[Fundamental geometric principle of LP]
+若 LP 在非空 polyhedron 上有有限最优值，并且可行域存在极点，则至少存在一个最优极点。对标准形 LP，这意味着若最优解存在，则存在 optimal BFS。
+\end{theorem}
+
+直觉上，线性函数的等值面是平行超平面；沿优化方向移动，最后接触 polyhedron 的 supporting face。若这个 face 含极点，取该极点仍有相同最优值。
+
+代数上，如果一个最优可行点不是 BFS，可沿 null direction 消去正变量，同时不改变目标值，直到落到 BFS。Luenberger--Ye 的 Fundamental Theorem of Linear Programming 正是这个结论。\cite[Ch.~2]{luenberger}
+
+
+\begin{proof}[标准形中的代数证明]
+设 $x$ 是最优可行解，并假设其正分量对应列线性相关。则存在非零 $d$，只支撑在正分量上且 $Ad=0$。对足够小的 $\eps>0$，$x\pm\eps d$ 都可行。最优性要求
+\[
+c^\transpose(x+\eps d)\ge c^\transpose x,
+\qquad
+c^\transpose(x-\eps d)\ge c^\transpose x,
+\]
+因此必有 $c^\transpose d=0$。于是可以像可行性压缩证明一样沿 $d$ 移动直到某个正分量变零，同时目标值完全不变。反复操作，最终得到同目标值的 BFS。
+\end{proof}
+
+\begin{warningbox}[“最优点一定唯一”是错误的]
+线性目标可能在一个完整 edge/face 上保持常数，所以最优解可以有无穷多个；真正正确的结论是：\textbf{只要有限最优值能达到，就至少有一个最优极点/BFS}。
+\end{warningbox}
+
+\chapter{Recession cone 与极方向：无界性的几何结构}
+
+\section{Recession direction}
+
+\begin{definition}[Recession direction]
+对非空凸集 $C$，若非零向量 $d$ 满足
+\[
+x+td\in C,
+\qquad \forall x\in C,\ \forall t\ge0,
+\]
+则称 $d$ 为 recession direction。
+\end{definition}
+
+所有 recession directions 加上 $0$ 构成 recession cone
+\[
+\rec(C).
+\]
+若
+\[
+P=\{x:Ax\le b\},
+\]
+则
+\[
+\rec(P)=\{d:Ad\le0\}.
+\]
+
+这个公式有一个很有用的推导：
+\[
+A(x+td)\le b\quad\forall t\ge0.
+\]
+若 $x\in P$ 已固定，则当 $t\to\infty$ 时，任何满足 $a_i^\transpose d>0$ 的约束最终都会被违反，因此必须 $Ad\le0$；反过来 $Ad\le0$ 显然保证 $A(x+td)\le Ax\le b$。
+
+定义 lineality space
+\[
+\lin(P):=\rec(P)\cap(-\rec(P)).
+\]
+对 $P=\{x:Ax\le b\}$，
+\[
+\lin(P)=\{d:Ad=0\}.
+\]
+于是
+\[
+P\text{ pointed}\Longleftrightarrow \lin(P)=\{0\}
+\Longleftrightarrow \rec(P)\text{ pointed}.
+\]
+若是标准形
+\[
+P=\{x:Ax=b,x\ge0\},
+\]
+则
+\begin{equation}
+\rec(P)=\{d:Ad=0,d\ge0\}.
+\label{eq:standard-recession}
+\end{equation}
+\cite[\S4.8]{bertsimas}
+
+\begin{corollary}
+非空 polyhedron $P$ 有界，当且仅当 $\rec(P)=\{0\}$。
+\end{corollary}
+
+\section{Extreme ray / extreme direction}
+
+\begin{definition}[Extreme ray]
+设 $K$ 为 pointed convex cone。非零 $d\in K$ 生成一个 extreme ray，如果
+\[
+d=d_1+d_2,\qquad d_1,d_2\in K
+\]
+必然推出 $d_1,d_2$ 都是 $d$ 的非负倍数。
+\end{definition}
+
+它是“极点”的齐次版本：极点不能被两个不同可行点平均；极射线不能被两个不同锥方向非平凡地相加。
+
+
+对 pointed polyhedral cone
+\[
+K=\{d:Ad\le0\}\subseteq\R^n,
+\]
+一个非零 $d\in K$ 生成 extreme ray，当且仅当在 $d$ 处存在 $n-1$ 个线性无关的 active homogeneous constraints（在有效线性空间中相应调整维数）。这正是 vertex test 的齐次 analogue：vertex 需要“锁死”所有 $n$ 个自由度，而 ray 允许保留一个沿射线缩放的自由度，所以只需锁死 $n-1$ 个。
+
+\section{标准形中的基方向 characterization}
+对 \eqref{eq:standard-recession}，取 $A=[B\ N]$。若某个非基列 $a_j$ 满足
+\[
+B^{-1}a_j\le0,
+\]
+则
+\[
+d=
+\begin{bmatrix}
+-B^{-1}a_j\\ e_j
+\end{bmatrix}\ge0,
+\qquad Ad=0.
+\]
+因此 $d$ 是 recession direction；在适当非退化/独立性条件下它生成 extreme direction。课程 slides 给出的极方向公式正是 simplex 的 basic direction 几何版本。
+
+
+\begin{proofmap}[为什么这个 basic direction 是 extreme？]
+$d$ 的所有非基分量除了第 $j$ 个外都为零。若
+\[
+d=d^{(1)}+d^{(2)},\qquad d^{(1)},d^{(2)}\in\rec(P),
+\]
+由于两向量都非负，它们在这些零坐标上也只能为零。因此两个方向都只可能在同一个 basic block 和第 $j$ 个坐标上非零。再由
+\[
+Ad^{(r)}=0
+\]
+以及 $B$ 可逆，basic block 被第 $j$ 个分量唯一决定，所以 $d^{(1)},d^{(2)}$ 都是 $d$ 的非负倍数。这就是 extreme-ray 性。
+\end{proofmap}
+
+\section{目标无界与下降极射线}
+
+\begin{theorem}[Unboundedness certificate]
+考虑
+\[
+\min\{c^\transpose x:x\in P\},
+\]
+其中 $P$ 是具有至少一个极点的非空 polyhedron。最优值为 $-\infty$ 当且仅当存在 extreme ray $d\in\rec(P)$ 使
+\[
+c^\transpose d<0.
+\]
+\end{theorem}
+
+一个方向 $d$ 若满足 $c^\transpose d<0$，则沿 $x+td$ 走得越远，目标越小：
+\[
+c^\transpose(x+td)=c^\transpose x+t c^\transpose d\to-\infty.
+\]
+难点在反方向：若问题无界，为什么总能找到\emph{极}方向？多面锥由有限极射线生成，因此任意下降方向最终可分解到至少一个下降极射线上。Bertsimas--Tsitsiklis 将其写成 Theorems 4.13--4.14。\cite[\S4.8]{bertsimas}
+
+\chapter{Minkowski--Weyl / Resolution Theorem：多面体的完整结构}
+
+\section{主定理}
+
+\begin{theorem}[Minkowski--Weyl / Resolution theorem, pointed case]
+设 $P\subseteq\R^n$ 是非空 polyhedron，并且含至少一个极点（等价地，在此语境下不含 lineality）。设其极点为
+\[
+v^1,\dots,v^k,
+\]
+其 recession cone 的一组 inequivalent extreme rays 为
+\[
+d^1,\dots,d^\ell.
+\]
+则
+\begin{equation}
+P=
+\conv\{v^1,\dots,v^k\}
++
+\cone\{d^1,\dots,d^\ell\}.
+\label{eq:minkowski-weyl}
+\end{equation}
+也就是说，每个 $x\in P$ 都可写成
+\[
+x=\sum_{i=1}^k\lambda_i v^i+
+\sum_{j=1}^{\ell}\mu_j d^j,
+\qquad
+\lambda_i\ge0,\quad
+\sum_i\lambda_i=1,\quad
+\mu_j\ge0.
+\]
+\end{theorem}
+
+\begin{theorem}[Minkowski--Weyl, general finite-generation form]
+一个集合 $P\subseteq\R^n$ 是 polyhedron，当且仅当存在有限集合 $V,R$ 使
+\[
+P=\conv(V)+\cone(R).
+\]
+若 $P$ 含 lineality，可以让 $R$ 同时包含某些 $\ell$ 与 $-\ell$，或者更清晰地写成
+\[
+P=\conv(V)+\cone(R_0)+L,
+\]
+其中 $L=\lin(P)$ 是一个线性子空间，而 $R_0$ 只生成 pointed recession part。
+\end{theorem}
+
+\begin{keybox}[一句话解释]
+\[
+\boxed{\text{polyhedron} = \text{bounded skeleton (vertices)} + \text{unbounded skeleton (rays)}}
+\]
+极点描述“从哪里出发”，极射线描述“可以朝哪些不可约方向走到无穷远”。这就是线性规划几何结构的终点。
+\end{keybox}
+
+\section{为什么右边一定包含在 $P$ 中？}
+若 $v^i\in P$，其凸组合仍在 $P$；若 $d^j\in\rec(P)$，则从任何 $y\in P$ 出发加上任意非负线性组合 $\sum_j\mu_jd^j$ 仍在 $P$。所以
+\[
+\conv(V)+\cone(R)\subseteq P.
+\]
+真正难的是反向包含。
+
+\section{反向包含的分离证明框架}
+令
+\[
+Q=\conv(V)+\cone(R).
+\]
+假设存在 $z\in P\setminus Q$。由于 $Q$ 是闭凸 polyhedral set，可以找线性函数 $p^\transpose x$ 严格分离 $z$ 与 $Q$。根据符号选择，可写为
+\[
+p^\transpose z< p^\transpose y,
+\qquad \forall y\in Q.
+\]
+由于 $Q$ 包含所有极点和沿所有极射线的非负移动，分离关系迫使：
+\begin{itemize}[leftmargin=2em]
+  \item $p^\transpose v^i>p^\transpose z$ 对所有极点；
+  \item $p^\transpose d^j\ge0$ 对所有极射线，否则沿某条 ray 可把 $p^\transpose y$ 推到 $-\infty$，破坏分离下界。
+\end{itemize}
+现在考虑 LP
+\[
+\min\{p^\transpose x:x\in P\}.
+\]
+若该 LP 有有限最优值，则存在最优极点 $v^i$，但这会给出
+\[
+p^\transpose v^i\le p^\transpose z,
+\]
+与分离矛盾。若该 LP 无界，则无界性定理给出某条 extreme ray $d^j$ 使 $p^\transpose d^j<0$，同样矛盾。故不存在 $z\in P\setminus Q$，于是 $P=Q$。
+
+这个证明结构非常漂亮，因为它把本讲所有前置结论串在一起：
+\[
+\boxed{
+\text{Separation}
++\text{Optimal extreme point}
++\text{Unboundedness by extreme ray}
+\Rightarrow
+\text{Minkowski--Weyl}
+}
+\]
+Bertsimas--Tsitsiklis 的 resolution theorem 正是沿这条逻辑展开；Ben-Tal--Nemirovski 则从 polyhedral inner/outer representation 的角度表述等价结构。\cite[\S4.9]{bertsimas}\cite[Appendix~B.2.9]{bental}
+
+\section{有界情形：polytope 只是极点的凸包}
+若 $P$ 有界，则 $\rec(P)=\{0\}$，所以公式退化为
+\[
+P=\conv\{v^1,\dots,v^k\}.
+\]
+因此 bounded polyhedron = convex hull of finitely many points。这是 H-representation 与 V-representation 在有界情形最清晰的等价。
+
+
+\begin{corollary}[Polytope 的两种等价定义]
+在有限维空间中：
+\[
+\boxed{\text{bounded polyhedron}}
+\quad\Longleftrightarrow\quad
+\boxed{\text{convex hull of finitely many points}}.
+\]
+一个方向是 Minkowski--Weyl 的有界特例；另一个方向可通过 lifting/projection 或 polyhedral representability 证明：
+\[
+\conv\{v^1,\ldots,v^k\}
+=\{V\lambda:\lambda\ge0,\ \mathbf1^\transpose\lambda=1\}
+\]
+是一个高维 simplex 的线性像，而 polyhedral projection 仍是 polyhedral。
+\end{corollary}
+
+\section{表示也可以是稀疏的}
+Minkowski--Weyl 给出有限生成，但 Carath\'eodory 还能进一步控制一个\emph{具体点}需要多少生成元。粗略地说，在 $n$ 维 pointed 情形中，一个点的 bounded part 最多需要 $n+1$ 个 vertices，而一个 recession vector 最多需要 $n$ 个 rays。于是“大量 vertices/rays 描述整个集合”与“单个点只需要少量活跃生成元”可以同时成立。
+
+\section{一般含直线的多面集}
+若 $P$ 含 lineality space
+\[
+L=\{d:x+td\in P,\ \forall t\in\R\},
+\]
+那么 $P$ 可能没有极点。这时完整 Minkowski--Weyl 表示需显式加入 lineality generators，或者允许 cone generator 同时出现 $d$ 与 $-d$。课程 slides 聚焦标准形 $Ax=b,x\ge0$，该集合是 pointed，因此 ``extreme points + extreme directions'' 的版本已足够。
+
+\chapter{Worked Examples：把抽象几何真正算一遍}
+
+这一章专门把前面的定义和定理放进小规模模型中。每个例子都尽量同时用“几何语言”和“代数语言”解释。
+
+\section{Example 1: probability simplex 的完整几何}
+考虑
+\[
+\Delta_3=\{x\in\R^3:x_1+x_2+x_3=1,\ x\ge0\}.
+\]
+它是一个位于仿射平面 $\mathbf1^\transpose x=1$ 中的二维 simplex。
+
+\textbf{Affine hull 与 relative interior:}
+\[
+\aff(\Delta_3)=\{x:\mathbf1^\transpose x=1\},
+\]
+\[
+\ri(\Delta_3)=\{x:\mathbf1^\transpose x=1,\ x_i>0\ \forall i\}.
+\]
+作为 $\R^3$ 的子集，$\interior(\Delta_3)=\varnothing$，但 relative interior 非空。
+
+\textbf{Extreme points/BFS:}
+\[
+e_1=(1,0,0),\quad e_2=(0,1,0),\quad e_3=(0,0,1)
+\]
+正是全部 extreme points，也正是标准形 BFS。
+
+\textbf{Support function:}
+对 $a\in\R^3$，
+\[
+\sigma_{\Delta_3}(a)=\max\{a_1,a_2,a_3\}.
+\]
+若 $a_1>a_2,a_3$，唯一 exposed point 为 $e_1$；若 $a_1=a_2>a_3$，则 exposed face 是边 $\conv\{e_1,e_2\}$。
+
+\textbf{Carath\'eodory:} affine dimension 为 $2$，所以任意点最多需要 $3$ 个生成点；实际上 $x=(x_1,x_2,x_3)$ 自身就给出
+\[
+x=x_1e_1+x_2e_2+x_3e_3.
+\]
+
+\section{Example 2: 半空间投影与 separation 是同一个公式}
+令
+\[
+H=\{x:a^\transpose x\le b\},\qquad a^\transpose y>b.
+\]
+投影为
+\[
+x^*=y-\frac{a^\transpose y-b}{\norm a_2^2}a.
+\]
+于是
+\[
+y-x^*=\frac{a^\transpose y-b}{\norm a_2^2}a,
+\]
+与半空间法向量平行。projection VI 给出
+\[
+(y-x^*)^\transpose(x-x^*)\le0,\qquad \forall x\in H,
+\]
+等价于
+\[
+a^\transpose x\le a^\transpose x^*=b<a^\transpose y.
+\]
+因此“求 projection”和“构造 separating hyperplane”在这个例子里完全是同一个计算。
+
+\section{Example 3: Farkas certificate 的矩阵化验证}
+考虑
+\[
+A=\begin{bmatrix}1&1\\1&1\end{bmatrix},\qquad
+b=\begin{bmatrix}1\\-1\end{bmatrix},
+\]
+以及系统 $Ax=b,x\ge0$。两个等式要求同时
+\[
+x_1+x_2=1,\qquad x_1+x_2=-1,
+\]
+显然不可行。
+
+选择
+\[
+y=\begin{bmatrix}0\\1\end{bmatrix}.
+\]
+则
+\[
+A^\transpose y=\begin{bmatrix}1\\1\end{bmatrix}\ge0,
+\qquad
+b^\transpose y=-1<0.
+\]
+验证 certificate 的成本极低，而它排除了\emph{所有} $x\ge0$：若某个 $x$ 满足 $Ax=b$，则
+\[
+0>b^\transpose y=x^\transpose A^\transpose y\ge0,
+\]
+矛盾。
+
+\section{Example 4: 一个退化 BFS 为什么可以有多个 bases}
+令
+\[
+A=\begin{bmatrix}
+1&1&1\\
+0&1&2
+\end{bmatrix},
+\qquad
+b=\begin{bmatrix}1\\0\end{bmatrix},
+\qquad x\ge0.
+\]
+第二个等式强迫 $x_2=x_3=0$，第一式给 $x_1=1$。因此可行域只有一个点
+\[
+x^*=(1,0,0).
+\]
+取 basis $B=[a_1,a_2]$ 时，basic solution 为 $(x_1,x_2)=(1,0)$；取 basis $B=[a_1,a_3]$ 时，同样得到 $(1,0)$。所以同一个 extreme point 对应多个 bases；basic variable 为零正是 degeneracy 的标志。
+
+\section{Example 5: unbounded polyhedron 的 vertices + rays 分解}
+考虑二维 polyhedron
+\[
+P=\{(x_1,x_2):x_1\ge0,\ 0\le x_2\le x_1+1\}.
+\]
+
+\textbf{Vertices.} 在 $x_1=0$ 上得到线段 $0\le x_2\le1$，两个端点
+\[
+v^1=(0,0),\qquad v^2=(0,1)
+\]
+是全部 vertices。
+
+\textbf{Recession cone.} 把常数去掉得到 homogeneous system
+\[
+d_1\ge0,\qquad d_2\ge0,\qquad d_2\le d_1.
+\]
+所以
+\[
+\rec(P)=\cone\{r^1,r^2\},\qquad
+r^1=(1,0),\quad r^2=(1,1).
+\]
+
+\textbf{Minkowski--Weyl.}
+\[
+P=\conv\{(0,0),(0,1)\}+\cone\{(1,0),(1,1)\}.
+\]
+给定任意 $(x_1,x_2)\in P$，可显式取
+\[
+\mu_2=\max\{0,x_2-1\},\qquad
+\lambda=x_2-\mu_2\in[0,1],\qquad
+\mu_1=x_1-\mu_2\ge0,
+\]
+于是
+\[
+(x_1,x_2)=(1-\lambda)(0,0)+\lambda(0,1)+\mu_1(1,0)+\mu_2(1,1).
+\]
+这把抽象 resolution theorem 变成了一条可直接检查的公式。
+
+\section{Example 6: 线性目标如何选择 face、vertex 或 ray}
+继续使用上面的 $P$。考虑 $\min c^\transpose x$。
+\begin{itemize}[leftmargin=2em]
+  \item 若 $c=(1,0)$，最优 face 是整条 $x_1=0,\ 0\le x_2\le1$；其中有两个 optimal vertices。
+  \item 若 $c=(0,1)$，唯一 optimal vertex 是 $(0,0)$。
+  \item 若 $c=(-1,0)$，则 $c^\transpose r^1=-1<0$，故目标沿 extreme ray $r^1$ 无界下降。
+  \item 若 $c=(1,-1)$，则 $c^\transpose r^2=0$，目标可能沿 ray 保持常数；这提醒我们“unbounded feasible set”不等于“objective unbounded”。
+\end{itemize}
+
+\begin{keybox}[这个例子把三类结果放在一起]
+\[
+\begin{array}{c|c}
+\text{finite optimum} & \text{optimal exposed face contains vertex}\\
+\text{unbounded optimum} & \exists\text{ descending extreme ray}\\
+\text{whole feasible geometry} & P=\conv(V)+\cone(R)
+\end{array}
+\]
+\end{keybox}
+
+\chapter{整条理论链的依赖关系}
+
+\section{核心定理图}
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=12mm and 10mm,
+  box/.style={draw,rounded corners,align=center,minimum width=34mm,minimum height=9mm,fill=blue!4},
+  arr/.style={-Latex,thick}
+]
+\node[box] (conv) {Convexity\\convex combinations};
+\node[box,right=of conv] (top) {Topology\\closed/compact/ri};
+\node[box,right=of top] (wei) {Weierstrass\\existence};
+\node[box,below=of wei] (proj) {Projection\\closest point};
+\node[box,left=of proj] (sep) {Separation\\support};
+\node[box,left=of sep] (farkas) {Farkas\\alternatives};
+\node[box,below=of farkas] (cone) {Dual / polar\\cones};
+\node[box,right=of cone] (extp) {Extreme points\\BFS};
+\node[box,right=of extp] (ray) {Recession\\extreme rays};
+\node[box,below=of extp] (mw) {Minkowski--Weyl\\polyhedral representation};
+\draw[arr] (conv)--(top);
+\draw[arr] (top)--(wei);
+\draw[arr] (wei)--(proj);
+\draw[arr] (proj)--(sep);
+\draw[arr] (sep)--(farkas);
+\draw[arr] (farkas)--(cone);
+\draw[arr] (conv) |- (extp);
+\draw[arr] (sep)--(extp);
+\draw[arr] (extp)--(ray);
+\draw[arr] (extp)--(mw);
+\draw[arr] (ray)--(mw);
+\end{tikzpicture}
+\end{center}
+
+\section{最重要的“转换套路”}
+本讲真正应该内化的是下面这些转换：
+\begin{enumerate}[leftmargin=2.3em,label=\arabic*.]
+  \item \textbf{存在性问题 $\to$ 紧集 + 连续函数}：用 Weierstrass。
+  \item \textbf{外点 $\to$ 最近点 $\to$ 法向量}：用 projection 构造 separator。
+  \item \textbf{两个集合 $\to$ 差集与原点}：$S,T\mapsto S-T,0$。
+  \item \textbf{线性系统不可行 $\to$ 锥成员关系失败 $\to$ 分离}：得到 Farkas certificate。
+  \item \textbf{极点问题 $\to$ active constraints 的秩}：几何变线性代数。
+  \item \textbf{标准形极点 $\to$ 基矩阵}：extreme point $\leftrightarrow$ BFS。
+  \item \textbf{无界集合 $\to$ recession cone}：把位置与方向分离。
+  \item \textbf{整个 polyhedron $\to$ vertices + rays}：Minkowski--Weyl。
+\end{enumerate}
+
+\chapter{证明工具箱：这节课最常用的 8 个套路}
+
+这部分不是新定理，而是把前面反复出现的证明机制单独抽出来。真正会做证明题，往往比多背十个结论更重要。
+
+\section{套路 1：沿线段做 infinitesimal move}
+若 $C$ 凸，$x^*,y\in C$，则
+\[
+x_t=x^*+t(y-x^*)\in C,\qquad 0\le t\le1.
+\]
+让 $t\downarrow0$，就能把“全局可行点 $y$”转成“在 $x^*$ 附近的局部可行方向”。局部最优 $\Rightarrow$ 全局最优、projection VI necessity、一阶 optimality necessity 都用这一招。
+
+\section{套路 2：$x\pm\eps d$ 双向扰动}
+要证明某点不是 extreme point，最直接的方法是找到 $d\ne0$ 使
+\[
+x\pm\eps d\in C
+\]
+对某个小 $\eps>0$ 成立，然后
+\[
+x=\tfrac12(x+\eps d)+\tfrac12(x-\eps d).
+\]
+active-constraint rank test、BFS necessity、polyhedron 无极点/含 line 的关系都靠这个模板。
+
+\section{套路 3：最小支撑表示 + 系数消元}
+Carath\'eodory、conic Carath\'eodory、从可行点压缩到 BFS 都先选“使用非零系数数量最少”的表示，再利用线性/仿射相关构造系数扰动，直到一个系数归零。
+
+\section{套路 4：compactness + convergent subsequence}
+Weierstrass、projection existence、supporting-hyperplane limit proof 都靠：
+\[
+\text{bounded sequence}\Rightarrow\text{convergent subsequence},
+\]
+再用 closedness 把极限留在集合里。
+
+\section{套路 5：把两集合问题变成差集与原点}
+\[
+S\cap T=\varnothing
+\quad\Longleftrightarrow\quad
+0\notin S-T.
+\]
+于是 separation of two sets 变成 separation of a point and a convex set。
+
+\section{套路 6：利用正齐次性让系数 $t\to\infty$}
+Farkas proof、cone separation、extreme-ray arguments 中经常出现：若 $\lambda a\in K$ 对所有 $\lambda\ge0$，则某个 separation inequality 必须对任意大 $\lambda$ 成立，从而逼出一个 inner-product sign condition。
+
+\section{套路 7：supporting hyperplane = linear optimization}
+一旦有 separator/support normal $a$，就考虑
+\[
+\max_{x\in C}a^\transpose x
+\quad\text{或}\quad
+\min_{x\in C}a^\transpose x.
+\]
+反过来，一个线性优化问题的最优等值面就是 supporting hyperplane。这是 separation、faces、LP corner optimality 与 Minkowski--Weyl 之间的主要桥梁。
+
+\section{套路 8：把“不存在方向”翻译成“存在 multiplier”}
+这是 theorem of alternatives 最深的通用模板：
+\[
+\text{没有某种可行/下降方向}
+\quad\Longrightarrow\quad
+\text{存在某种线性组合证书}.
+\]
+Farkas、LP duality、KKT 都是这个模板的不同层次版本。
+
+\begin{exercisebox}[快速自测]
+看到一个新证明题时，先问：它更像“线段小步”、“双向扰动”、“系数消元”、“紧性取子列”、“差集分离”、“齐次缩放”还是“alternatives multiplier”？能正确识别套路，通常已经解决了一半。
+\end{exercisebox}
+
+\chapter{容易混淆的概念与考试陷阱}
+
+\section{strict local 与 isolated local}
+strict local minimum 只要求邻域内其他点目标值更大；isolated local optimum 还要求邻域内没有其他局部最优点。一般问题中 isolated $\Rightarrow$ strict 并非无条件的逻辑同义；需要看课程采用的具体定义。对凸优化，若局部最优存在，首先可立即提升为全局最优；若再讨论唯一性，则严格凸性等条件更直接。
+
+\section{interior 与 relative interior}
+若一个凸集位于低维仿射子空间内，则 $\interior(C)$ 可能为空，但 $\ri(C)$ 非空。一般 separation theorem、Slater condition 等都更自然地使用 relative interior。
+
+\section{closed 与 bounded 各负责什么？}
+\begin{itemize}[leftmargin=2em]
+  \item closed 防止极限点“掉出”集合；
+  \item bounded 防止最小化序列逃到无穷远；
+  \item 在 $\R^n$ 中二者合起来就是 compact，从而触发 Weierstrass。
+\end{itemize}
+
+\section{polyhedron 与 polytope}
+本讲统一采用
+\[
+\text{polyhedron}=\text{finite halfspace intersection},
+\qquad
+\text{polytope}=\text{bounded polyhedron}.
+\]
+少数教材术语可能不同，遇到定义题以题目给出的约定为准。
+
+\section{extreme point 与 extreme ray}
+极点是“位置”的不可约元素；极射线是“方向”的不可约元素。锥中除 $0$ 外一般没有极点，因为 $x=\frac12(\frac12x)+\frac12(\frac32x)$；所以对锥应该研究 extreme rays 而不是 nonzero extreme points。
+
+\section{Normal cone 的正负号}
+本讲定义
+\[
+N_C(x)=\{v:v^\transpose(y-x)\le0,\ \forall y\in C\},
+\]
+因此 constrained optimum 写成 $-\nabla f(x^*)\in N_C(x^*)$。Nesterov 某些章节采用相反方向的 normal cone，于是公式会写成 $\nabla f(x^*)\in N(x^*)$。二者没有数学冲突，只是符号约定不同。
+
+\section{Affine image 与 closedness}
+Affine image 保持 convexity，但一般不自动保持 closedness；affine inverse image of a closed set 则保持 closedness。Polyhedral sets 是特殊的：其 projection 仍是 polyhedral，因此仍闭。
+
+\section{Farkas 的符号版本}
+Farkas 有很多等价写法。最安全策略：
+\begin{enumerate}[leftmargin=2em]
+  \item 先明确 primal system；
+  \item 把可行性解释为某个 cone/halfspace membership；
+  \item 写出 separator 的方向；
+  \item 再检查乘 $-1$ 是否改变不等号。
+\end{enumerate}
+不要只靠背诵符号。
+
+\chapter{五本教材之间的记号与侧重点对照}
+
+\section{同一个对象，五种写法}
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{p{0.18\textwidth} X}
+\toprule
+\textbf{概念} & \textbf{常见差异}\\
+\midrule
+Dual vs polar cone & Boyd 常以 $K^*$ 表 dual cone；课程 slides 以 $S^*$ 表 polar cone；本讲义用 $K^\vee$ 与 $K^\circ$ 分开。\\
+Normal cone & 本讲用 outward convention $v^\transpose(y-x)\le0$；Nesterov 在相关章节可采用相反号，因此最优性公式正负号相反。\\
+Separation terminology & proper/strict/strong 在 slides、Boyd、Ben-Tal--Nemirovski 中命名不完全相同；最安全是直接写 $\sup a^Tx$ 与 $\inf a^Ty$ 的不等式。\\
+Polyhedron /\allowbreak polytope & Boyd/Bertsimas 通常 polyhedron 可无界、polytope 有界；Luenberger 的 Appendix B 使用的命名存在历史性差别。\\
+BFS & Luenberger--Ye 偏标准形 basis；Bertsimas--Tsitsiklis 更强调一般 polyhedron 的 active-constraint/vertex 等价。\\
+Projection & Boyd 多作为 geometric optimization/application；Nesterov 把它直接发展为 constrained first-order methods 的基本算子。\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{本讲义采用的统一选择}
+为了保证整条证明链一致，本讲固定使用：
+\[
+N_C(x)=\{v:v^\transpose(y-x)\le0,\ \forall y\in C\},
+\]
+\[
+K^\vee=\{y:y^\transpose x\ge0,\ \forall x\in K\},\qquad
+K^\circ=-K^\vee,
+\]
+以及 ``polyhedron 可无界、polytope 有界''。凡引用不同教材时，若原书符号相反，本讲义只保留数学内容而统一转写到这套记号。
+
+\begin{landscape}
+\chapter{五本教材的知识点交叉索引}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{p{0.12\linewidth}p{0.15\linewidth}p{0.17\linewidth}p{0.15\linewidth}p{0.15\linewidth}p{0.16\linewidth}}
+\toprule
+\textbf{Topic} & \textbf{Boyd--Vandenberghe} & \textbf{Ben-Tal--Nemirovski} & \textbf{Bertsimas--Tsitsiklis} & \textbf{Luenberger--Ye} & \textbf{Nesterov}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Topic} & \textbf{Boyd--Vandenberghe} & \textbf{Ben-Tal--Nemirovski} & \textbf{Bertsimas--Tsitsiklis} & \textbf{Luenberger--Ye} & \textbf{Nesterov}\\
+\midrule
+\endhead
+Affine/convex sets, hull & Ch.~2 \S2.1--2.3 & App.~B \S B.1 & Ch.~2 \S2.1 & App.~B \S B.1 & \S2.2.3; \S3.1\\
+Carath\'eodory & background/exercises & App.~B \S B.2.1 & Ch.~2/4 exercises & Ch.~2 fundamental theorem link & indirect sparsity viewpoint\\
+Topology, relative interior & Ch.~2 \S2.1 & App.~B \S B.1.6 & Ch.~4 \S4.7 background & App.~A/B & convex-domain interior theory\\
+Projection & Ch.~8 \S8.1 & separation machinery & Ch.~4 \S4.7 proof route & implicit in separation appendix & \S2.2.3: VI, nonexpansive, distance smoothness\\
+Normal/tangent cones & Ch.~2/optimality language & App.~B polarity machinery & feasible-direction geometry & constrained optimization chapters & \S3.1.7 explicit tangent/normal duality\\
+Separation/support & Ch.~2 \S2.5 & App.~B \S B.2.6 & Ch.~4 \S4.7 & App.~B \S B.3 & \S3.1.4\\
+Support function & Ch.~2/3 & App.~B polarity/support & dual/geometric interpretation & convex appendices & \S3.1.4 set-inclusion test\\
+Farkas/alternatives & Ch.~5 \S5.8 & App.~B \S B.2.5 & Ch.~4 \S4.6--4.7 & Ch.~2 \S2.6 & separation/duality perspective later chapters\\
+Cones/dual cones & Ch.~2 \S2.6 & Lecture~1 + App.~B \S B.2.7 & Ch.~4 \S4.8 & Ch.~6 \S6.1 & conic/barrier chapters\\
+Extreme points/BFS & polyhedra background & App.~B \S B.2.8 & Ch.~2 \S2.2--2.6 & Ch.~2 \S2.3--2.5 & not a main emphasis\\
+Extreme rays/recession & indirect/conic language & App.~B \S B.2.9 & Ch.~4 \S4.8 & Ch.~2 + Ch.~6 & conic geometry indirect\\
+Minkowski--Weyl & convex hull description & App.~B \S B.2.9 & Ch.~4 \S4.9 & LP geometry discussion & not central\\
+Set-constrained first order condition & Ch.~4/optimality & convex programming appendices & later nonlinear optimization & Ch.~11 & \S2.2.3; \S3.1.7\\
+\bottomrule
+\end{longtable}
+\end{landscape}
+
+\chapter{定理速查表}
+
+\begin{longtable}{p{0.27\textwidth}p{0.66\textwidth}}
+\toprule
+\textbf{Result} & \textbf{Statement / trigger condition}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Result} & \textbf{Statement / trigger condition}\\
+\midrule
+\endhead
+Carath\'eodory & $x\in\conv(S)$ 且 affine dimension $m$ $\Rightarrow$ 至多 $m+1$ 个点的凸组合。\\
+Weierstrass & 非空 compact $S$ + continuous $f$ $\Rightarrow$ min/max attained。\\
+Projection & 非空 closed convex $C$ $\Rightarrow$ Euclidean projection 存在且唯一。\\
+Projection VI & $x^*=\proj_C(y)$ $\Leftrightarrow$ $(y-x^*)^\transpose(x-x^*)\le0$ for all $x\in C$。\\
+Point separation & $C$ nonempty closed convex, $y\notin C$ $\Rightarrow$ strict separating hyperplane。\\
+General separation & convex $S,T$ separable $\Leftrightarrow \ri S\cap\ri T=\varnothing$；strong separation $\Leftrightarrow\dist(S,T)>0$。\\
+Supporting hyperplane & boundary point of convex set admits supporting hyperplane under standard finite-dimensional conditions。\\
+Farkas & Exactly one: $Ax=b,x\ge0$ or $A^\transpose y\ge0,b^\transpose y<0$。\\
+Bipolar cone & closed convex cone $K$ satisfies $(K^\vee)^\vee=K$。\\
+Extreme point test & polyhedron: $x^*$ extreme iff enough linearly independent constraints are active。\\
+BFS equivalence & $P=\{x:Ax=b,x\ge0\}$: extreme point iff BFS。\\
+Extreme-point existence & nonempty polyhedron has extreme point iff it contains no line。\\
+LP corner optimum & finite attained LP optimum can be chosen at an extreme point/BFS。\\
+Recession cone & $P=\{x:Ax\le b\}$: $\rec(P)=\{d:Ad\le0\}$。\\
+LP unboundedness & objective unbounded below iff some extreme ray $d$ has $c^\transpose d<0$ (under pointed/extreme-point condition).\\
+Minkowski--Weyl & pointed nonempty polyhedron = convex hull of extreme points + cone of extreme rays。\\
+Conic Carath\'eodory & $x\in\cone(S)\subseteq\R^n$ $\Rightarrow$ 至多 $n$ 个生成向量。\\
+Projection nonexpansive & $\|P_C(x)-P_C(y)\|\le\|x-y\|$；更强地 firm nonexpansiveness 成立。\\
+Squared distance & $\rho_C(x)=\tfrac12\dist(x,C)^2$ 可微，$\nabla\rho_C=x-P_C(x)$，梯度 $1$-Lipschitz。\\
+Convex constrained FOC & $x^*$ optimal $\Leftrightarrow \langle\nabla f(x^*),x-x^*\rangle\ge0\ \forall x\in C$。\\
+Support function inclusion & closed convex $C\subseteq D$ $\Leftrightarrow$ $\sigma_C(a)\le\sigma_D(a)$ for all $a$。\\
+Normal/tangent polarity & $N_C(x)=T_C(x)^\circ$（按本讲符号约定）。\\
+Dual pointed/interior & closed convex cone $K$ pointed $\Leftrightarrow \operatorname{int}K^\vee\ne\varnothing$。\\
+\bottomrule
+\end{longtable}
+
+\chapter{建议练习与自测问题}
+
+\section*{A. 概念题}
+\begin{enumerate}[leftmargin=2.3em]
+  \item 给出一个闭凸但无界集合；一个有界但不闭集合；一个非空凸集但 interior 为空且 relative interior 非空的例子。
+  \item 为什么 $\ell_p$ ``ball'' 在 $0<p<1$ 时通常不是凸集？画出二维情形的形状并解释三角不等式失败。
+  \item 一个 convex cone 是否可能有非零 extreme point？为什么研究 extreme ray 更合适？
+  \item 举例说明两个不相交闭凸集不一定能被 strong separation，如果缺少“一个集合 compact”或正距离条件会发生什么。
+\end{enumerate}
+
+\section*{B. 证明题}
+\begin{enumerate}[leftmargin=2.3em]
+  \item 用线性依赖消元证明 Carath\'eodory theorem。
+  \item 完整证明 projection variational inequality 的充要性。
+  \item 用 projection theorem 证明 point--set strict separation。
+  \item 从 separation theorem 推导 Farkas lemma。
+  \item 证明标准形 $P=\{x:Ax=b,x\ge0\}$ 的 extreme point 与 BFS 等价。
+  \item 证明若 $P=\{x:Ax\le b\}$，则 $\rec(P)=\{d:Ad\le0\}$。
+  \item 使用 separation + extreme point optimality + extreme ray unboundedness 证明 pointed polyhedron 的 resolution theorem。
+\end{enumerate}
+
+\section*{C. 结构题}
+给定
+\[
+P=\{x\in\R^3: x_1+x_2+x_3=1,\ x\ge0\},
+\]
+求：
+\begin{enumerate}[leftmargin=2em]
+  \item 所有 BFS / extreme points；
+  \item $\rec(P)$；
+  \item 用 Minkowski--Weyl 表示 $P$；
+  \item 解释为什么这里没有 extreme directions。
+\end{enumerate}
+
+再把等式改成
+\[
+x_1+x_2-x_3=1,\qquad x\ge0,
+\]
+重复上述问题，并找出无界方向。
+
+\section*{D. 深化题：projection / normal cone / support function}
+\begin{enumerate}[leftmargin=2.3em]
+  \item 求闭半空间 $H=\{x:a^\transpose x\le b\}$ 的 Euclidean projection，证明
+  \[
+  P_H(y)=y-\frac{(a^\transpose y-b)_+}{\norm{a}_2^2}a.
+  \]
+  \item 对 $C=\R_+^n$，写出 $P_C(y)$、$N_C(x)$，并逐坐标验证 projection VI。
+  \item 证明 $P_C$ 的 firm nonexpansiveness，并推出 squared-distance gradient 的 $1$-Lipschitz 性。
+  \item 对 probability simplex $\Delta_n$ 计算 support function
+  \[
+  \sigma_{\Delta_n}(a)=\max_i a_i.
+  \]
+  由此识别每个 $a$ 暴露出的 face。
+\end{enumerate}
+
+\section*{E. 深化题：alternatives / cones / polyhedra}
+\begin{enumerate}[leftmargin=2.3em]
+  \item 从标准 Farkas lemma 推导 Gordan theorem；然后再推导一个带 equality 的版本。
+  \item 证明 $\R_+^n$、second-order cone、$\mathbb S_+^n$ 的 self-duality。
+  \item 证明若 closed convex cone $K$ 含一条非零直线，则 $K^\vee$ 没有 interior。
+  \item 对 $P=\{x\in\R^2:x_1\ge0,\ 0\le x_2\le x_1+1\}$ 求所有 vertices、recession cone、extreme rays，并写出一个 Minkowski--Weyl representation。
+  \item 给定 $P=\{x:Ax\le b\}$ 与某点 $\bar x\in P$，用 active rows $A_I$ 描述一个 sufficient/necessary rank condition 判断 $\bar x$ 是否 vertex，并说明退化是什么意思。
+\end{enumerate}
+
+\section*{F. 选做证明链：从头重建本讲主线}
+不看正文，尝试只用以下 7 个 lemma 重建全部主定理：
+\begin{enumerate}[leftmargin=2.3em]
+  \item finite-dimensional Heine--Borel；
+  \item Weierstrass；
+  \item projection VI；
+  \item point--set separation；
+  \item Farkas；
+  \item extreme point/BFS equivalence；
+  \item recession cone + extreme-ray unboundedness。
+\end{enumerate}
+最终目标是独立证明 Minkowski--Weyl pointed case。
+
+\section*{G. 部分解题提示}
+\begin{exercisebox}[半空间投影]
+若 $a^\transpose y\le b$，投影就是 $y$。否则投影点一定落在边界 $a^\transpose x=b$，且最短方向平行于 normal $a$，故写 $x=y-\lambda a$，由边界条件求 $\lambda$。
+\end{exercisebox}
+
+\begin{exercisebox}[Simplex support function]
+在线性目标 $a^\transpose x$ 下，$x\in\Delta_n$ 是坐标值 $a_i$ 的凸组合，因此最大值不超过 $\max_i a_i$；取相应 $e_i$ 达到。若最大坐标有多个，则 exposed face 是这些 $e_i$ 的 convex hull。
+\end{exercisebox}
+
+\begin{exercisebox}[Unbounded polyhedron decomposition]
+先求 vertices，再把所有不含 $b$ 的 homogeneous constraints 写成 recession cone，求它的极射线。最后验证任意点都能写成一个 vertex convex combination 加 ray conic combination。
+\end{exercisebox}
+
+\chapter*{结语：这节课真正建立了什么？}
+\addcontentsline{toc}{chapter}{结语}
+
+这节课表面上包含很多定义，但它实际上建立的是一套统一的“几何证明语言”：
+
+\begin{enumerate}[leftmargin=2.3em]
+  \item \textbf{Convexity} 让线段与线性组合成为可行的，从而能够用局部移动做全局推理；
+  \item \textbf{Topology} 保证极限与最小距离不会“消失”；
+  \item \textbf{Projection} 把最短距离变成法向量；
+  \item \textbf{Separation} 把“两个对象不同”变成一个线性不等式证书；
+  \item \textbf{Farkas} 把线性不可行性变成可验证的 multiplier certificate；
+  \item \textbf{Dual/polar cones} 把所有“非负内积证书”统一起来；
+  \item \textbf{Extreme points/BFS} 说明 LP 的无限连续可行域可以被有限的角点结构控制；
+  \item \textbf{Extreme rays} 说明无界性也可以被有限的方向结构控制；
+  \item \textbf{Minkowski--Weyl} 最终把整个 polyhedron 压缩成“有限点 + 有限方向”。
+\end{enumerate}
+
+因此，Lecture 2 的真正终点不是某个单独公式，而是：
+\[
+\boxed{
+\text{线性规划的可行域虽然是连续无限集合，}
+\text{但它的本质几何结构是有限可描述的。}
+}
+\]
+这就是后续 simplex、duality、KKT、conic optimization 与算法理论能够成立的几何基础。
+
+\begin{thebibliography}{9}
+
+\bibitem{boyd}
+Stephen Boyd and Lieven Vandenberghe.
+\newblock \emph{Convex Optimization}.
+\newblock Cambridge University Press, 2004.
+\newblock Relevant parts for this lecture: Chapter 2 (convex sets, separation, dual cones), \S5.8 (theorems of alternatives), \S8.1 (projection).
+
+\bibitem{bental}
+Aharon Ben-Tal and Arkadi Nemirovski.
+\newblock \emph{Lectures on Modern Convex Optimization: Analysis, Algorithms, and Engineering Applications}.
+\newblock MPS-SIAM Series on Optimization, SIAM, 2001.
+\newblock Relevant parts for this lecture: Lecture 1 and Appendix B, especially B.1 and B.2.1--B.2.9.
+
+\bibitem{bertsimas}
+Dimitris Bertsimas and John N. Tsitsiklis.
+\newblock \emph{Introduction to Linear Optimization}.
+\newblock Athena Scientific, 1997.
+\newblock Relevant parts for this lecture: Chapter 2 (geometry of LP) and Chapter 4 \S4.6--4.9 (Farkas, separation, cones, extreme rays, resolution theorem).
+
+\bibitem{luenberger}
+David G. Luenberger and Yinyu Ye.
+\newblock \emph{Linear and Nonlinear Programming}, 5th ed.
+\newblock Springer, 2021.
+\newblock Relevant parts for this lecture: Chapter 2 (BFS, fundamental theorem, Farkas), Chapter 6 (convex cones), Appendix B (convex sets and separation).
+
+\bibitem{nesterov}
+Yurii Nesterov.
+\newblock \emph{Lectures on Convex Optimization}, 2nd ed.
+\newblock Springer, 2018.
+\newblock Relevant parts for this lecture: \S2.2.3 (convex sets, constrained optimality, Euclidean projection) and \S3.1.4--3.1.7 (separation, support, subgradients, tangent/normal cones and optimality).
+
+\bibitem{wan}
+Guohua Wan.
+\newblock \emph{Operations Research -- Deterministic Models, Lecture 2(1)}.
+\newblock Course slides.
+
+\end{thebibliography}
+
+\end{document}
