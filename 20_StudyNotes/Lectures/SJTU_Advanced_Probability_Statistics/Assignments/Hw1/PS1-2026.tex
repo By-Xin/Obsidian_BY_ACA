@@ -34,6 +34,46 @@ Starting with \$1,000,000:
   expected wealth after the final investment? What is the probability that your final
   wealth is less than the \$1,000,000 with which you started?
 \end{subproblems}
+
+\begin{solution}
+
+  (i) Denote the wealth after $n$ investments by $W_n$. Denote the outcome of the $n$-th investment by $X_n:=\1 \{\text{success}\}$, which is a Bernoulli random variable with success probability $1/2$. 
+  Then
+  \[
+    W_n =  \begin{cases}
+      (1+1.6) \frac{W_{n-1}}{2} + \frac{W_{n-1}}{2} = 1.8 W_{n-1}, & \text{ if } X_n=1,\\
+      0 \times \frac{W_{n-1}}{2} + \frac{W_{n-1}}{2} = 0.5 W_{n-1}, & \text{ if } X_n=0.
+    \end{cases}
+  \]
+
+  (ii) Given last step's wealth $W_{n-1}$, the expected wealth after the $n$-th investment is
+  \[
+    \mathbb{E}[W_n|W_{n-1}] = 1.8 \cdot \frac{1}{2} W_{n-1} + 0.5 \cdot \frac{1}{2} W_{n-1} = 1.15 W_{n-1} > W_{n-1}.
+  \]
+  Therefore, on average, you gain money with this strategy.
+
+  (iii) The expected wealth after $n$ investments is
+  \[
+    \mathbb{E}[W_n] = \mathbb{E}[\mathbb{E}[W_n|W_{n-1}]] = 1.15 \mathbb{E}[W_{n-1}] = 1.15^n W_0.
+  \]
+  Therefore, after 10,000 investments, the expected wealth is
+  \[
+    \mathbb{E}[W_{10000}] = 1.15^{10000} \cdot 10^6.
+  \]
+
+  On the other hand, denote the total number of successful investments by $S_n = \sum_{i=1}^n X_i$. Then total wealth after $n$ investments is
+  \[
+    W_n = 10^6 \times 1.8^{S_n} \times 0.5^{n-S_n} 
+    \]
+  To have $W_n < 10^6$, we need $S_n < n \frac{\log 2}{\log 3.6}$. Substituting $n=10000$ gives $S_{10000} < 10000 \frac{\log 2}{\log 3.6} \approx 5411.264$, hence $W_{10000} < 10^6 \iff S_{10000} \leq 5411$. Since $S_n \sim \text{Binomial}(10000, 1/2) \approx \mathcal{N}(5000, 2500)$, we can use the normal approximation to estimate the probability:
+  \[
+    \mathbb{P}(W_{10000} < 10^6) = \mathbb{P}(S_{10000} \leq 5411) \approx \mathbb{P}\left(Z \leq \frac{5411 - 5000}{\sqrt{10000 \cdot 1/2 \cdot 1/2}} \right)
+    = \mathbb{P}(Z \leq 8.22) \approx 1.
+  \]
+
+
+\end{solution}
+
 \end{problem}
 
 \begin{problem}[10]
@@ -44,6 +84,124 @@ straight (excluding straight flushes); three of a kind; two pairs; one pair; and
 (none of the preceding categories). Show how you count the number of hands in each category,
 and verify that your counts sum to $\binom{52}{5}$.
 \end{problem}
+\begin{solution}
+
+The total number of five-card hands is
+\[
+\binom{52}{5}=2,598,960.
+\]
+
+\begin{itemize}
+
+\item \textbf{Royal flush:} \(10,J,Q,K,A\) of the same suit.
+\[
+\frac{4}{\binom{52}{5}}
+=
+\frac{4}{2,598,960}
+\approx 0.000001539077.
+\]
+
+\item \textbf{Other straight flush:} five consecutive ranks of the same suit, excluding royal flushes.
+\[
+\frac{10\cdot 4-4}{\binom{52}{5}}
+=
+\frac{36}{2,598,960}
+\approx 0.000013851695.
+\]
+
+\item \textbf{Four of a kind:} four cards of one rank and one card of another rank.
+\[
+\frac{13\cdot 48}{\binom{52}{5}}
+=
+\frac{624}{2,598,960}
+\approx 0.000240096038.
+\]
+
+\item \textbf{Full house:} three cards of one rank and two cards of another rank.
+\[
+\frac{13\binom{4}{3}\cdot 12\binom{4}{2}}
+{\binom{52}{5}}
+=
+\frac{3744}{2,598,960}
+\approx 0.001440576230.
+\]
+
+\item \textbf{Flush:} five cards of the same suit, excluding straight flushes.
+\[
+\frac{4\binom{13}{5}-40}{\binom{52}{5}}
+=
+\frac{5108}{2,598,960}
+\approx 0.001965401545.
+\]
+
+\item \textbf{Straight:} five consecutive ranks, excluding straight flushes.
+\[
+\frac{10\cdot 4^5-40}{\binom{52}{5}}
+=
+\frac{10200}{2,598,960}
+\approx 0.003924646782.
+\]
+
+\item \textbf{Three of a kind:} three cards of one rank and two cards of two distinct other ranks.
+\[
+\frac{
+13\binom{4}{3}\binom{12}{2}4^2
+}{
+\binom{52}{5}
+}
+=
+\frac{54912}{2,598,960}
+\approx 0.021128451381.
+\]
+
+\item \textbf{Two pairs:} two cards of one rank, two cards of another rank, and one card of a third rank.
+\[
+\frac{
+\binom{13}{2}\binom{4}{2}^2\cdot 11\cdot 4
+}{
+\binom{52}{5}
+}
+=
+\frac{123552}{2,598,960}
+\approx 0.047539015606.
+\]
+
+\item \textbf{One pair:} two cards of one rank and three cards of three distinct other ranks.
+\[
+\frac{
+13\binom{4}{2}\binom{12}{3}4^3
+}{
+\binom{52}{5}
+}
+=
+\frac{1098240}{2,598,960}
+\approx 0.422569027611.
+\]
+
+\item \textbf{High card only:} five distinct ranks, not consecutive, and not all of the same suit.
+\[
+\frac{
+\left(\binom{13}{5}-10\right)(4^5-4)
+}{
+\binom{52}{5}
+}
+=
+\frac{1302540}{2,598,960}
+\approx 0.501177394035.
+\]
+
+\end{itemize}
+
+Finally,
+\[
+4+36+624+3744+5108+10200+54912+123552+1098240+1302540
+=
+2,598,960
+=
+\binom{52}{5}.
+\]
+
+\end{solution}
 
 \begin{problem}[10]
 Let $\mathcal{F}$ be a $\sigma$-field on $\Omega$. Prove that $\mathcal{F}$ is closed under
@@ -55,6 +213,13 @@ intersections and set differences; that is, for any $A,B\in\mathcal{F}$, show th
 \]
 \end{problem}
 
+\begin{solution}
+
+  Since $A \bigcap B = (A^c \cup B^c)^c$, and $\mathcal{F}$ is closed under complements and countable unions, we have $A^c \cup B^c \in \mathcal{F}$, and thus $A \bigcap B \in \mathcal{F}$.
+
+  Also, since $A \setminus B = A \bigcap B^c$, and we have already shown that $\mathcal{F}$ is closed under intersections and complements, we conclude that $A \setminus B \in \mathcal{F}$.
+\end{solution}
+
 \begin{problem}[10]
 Suppose that we are given a measure space $(\Omega,\mathcal{F},\mu)$. Show that whenever
 $A\subseteq B$, we have
@@ -63,6 +228,18 @@ $A\subseteq B$, we have
 \]
 Make explicit at each step where the defining properties of a measure and a $\sigma$-field are used.
 \end{problem}
+
+\begin{solution}
+  
+  If $A = B$, then $\mu(A) = \mu(B)$, and the inequality holds.
+
+  If $A \subsetneq B$, then $B\setminus A \in \mathcal{F}$ and is nonempty. This is because $A^c \in \mathcal{F}$ by the closure under complements of $\sigma$-fields, and then $(B\setminus A) = B \cap A^c \in \mathcal{F}$ by the closure under intersections of $\sigma$-fields. Since $A$ and $B\setminus A$ are disjoint measurable sets, countable additivity of $\mu$ gives
+  \[
+    \mu(B) = \mu(A \uplus (B\setminus A)) = \mu(A) + \mu(B\setminus A).
+  \]
+  By nonnegativity of measures, $\mu(B\setminus A) \geq 0$, and hence $\mu(B) \geq \mu(A)$.
+
+\end{solution}
 
 \begin{problem}[20]
 Let $\Omega=\{R,M,L\}$ and take the $\sigma$-field $\mathcal{F}=2^\Omega$. Let $P$ be a
@@ -89,7 +266,65 @@ Define random variables $X$ and $Y$ by, for every $\omega\in\Omega$,
 \end{subproblems}
 \end{problem}
 
-\begin{problem}[20]
+\begin{solution}
+  
+  (i) $\mathbb{P}(X = 2) = \mathbb{P}(\{R\}) = 1/2$, $\mathbb{P}(X = 3) = \mathbb{P}(\{M,L\}) = 1/4 + 1/4 = 1/2$. Therefore, the cumulative distribution function of $X$ is
+  \[
+    F_X(x) = \begin{cases}
+      0, & x < 2,\\
+      1/2, & 2 \leq x < 3,\\
+      1, & x \geq 3.
+    \end{cases}
+  \]
+  The graph of $F_X(x)$ is as follows.
+
+    \begin{center}
+    \begin{tikzpicture}[scale=1.2]
+
+    % Axes
+    \draw[->] (0,0) -- (5,0) node[right] {$x$};
+    \draw[->] (0,-0.1) -- (0,2.4) node[above] {$F_X(x)$};
+
+    % y-axis labels
+    \draw (-0.08,1) -- (0.08,1);
+    \node[left] at (0,1) {$\frac12$};
+
+    \draw (-0.08,2) -- (0.08,2);
+    \node[left] at (0,2) {$1$};
+
+    % x-axis labels
+    \draw (2,-0.08) -- (2,0.08);
+    \node[below] at (2,0) {$2$};
+
+    \draw (3,-0.08) -- (3,0.08);
+    \node[below] at (3,0) {$3$};
+
+    % CDF
+    \draw[thick] (0,0) -- (2,0);
+    \draw[thick] (2,1) -- (3,1);
+    \draw[thick] (3,2) -- (4.7,2);
+
+    % Open circles
+    \draw[fill=white, thick] (2,0) circle (2pt);
+    \draw[fill=white, thick] (3,1) circle (2pt);
+
+    % Closed circles
+    \fill (2,1) circle (2pt);
+    \fill (3,2) circle (2pt);
+
+    \end{tikzpicture}
+    \end{center}
+
+  (ii) The $\sigma$-field generated by $X$ is
+  \[
+    \sigma(X) = \{\varnothing, \{R\}, \{M,L\}, \Omega\}.
+  \]
+
+  \end{solution}
+
+
+  \begin{problem}[20]
+
 Suppose that we are given a measurable space $(\Omega,\mathcal{F})$.
 
 \begin{subproblems}
@@ -110,9 +345,38 @@ Suppose that we are given a measurable space $(\Omega,\mathcal{F})$.
 \end{subproblems}
 \end{problem}
 
+\begin{solution}
+
+  (i)
+    \[
+    \Omega \xrightarrow{f} \mathbb{R}^d \xrightarrow{g} \mathbb{R}^r
+  \]
+
+  Since $f$ is measurable, for all $A \in \mathcal{B}(\mathbb{R}^d)$, we have $f^{-1}(A) \in \mathcal{F}$. Since $g$ is Borel measurable, for all $B \in \mathcal{B}(\mathbb{R}^r)$, we have $g^{-1}(B) \in \mathcal{B}(\mathbb{R}^d)$. 
+  
+  Therefore, for all $B \in \mathcal{B}(\mathbb{R}^r)$, $g^{-1}(B) \in \mathcal{B}(\mathbb{R}^d)$, and thus $f^{-1}(g^{-1}(B)) \in \mathcal{F}$. Thus, to prove $g \circ f$ is measurable, it suffices to show that $(g \circ f)^{-1}(B) = f^{-1}(g^{-1}(B)) \in \mathcal{F}$ for all $B \in \mathcal{B}(\mathbb{R}^r)$, which we have established.
+
+  (ii)
+  \[
+    \Omega \xrightarrow{X} \mathbb{R} \xrightarrow{f} \mathbb{R}
+  \]
+
+  Since $f$ is Borel measurable, for all $B \in \mathcal{B}(\mathbb{R})$, $f^{-1}(B) \in \mathcal{B}(\mathbb{R})$. By definition, for all $B' \in \mathcal{B}(\mathbb{R})$, $X^{-1}(B') \in \sigma(X)$. Take $B' = f^{-1}(B)$, then $X^{-1}(f^{-1}(B)) = (f \circ X)^{-1}(B) \in \sigma(X)$. Therefore, for all $B \in \mathcal{B}(\mathbb{R})$, $(f \circ X)^{-1}(B) \in \sigma(X)$, which implies $f(X)$ is measurable with respect to $\sigma(X)$, and thus $\sigma(f(X)) \subseteq \sigma(X)$.
+
+\end{solution}
+
 \begin{problem}[10]
 Give an example of a probability space $(\Omega,\mathcal{F},P)$ and two random variables $X$
 and $Y$ such that $X$ and $Y$ have the same distribution but are not the same random variable.
 \end{problem}
+
+\begin{solution}
+  
+  Consider $\Omega = \{\omega_1, \omega_2\}$, $\mathcal{F} = 2^\Omega$, and $P(\{\omega_1\}) = P(\{\omega_2\}) = 1/2$. Define random variables $X$ and $Y$ by
+  \[
+    X(\omega_1) = 0, \quad X(\omega_2) = 1, \quad Y(\omega_1) = 1, \quad Y(\omega_2) = 0.
+  \]
+  Then $X$ and $Y$ have the same distribution, since $\mathbb{P}(X = 0) = \mathbb{P}(Y = 0) = 1/2$ and $\mathbb{P}(X = 1) = \mathbb{P}(Y = 1) = 1/2$, but $X$ and $Y$ are not the same random variable, since $X(\omega_1) \neq Y(\omega_1)$ and $X(\omega_2) \neq Y(\omega_2)$.
+\end{solution}
 
 \end{document}

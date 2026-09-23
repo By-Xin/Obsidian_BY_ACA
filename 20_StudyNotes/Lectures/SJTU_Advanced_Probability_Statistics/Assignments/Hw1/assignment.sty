@@ -5,12 +5,14 @@
 \RequirePackage[T1]{fontenc}
 \RequirePackage{lmodern}
 \RequirePackage{amsmath,amssymb,mathtools}
+\RequirePackage{dsfont}  % for \mathds{1} indicator function
 \RequirePackage{microtype}
 \RequirePackage{enumitem}
 \RequirePackage{fancyhdr}
 \RequirePackage{etoolbox}
 \RequirePackage{xparse}
 \RequirePackage{needspace}
+\RequirePackage[most]{tcolorbox}
 
 % ---------- Page style ----------
 \setlength{\parindent}{0pt}
@@ -69,6 +71,24 @@
   \begin{enumerate}[label=(\roman*),leftmargin=2.65em,labelsep=0.65em,itemsep=0.55em,topsep=0.55em,parsep=0pt]
 }{%
   \end{enumerate}
+}
+
+% ---------- Solutions ----------
+\newtcolorbox{solution}{%
+  enhanced,
+  colback=gray!12,
+  colframe=gray!12,   % same as background => no visible border
+  boxrule=0pt,
+  sharp corners,
+  left=0.8em,
+  right=0.8em,
+  top=0.6em,
+  bottom=0.6em,
+  before skip=0.7\baselineskip,
+  after skip=0.4\baselineskip,
+  breakable,
+  fontupper=\normalfont,
+  before upper={\textbf{Solution.}\hspace{0.6em}},
 }
 
 % A slightly tighter displayed-math spacing suits problem sheets.
