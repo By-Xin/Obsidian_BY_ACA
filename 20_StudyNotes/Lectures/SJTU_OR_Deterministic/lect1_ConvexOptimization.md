@@ -8,6 +8,8 @@
 > - [Nesterov] Nesterov, Yurii. Lectures on Convex Optimization. Vol. 137. Springer Optimization and Its Applications. Springer International Publishing, 2018.
 > - [Beck] Beck, Amir. *First-Order Methods in Optimization*. Society for Industrial and Applied Mathematics, 2017. Chapter 2.
 
+有时在撰写本课程笔记时, 在一些地方可能会出现前文尚未正式介绍的概念, 但根据行文的流畅性和逻辑的连贯性，确实又不忍打断. 因此对于新手读者请见谅. 本文的处理策略也会在整个构建过程中, 对于较新的概念, 每次出现时都会给出一个简要的介绍定义等. 
+
 
 <!-- > | Topic | Boyd–Vandenberghe | Ben-Tal–Nemirovski | Bertsimas–Tsitsiklis | Luenberger–Ye |
 > |---|---|---|---|---|
@@ -93,7 +95,7 @@ $$
 - Hyperplane 是一个仿射集, 也是一个凸集.
 - 其几何直观为: 先确定一个方向 $\bm{a}$，然后所有向这个方向投影为定长 $b/\|\bm{a}\|$ 的点的集合就是一个 hyperplane.
   
-    <img src="https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260922111438897.png" width="300">
+    <img src="https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260922111438897.png" width="30%">
 
 Closed halfspace:
 $$
@@ -191,7 +193,7 @@ $$
 - 仿射的 preimage: 若 $\bm{A} \in \mathbb{R}^{m \times n}$ 且 $\bm{b} \in \mathbb{R}^m$，则 $\{\bm{x} \in \mathbb{R}^n: \bm{A}\bm{x} + \bm{b} \in C\}$ 是凸集.
 - Minkowski sum: $C_1 + C_2 := \{\bm{x}_1 + \bm{x}_2: \bm{x}_1 \in C_1, \bm{x}_2 \in C_2\}$ 是凸集.
 - Cartesian product: $C_1 \times C_2 := \{(\bm{x}_1, \bm{x}_2): \bm{x}_1 \in C_1, \bm{x}_2 \in C_2\}$ 是凸集.
-- Projection: 若 $C \subseteq \mathbb{R}^{n+m}$ 是凸集, 则将 $C$ 投影到 $\bm{x}$ 上得到 $\text{proj}_x C := \{\bm{x} \in \mathbb{R}^n:  \exists \bm{y} \in \mathbb{R}^m, \text{s.t. } (\bm{x}, \bm{y}) \in C\}$ 是凸集.
+- Projection: 若 $C \subseteq \mathbb{R}^{n+m}$ 是凸集, 则将 $C$ 投影到 $\bm{x}$ 上得到 $\Pi_x C := \{\bm{x} \in \mathbb{R}^n:  \exists \bm{y} \in \mathbb{R}^m, \text{s.t. } (\bm{x}, \bm{y}) \in C\}$ 是凸集.
 
 
 ### 1.3 Carathéodory's theorem
@@ -208,7 +210,7 @@ $$
 - 直观理解, 在 $n$ 维空间中, 最多只需要 $n+1$ 个点就可以表示出任意一个凸组合. 其实这个 theorem 有点类似 simplex 的反向理解. 
 
 
-*Proof$~^\dagger$* *[Nemirovski, App. B §B.2.1]* :
+*Proof$~^\dagger$* *[Nemirovski, Appendix. B §B.2.1]* :
 - 由于 $\bm{x} \in \text{conv}(S)$，一定存在有限 $N$, 使得 $\bm{x} = \sum_{i=1}^N \theta_i \bm{x}_i$，其中 $\bm{x}_i \in S$, $\theta_i \geq 0$, $\sum_{i=1}^N \theta_i = 1$. 并且选取所有可能构造中目前最小的 $N$ (例如去掉一些 $\theta_i = 0$ 的点).
 - 下证明, 定有 $N \leq m+1$. 用反证法, 假设 $N > m+1$. 此时由于 $\bm{x}_1, \ldots, \bm{x}_N$ 在 $m$-dimensional affine space 中, 定是 affine dependent 的, 即存在 $\alpha_1, \ldots, \alpha_N$ 不全为零, 且 $\sum_{i=1}^N \alpha_i = 0$, 使得 $\sum_{i=1}^N \alpha_i \bm{x}_i = 0$.
 - 故根据 $\sum_{i=1}^N \theta_i = 1$ 和 $\sum_{i=1}^N \alpha_i = 0$，有 $\sum_{i=1}^N (\theta_i + t\alpha_i) = 1$ 对任意 $t \in \mathbb{R}$ 成立. 同时, $\sum_{i=1}^N (\theta_i + t\alpha_i) \bm{x}_i = \sum_{i=1}^N \theta_i \bm{x}_i + t\sum_{i=1}^N \alpha_i \bm{x}_i = \bm{x}$ 对任意 $t \in \mathbb{R}$ 成立.
@@ -269,10 +271,15 @@ $$
 
 #### Weierstrass theorem
 
-若 $S \subseteq \mathbb{R}^n$ 是非空的 compact set, 且 $f: S \to \mathbb{R}$ 是连续函数, 则 $f$ 在 $S$ 上有最小和最大值. 特别地, 存在 $\bm{x}^\star \in S$ 使得
+***Theorem* (Weierstrass)**: 若 $S \subseteq \mathbb{R}^n$ 是非空的 **compact** set, 且 $f: S \to \mathbb{R}$ 是**连续**函数, 则 $f$ 在 $S$ 上有最小和最大值. 特别地, 存在 $\bm{x}^\star \in S$ 使得
 $$
 f(\bm{x}^\star) = \min_{\bm{x} \in S} f(\bm{x}).
 $$
+
+- Tl;dr: 可行域紧 + 目标函数连续 $\implies$ 存在最优解.
+- 优化中, 证明最优解存的通常思路:
+  - 证明 feasible set 是紧的
+  - 即使 feasible set 是 unbounded, 但存在某个 sublevel set $\{\bm{x} \in S: f(\bm{x}) \leq \alpha\}$ 是紧的, 则可以将问题限制在这个 sublevel set 上
 
 *Proof Sketch*: 令 $\alpha := \inf_{\bm{x} \in S} f(\bm{x})$. 选择一个序列 $\{\bm{x}_k\} \subseteq S$ 使得 $f(\bm{x}_k) \downarrow \alpha$. 因为 $S$ 是 compact set, $\{\bm{x}_k\}$ 有一个收敛的子序列 $\{\bm{x}_{k_j}\} \to \bm{x}^\star \in S$. 由于 $f$ 是连续函数, 则 $f(\bm{x}_{k_j}) \to f(\bm{x}^\star)$. 因此 $f(\bm{x}^\star) = \alpha$, 即 $\bm{x}^\star$ 是最优解.
 
@@ -287,15 +294,260 @@ $$
 
 $\square$
 
-<!-- 
+***Corollary* [Yurii, $\S$ 2.2.3, Thm. 2.2.10]** *(强凸函数在闭凸集上的最优解存在且唯一)*: 若 $Q \subseteq \mathbb{R}^n$ 是非空的 closed convex set, 且 $f: Q \to \mathbb{R}$ 是 $\mu$-strongly convex 函数 (即 $\exists \mu > 0$ 使得 $f(\bm{y}) \geq f(\bm{x}) + \nabla f(\bm{x})^\top (\bm{y}-\bm{x}) + \frac{\mu}{2}\|\bm{y}-\bm{x}\|_2^2,~ \forall \bm{x}, \bm{y} \in Q$), 且 $f$ 是连续的, 则 $\min_{\bm{x} \in Q} f(\bm{x})$ 存在唯一最优解.
 
 
 
-## 2. Projections, Separation and Certificates
+## 2. Projections
 
 ### 2.1 Euclidean projection
 
-### 2.2 Projection variational inequality / normal cone
+给定非空闭集 $C \subseteq \mathbb{R}^n$，定义点 $\bm{x} \in \mathbb{R}^n$ 到集合 $C$ 的 Euclidean distance 为:
+$$
+d(\bm{x}, C) := \inf_{\bm{y} \in C} \|\bm{x}-\bm{y}\|_2.
+$$
+若存在 $\bm{y}^\star \in C$ 使得 $d(\bm{x}, C) = \|\bm{x}-\bm{y}^\star\|_2$，则称 $\bm{y}^\star$ 是 $\bm{x}$ 在 $C$ 上的 Euclidean projection, 记为:
+$$
+\Pi_C(\bm{x}) := \arg\min_{\bm{y} \in C} \|\bm{x}-\bm{y}\|_2.
+$$
+
+***Theorem*** *(凸闭集上的投影存在唯一)*: 若 $C \subseteq \mathbb{R}^n$ 是非空, 闭, 凸的, 则对每个 $\bm{y} \in \mathbb{R}^n$，存在唯一的 $\bm{x}^\star \in C$ 使得 $\bm{x}^\star = \Pi_C(\bm{y})$.
+
+*Proof*. 证明等价于证明 $\min_{\bm{x} \in C} \|\bm{x}-\bm{y}\|_2^2$ 存在唯一最优解. 
+
+存在性. 
+
+<img src="https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260929111038580.png" width="30%">
+
+- 根据 Weistrass theorem, 由于目标函数是连续的, 故只需给出一个紧的可行域即可. Compact = closed + bounded, 而 closed 已经给出, 故只需找到一个 bounded 的可行域即可.
+- 由于 $C$ 是非空闭集, 故任取 $\bm{x}_0 \in C$, 记 $R:= \|\bm{x}_0 - \bm{y}\|_2$. 则任意 $d(\bm{x}, \bm{y}) > R$ 的点 $\bm{x} \in C$ 都不可能是最优解. 故可行域为 $C \cap B(\bm{y}, R)$，其是一个非空闭集, 且 bounded, 故是 compact set. 因此最优解存在.
+
+唯一性. 事实上唯一性在证明, 对于凸可行域+强凸目标函数, 其最优解若存在必然唯一. 
+- 反证法, 若存在两个不同的最优解 $\bm{x}_1^\star, \bm{x}_2^\star \in C$，一方面
+  $$
+  \begin{aligned}
+    \|\bm{y} - \bm{x}_1^\star + (\bm{y} - \bm{x}_2^\star)\|_2^2 &= \|\bm{y} - \bm{x}_1^\star\|_2^2 + \|\bm{y} - \bm{x}_2^\star\|_2^2 + 2\left\langle \bm{y} - \bm{x}_1^\star, \bm{y} - \bm{x}_2^\star \right\rangle\\
+  \end{aligned}
+  $$
+  另一方面
+  $$
+  \begin{aligned}
+    \|\bm{y} - \bm{x}_1^\star - (\bm{y} - \bm{x}_2^\star)\|_2^2 &= \|\bm{x}_1^\star - \bm{x}_2^\star\|_2^2 = \|\bm{x}_1^\star - \bm{y}\|_2^2 + \|\bm{x}_2^\star - \bm{y}\|_2^2 - 2\left\langle \bm{y} - \bm{x}_1^\star , \bm{y} - \bm{x}_2^\star \right\rangle\\
+  \end{aligned}
+  $$
+  因此两式相减得
+  $$
+  \left\langle \bm{y} - \bm{x}_1^\star, \bm{y} - \bm{x}_2^\star \right\rangle = -\frac{1}{2}\|\bm{x}_1^\star - \bm{x}_2^\star\|_2^2 < 0.
+  $$
+- 考虑 $\bm{y}$ 到 $\frac{1}{2}(\bm{x}_1^\star + \bm{x}_2^\star)$ 的距离, 由于 $C$ 是凸的, 必有 $\frac{1}{2}(\bm{x}_1^\star + \bm{x}_2^\star) \in C$. 于是
+  $$
+  \begin{aligned}
+    \|\bm{y} - \frac{1}{2}(\bm{x}_1^\star + \bm{x}_2^\star)\|_2^2 &= \left\|\frac{1}{2}(\bm{y}-\bm{x}_1^\star) + \frac{1}{2}(\bm{y}-\bm{x}_2^\star)\right\|_2^2\\
+    &= \frac{1}{4}\|\bm{y}-\bm{x}_1^\star\|_2^2 + \frac{1}{4}\|\bm{y}-\bm{x}_2^\star\|_2^2 + \frac{1}{4}\left\langle \bm{y}-\bm{x}_1^\star, \bm{y}-\bm{x}_2^\star \right\rangle\\
+    &< \frac{1}{4}\|\bm{y}-\bm{x}_1^\star\|_2^2 + \frac{1}{4}\|\bm{y}-\bm{x}_2^\star\|_2^2 = d(\bm{y}, C)^2.
+  \end{aligned}
+  $$
+  这与 $\bm{x}_1^\star, \bm{x}_2^\star$ 是最优解矛盾. 因此最优解唯一.
+
+$\square$
+
+
+### 2.2 Projection variational inequality 
+
+***Theorem* (Projection variational inequality)**: 对于非空闭凸集 $C \subseteq \mathbb{R}^n$，$\bm{x}^\star \in C$ 是 $\Pi_C(\bm{y})$ 当且仅当
+  $$
+  \left\langle \bm{y} - \bm{x}^\star, \bm{x} - \bm{x}^\star \right\rangle \leq 0,~ \forall \bm{x} \in C.
+  $$
+
+  <img src="https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260929215140832.png" width="30%">
+
+  - 从 $\bm{x}^\star$ 出发, 向投影起点的向量定与任意可行点的向量呈钝角或直角. 
+
+
+*Proof*. 
+
+$(\Leftarrow)$ 对于任意 $\bm{x} \in C$，有
+$$
+\begin{aligned}
+\|\bm{y}-\bm{x}\|_2^2 &= \|\bm{y}-\bm{x}^\star + \bm{x}^\star - \bm{x}\|_2^2\\
+&= \|\bm{y}-\bm{x}^\star\|_2^2 + \|\bm{x}^\star - \bm{x}\|_2^2 + 2\left\langle \bm{y}-\bm{x}^\star, \bm{x}^\star - \bm{x} \right\rangle\\
+&\geq \|\bm{y}-\bm{x}^\star\|_2^2 + \|\bm{x}^\star - \bm{x}\|_2^2 \geq \|\bm{y}-\bm{x}^\star\|_2^2.
+\end{aligned}
+$$
+故 $\bm{x}^\star = \arg\min_{\bm{x} \in C} \|\bm{y}-\bm{x}\|_2 = \Pi_C(\bm{y})$.
+
+$(\Rightarrow)$ 定义 $\bm{x}_t := \bm{x}^\star + t(\bm{x}-\bm{x}^\star)$, $t \in(0,1]$. 由于 $C$ 是凸的, 故 $\bm{x}_t \in C$. 由 $\bm{x}^\star = \Pi_C(\bm{y})$，有
+$$
+\begin{aligned}
+\|\bm{y}-\bm{x}^\star\|_2^2 & \leq \|\bm{y}-\bm{x}_t\|_2^2 = \|\bm{y}-\bm{x}^\star + t(\bm{x}^\star - \bm{x})\|_2^2\\
+& = \|\bm{y}-\bm{x}^\star\|_2^2 + t^2\|\bm{x}^\star - \bm{x}\|_2^2 + 2t\left\langle \bm{y}-\bm{x}^\star, \bm{x}^\star - \bm{x} \right\rangle.
+\end{aligned}
+$$
+左右两边同时除以 $t > 0$，并令 $t \downarrow 0$，则有
+$$
+\left\langle \bm{y}-\bm{x}^\star, \bm{x}^\star - \bm{x} \right\rangle \geq 0,~ \forall \bm{x} \in C.
+$$
+
+$\square$
+
+### 2.3 Normal cone and optimality condition
+
+若进一步引入法锥 (normal cone) 的概念, 则可以将 projection variational inequality 进一步推广为更一般的 optimality condition.
+
+定义闭凸集 $C \subseteq \mathbb{R}^n$ 在 $\bm{x} \in C$ 处的法锥为:
+$$
+N_C(\bm{x}) := \{\bm{v} \in \mathbb{R}^n: \left\langle \bm{v}, \bm{y}-\bm{x} \right\rangle \leq 0,~ \forall \bm{y} \in C\}.
+$$
+
+- 集合某点的法锥可以理解为从该点出发, 指向集合外部的所有向量的集合.
+- $\langle \bm{v}, \bm{y}-\bm{x} \rangle \leq 0$ 相当于是在寻找所有的直角或钝角向量. 因此每给定一个 $\bm{y} \in C$，都会排除掉一半的空间. 最终被保留的部分的交集就是法锥. 
+
+如下是几种典型的法锥示意图:
+
+<img src="https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260929221224372.png" width="50%">
+
+
+- $\bm{x}_a \in \text{int}(C)$ 是集合的内点. 则四周都是集合的点, 因此从 $\bm{x}_a$ 出发, 指向集合外部的向量是不存在的. 因此 $N_C(\bm{x}_a) = \{\bm{0}\}$.
+- $\bm{x}_b \in \partial C$ 是集合的边界点. 则从 $\bm{x}_b$ 出发, 指向集合外部的向量是存在的. 最极端考虑两个切线方向, 则从 $\bm{x}_b$ 出发, 指向集合外部的向量只能在这两个切线方向之间. 因此 $N_C(\bm{x}_b)$ 是一个射线, 其方向垂直于切线方向.
+- $\bm{x}_c \in C$ 是集合的角点. 则法锥是构成角点的法向量的凸组合. 也即, 法锥是一个凸锥, 其包含了所有指向集合外部的向量.
+
+***法锥与投影***
+
+Projection variational inequality 可以用法锥的概念来重新表述为:
+$$
+\bm{x}^\star = \Pi_C(\bm{y}) \iff \bm{y}-\bm{x}^\star \in N_C(\bm{x}^\star).
+$$
+或
+$$
+\bm{y} - \Pi_C(\bm{y}) \in N_C(\Pi_C(\bm{y})).
+$$
+
+***法锥与超平面***
+
+此外, 回顾一个超平面的定义 $\{\bm{x} \in \mathbb{R}^n: \bm{a}^\top \bm{x} = b\}$, 其法向量就是 $\bm{a}$. 因此确定了一个法向量就确定了一个平面的方向, 再加上平面过的一个点, 就确定了一个超平面. 而对于法锥中的法向量, 这样定义的超平面很完美地将集合分为了内外两部分.
+
+***法锥与最优性条件***
+
+很典型的, 在 LP 问题 $\min_{\bm{x} \in C} f(\bm{x})$, 假设 $C = \{\bm{x} \in \mathbb{R}^n: \bm{A}\bm{x} \leq \bm{b}\}$ 是一个 polyhedron. 在 $\bm{x}^\star \in C$ 处, 定义 active constraint set 为 $\mathcal{A}(\bm{x}^\star) := \{i: \bm{a}_i^\top \bm{x}^\star = b_i\}$，则在 $\bm{x}^\star$ 处的法锥就是这些 active constraints 的法向量的凸组合, 即
+$$
+N_C(\bm{x}^\star) = \left\{\sum_{i \in \mathcal{A}(\bm{x}^\star)} \lambda_i \bm{a}_i: \lambda_i \geq 0\right\}.
+$$
+
+在讨论 KKT optimality condition 时, 其平稳性条件为
+$$
+\nabla f(\bm{x}^\star) + \sum_{i \in \mathcal{A}(\bm{x}^\star)} \lambda_i \bm{a}_i = 0,~ \lambda_i \geq 0.
+$$
+而这恰好就是 $N_C(\bm{x}^\star)$ 的定义. 也即, 
+$$
+- \nabla f(\bm{x}^\star) \in N_C(\bm{x}^\star).
+$$
+这也是与法锥的几何直观的理解相符: 我们想要在 $\bm{x}^\star$ 处下降, 也即 $-\nabla f(\bm{x}^\star)$ 指向的方向. 若下降的方向指向了可行集的内部, 则说明我们可以继续下降, 这显然不是最优解. 反之, 若所有可能的下降方向都指向了可行集的外部, 则确实已经最优了. 
+
+
+<img src="https://raw.githubusercontent.com/By-Xin/Blog-figs/main/20260929223822798.png" width="30%">
+
+另外还有一种理解方式更加物理直观. 所有的可行约束类似一个墙壁 (例如图中的边界). 而墙壁所提供的支持力就是法方向. 故法锥可以理解为所有约束 (墙壁) 所提供的支持力的合力, 而 Lagrange multiplier $\lambda_i$ 就是每个约束所提供的支持力的大小. 因此, 若下降方向处在法锥中, 则说明我们能够通过调整各个墙壁提供的支持力的大小, 来抵消下降方向的作用, 也即我们已经无法继续下降了. 而若一个下降方向不在法锥中, 则说明我们无法通过现有力的合成来抵消下降方向的作用, 因此这将会导致我们继续下降, 也即不是最优解.
+
+### 2.4 Stability of projection: Non-expansiveness and Pythagorean theorem 
+
+投影也是一种算子/映射, 即 $\Pi_C: \mathbb{R}^n \to C$. 投影的稳定性是讨论对于输入 $\bm{y}$ 的微小扰动, 投影结果 $\Pi_C(\bm{y})$ 的变化情况. 
+
+***Theorem* (Firm non-expansiveness)**: 对于非空闭凸集 $C \subseteq \mathbb{R}^n$，$\forall \bm{y}_1, \bm{y}_2 \in \mathbb{R}^n$，有
+$$
+\|\Pi_C(\bm{y}_1) - \Pi_C(\bm{y}_2)\|_2^2 \leq 
+\langle \Pi_C(\bm{y}_1) - \Pi_C(\bm{y}_2), \bm{y}_1 - \bm{y}_2 \rangle.
+$$
+Firm non-expansiveness 可以直接推出 Non-expansiveness, 即
+$$
+\|\Pi_C(\bm{y}_1) - \Pi_C(\bm{y}_2)\|_2 \leq \|\bm{y}_1 - \bm{y}_2\|_2.
+$$
+
+- Non-expansiveness (非扩张性): 投影后的点之间的距离不会大于投影前的点之间的距离
+
+*Proof*.
+
+记 $\bm{p}_1 := \Pi_C(\bm{y}_1)$, $\bm{p}_2 := \Pi_C(\bm{y}_2)$. 由 projection variational inequality, 有对于任意 $\bm{x} \in C$，有
+$$
+\begin{aligned}
+\langle \bm{y}_1 - \bm{p}_1, \bm{x} - \bm{p}_1 \rangle &\leq 0\,\stackrel{\bm{x}:= \bm{p}_2}{\implies} \langle \bm{y}_1 - \bm{p}_1, \bm{p}_2 - \bm{p}_1 \rangle \leq 0,\\
+\langle \bm{y}_2 - \bm{p}_2, \bm{x} - \bm{p}_2 \rangle &\leq 0\,\stackrel{\bm{x}:= \bm{p}_1}{\implies} \langle \bm{y}_2 - \bm{p}_2, \bm{p}_1 - \bm{p}_2 \rangle \leq 0.
+\end{aligned}
+$$
+相加即证 firm non-expansiveness:
+$$
+\langle \bm{y}_1 - \bm{p}_1 - (\bm{y}_2 - \bm{p}_2), \bm{p}_2 - \bm{p}_1 \rangle \leq 0 \implies \langle \bm{p}_1 - \bm{p}_2, \bm{y}_1 - \bm{y}_2 \rangle \geq \|\bm{p}_1 - \bm{p}_2\|_2^2.
+$$
+再由 Cauchy-Schwarz inequality, 有
+$$
+\|\bm{p}_1 - \bm{p}_2\|_2^2 \leq \langle \bm{p}_1 - \bm{p}_2, \bm{y}_1 - \bm{y}_2 \rangle \leq \|\bm{p}_1 - \bm{p}_2\|_2 \cdot \|\bm{y}_1 - \bm{y}_2\|_2 \implies \|\bm{p}_1 - \bm{p}_2\|_2 \leq \|\bm{y}_1 - \bm{y}_2\|_2.
+$$
+
+$\square$
+
+***Corollary* (Pythagorean theorem)**: 对于非空闭凸集 $C \subseteq \mathbb{R}^n$，$\forall \bm{y} \in \mathbb{R}^n$，有
+$$
+\|\bm{y}-\Pi_C(\bm{y})\|_2^2 + \|\Pi_C(\bm{y}) - \bm{x}\|_2^2 \leq \|\bm{y}-\bm{x}\|_2^2,~ \forall \bm{x} \in C.
+$$
+若 $C$ 是 affine space, 则有等号成立.
+
+### 2.5 Projection Distance
+
+前文说到投影是稳定的. 然而, 稳定性是一个零阶条件, 衡量是函数值对于输入扰动的变化幅度. 然而投影算子并不一定是连续可微的. 例如考虑一维空间中 $C = \mathbb{R}_+$，则 $\Pi_C(x) = \max\{0, x\}$，其在 $x=0$ 处不可微. 
+
+不过, 若考虑点到集合的距离函数, 则其具有更好的性质. 定义平方距离为
+$$
+\rho_C(\bm{y}) := \frac12 d(\bm{y}, C)^2 = \frac12 \|\bm{y}-\Pi_C(\bm{y})\|_2^2.
+$$
+
+***Proposition* [Nesterov, § 2.2.3, Lemma 2.2.9; Beck, § 6.7.2, Theorem 6.60; Example 6.61]** *(平方投影距离是凸且可微的)*. 给定 $C$ 是非空闭凸集, 则 $\rho_C(\bm{y})$ 是 convex 且处处可微, 且其梯度是 Lipschitz continuous, 取值为
+$$
+\nabla \rho_C(\bm{y}) = \bm{y}-\Pi_C(\bm{y}).
+$$
+
+*Proof*. 直接通过 Fréchet differentiability 来证明. 给定 $\bm{y}_1 , \bm{y}_2 \in \mathbb{R}^n$，记 $\bm{p}_1 := \Pi_C(\bm{y}_1)$, $\bm{p}_2 := \Pi_C(\bm{y}_2)$. 令 $\bm{d} := \bm{y}_2 - \bm{y}_1$. 
+
+首先考虑上界. 
+$$
+\begin{aligned}
+\rho_C(\bm{y}_2) &= \frac12 \|\bm{y}_2 - \bm{p}_2\|_2^2 \\&\leq \frac12 \|\bm{y}_2 - \bm{p}_1\|_2^2\qquad {\small(\text{因为 $\bm{p}_2$ 是 $\bm{y}_2$ 的投影, 而 $\bm{p}_1 \in C$ 是任意可行点})}\\
+&= \frac12 \|\bm{y}_1 - \bm{p}_1 + \bm{y}_2 - \bm{y}_1\|_2^2\\
+&= \frac12 \|\bm{y}_1 - \bm{p}_1\|_2^2 + \frac12 \|\bm{y}_2 - \bm{y}_1\|_2^2 + \langle \bm{y}_1 - \bm{p}_1, \bm{y}_2 - \bm{y}_1 \rangle\\
+&=  \rho_C(\bm{y}_1) + \langle \bm{y}_1 - \bm{p}_1, \bm{d} \rangle + \frac12 \|\bm{d}\|_2^2.
+\end{aligned}
+$$
+
+其次考虑下界.
+$$
+\begin{aligned}
+  \rho_C(\bm{y}_2) &= \frac12 \|\bm{y}_2 - \bm{p}_2\|_2^2 \\
+  &= \frac12 \|\bm{y}_1 - \bm{p}_1 + \left(\bm{y}_2 - \bm{y}_1 + \bm{p}_1 - \bm{p}_2\right)\|_2^2\\
+  &= \frac12 \|\bm{y}_1 - \bm{p}_1\|_2^2 + \frac12 \|\bm{d} + \bm{p}_1 - \bm{p}_2\|_2^2 + \langle \bm{y}_1 - \bm{p}_1, \bm{d} \rangle + \underbrace{\langle \bm{y}_1 - \bm{p}_1, \bm{p}_1 - \bm{p}_2 \rangle}_{{\small{\text{Proj. VI.}\geq 0}}}\\
+  &\geq \rho_C(\bm{y}_1) + \langle \bm{y}_1 - \bm{p}_1, \bm{d} \rangle .
+\end{aligned}
+$$
+整理上下界, 左右同除 $\|\bm{d}\|_2$ 有
+$$
+0 \leq \frac{\rho_C(\bm{y}_2) - \rho_C(\bm{y}_1) - \langle \bm{y}_1 - \bm{p}_1, \bm{d} \rangle}{\|\bm{d}\|_2} \leq \frac12 \|\bm{d}\|_2.
+$$
+令 $\bm{d} \to 0$，故$\rho_C$ 在 $\bm{y}_1$ 处 Fréchet 可微, 其梯度为 $\nabla \rho_C(\bm{y}_1) = \bm{y}_1 - \bm{p}_1$.
+
+$\square$
+
+> 回顾: Fréchet differentiability. 在一元函数 $f: \mathbb{R} \to \mathbb{R}$ 中, 若 $f$ 在 $x_0$ 处可微, 则有 
+> $$
+> f'(x_0) = \lim_{h \to 0} \frac{f(x_0+h)-f(x_0)}{h} \iff f(x_0+h) = f(x_0) + f'(x_0)h + o(|h|), h \to 0.
+> $$
+> 换言之, 对于输入 $x_0$ 的微小扰动 $h$，函数值的变化可以用线性函数 $f'(x_0)h$ 来近似, 且误差是高阶无穷小.
+> 
+> 扩展到多元函数 $f: \mathbb{R}^n \to \mathbb{R}$，此时输入扰动是一个向量 $\bm{d} \in \mathbb{R}^n$，我们同样希望可以用某个线性函数来近似函数值的变化, 且误差是高阶无穷小. 故可微的定义为: 若存在一个线性映射 $L : \mathbb{R}^n \to \mathbb{R}$，使得
+> $$
+> \lim_{\bm{d} \to 0} \frac{|f(\bm{x}_0 + \bm{d}) - f(\bm{x}_0) - L(\bm{d})|}{\|\bm{d}\|} = 0 \iff f(\bm{x}_0 + \bm{d}) = f(\bm{x}_0) + L(\bm{d}) + o(\|\bm{d}\|),
+> $$
+> 则称 $f$ 在 $\bm{x}_0$ 处可微.
+>
+> 特别地, 在 Euclidean space 中, 每个线性映射 $L(\bm{d}): \mathbb{R}^n \to \mathbb{R}$ 都可以唯一地表示为内积的形式, 即 $L(\bm{d}) = \langle \bm{g}, \bm{d} \rangle$，我们称 $\bm{g}$ 为 $f$ 在 $\bm{x}_0$ 处的梯度, 记为 $\nabla f(\bm{x}_0) = \bm{g}$. 
+
+<!-- 
 
 ### 2.3 Farkas lemma
 
