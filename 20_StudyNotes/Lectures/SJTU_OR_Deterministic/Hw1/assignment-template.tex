@@ -1,0 +1,45 @@
+\documentclass[11pt]{article}
+\usepackage{assignment}
+\input{math_commands.tex}
+
+% Metadata ----------------------------------------------------------
+\course{DOR}
+\term{Fall 2026}
+\assignment{Homework 1}
+\duedate{Xin Baiying}
+
+\begin{document}
+\makeassignmenttitle
+
+\begin{problem}
+
+\end{problem}
+
+\begin{problem}
+  
+\end{problem}
+
+\begin{problem}
+Let \(P_n\) denote the statement that, for any \(y_1,\ldots,y_n\in S\) and any \(\alpha_1,\ldots,\alpha_n\ge 0\) satisfying \(\sum_{i=1}^n\alpha_i=1\), we have \(\sum_{i=1}^n\alpha_i y_i\in S\).
+The implication \(P_n\Rightarrow P_2\) is immediate by keeping two $\alpha_i \alpha_j > 0$ and $\alpha_i+\alpha_j=1$, and let the rest $\alpha_k =0$, $k\in [n]\backslash\{i,j\}$.
+For \(P_2\Rightarrow P_n\), we proceed by induction on \(n\). The base case \(n=2\) is exactly \(P_2\).
+Assume that \(P_{n-1}\) holds. We prove \(P_n\). Let \(y_1,\ldots,y_n\in S\), and let \(\alpha_1,\ldots,\alpha_n\ge 0\) satisfy \(\sum_{i=1}^n\alpha_i=1\). Define \(\gamma=\sum_{i=1}^{n-1}\alpha_i=1-\alpha_n\).
+If \(\gamma=0\), then by nonnegativity, \(\alpha_1=\cdots=\alpha_{n-1}=0\). Hence \(\alpha_n=1\), and therefore \(\sum_{i=1}^n\alpha_i y_i=y_n\in S\).
+Now suppose \(\gamma>0\). Define \(\bar y=\sum_{i=1}^{n-1}\frac{\alpha_i}{\gamma}y_i\). Since \(\frac{\alpha_i}{\gamma}\ge 0\) and \(\sum_{i=1}^{n-1}\frac{\alpha_i}{\gamma}=1\), the induction hypothesis \(P_{n-1}\) gives \(\bar y\in S\).
+Moreover, \(\sum_{i=1}^n\alpha_i y_i=\gamma\bar y+\alpha_n y_n\). Since \(\gamma+\alpha_n=1\), \(\gamma,\alpha_n\ge 0\), and \(\bar y,y_n\in S\), the two-point property \(P_2\) implies \(\gamma\bar y+\alpha_n y_n\in S\). Thus \(P_n\) holds.
+Therefore, by induction, \(P_2\) implies \(P_n\) for every finite \(n\ge 2\), and hence the two conditions are equivalent.
+
+$\square$
+\end{problem}
+
+\begin{problem}
+Consider the ambient space \(\mathbb{R}^n\). Let \(C\subseteq\mathbb{R}^n\), and let \(L:=\{x_0+tv:t\in\mathbb{R}\}\) be an arbitrary line, where \(x_0,v\in\mathbb{R}^n\) and \(v\neq0\).
+
+(\(\Rightarrow\)) Suppose \(C\) is convex. For any \(x_1,x_2\in C\) and any \(\theta\in[0,1]\), we have \(\theta x_1+(1-\theta)x_2\in C\). Now take any \(x_1,x_2\in L\). Since both points lie on the same line \(L\), there exist \(t_1,t_2\in\mathbb{R}\) such that \(x_1=x_0+t_1v\) and \(x_2=x_0+t_2v\). Hence \(\theta x_1+(1-\theta)x_2=x_0+(\theta t_1+(1-\theta)t_2)v\in L\). Therefore, for any \(x_1,x_2\in C\cap L\), we have \(\theta x_1+(1-\theta)x_2\in C\cap L\). Thus \(C\cap L\) is convex.
+
+(\(\Leftarrow\)) Suppose \(C\cap L\) is convex for every line \(L\). To show that \(C\) is convex, take any \(x_1,x_2\in C\) and any \(\alpha\in[0,1]\). If \(x_1=x_2\), then \(\alpha x_1+(1-\alpha)x_2=x_1\in C\). Otherwise, choose the line \(L:=\{x_1+t(x_2-x_1):t\in\mathbb{R}\}\), which contains both \(x_1\) and \(x_2\). Hence \(x_1,x_2\in C\cap L\). Since \(C\cap L\) is convex, \(\alpha x_1+(1-\alpha)x_2\in C\cap L\subseteq C\). Therefore \(C\) is convex.
+
+$\square$
+\end{problem}
+
+\end{document}
