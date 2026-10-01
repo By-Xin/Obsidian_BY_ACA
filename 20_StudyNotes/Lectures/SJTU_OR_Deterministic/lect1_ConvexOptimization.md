@@ -547,6 +547,40 @@ $\square$
 >
 > 特别地, 在 Euclidean space 中, 每个线性映射 $L(\bm{d}): \mathbb{R}^n \to \mathbb{R}$ 都可以唯一地表示为内积的形式, 即 $L(\bm{d}) = \langle \bm{g}, \bm{d} \rangle$，我们称 $\bm{g}$ 为 $f$ 在 $\bm{x}_0$ 处的梯度, 记为 $\nabla f(\bm{x}_0) = \bm{g}$. 
 
+
+### 2.6 Proximal operator and Moreau envelope
+
+Proximal operator 是投影算子的一种推广, 其定义为:
+$$
+\text{prox}_{\gamma f}(\bm{y}) := \arg\min_{\bm{x} \in \mathbb{R}^n} \left\{f(\bm{x}) + \frac{1}{2\gamma}\|\bm{x}-\bm{y}\|_2^2\right\},~ \gamma > 0.
+$$
+- 粗略地, proximal operator 尝试在输入点 $\bm{y}$ 附近寻找可以相对最小化 $f$ 的点. 因此这里也天然地引入了距离.
+
+Indicator function $\delta_C(\bm{x})$ 是一个特殊的凸函数, 其定义为:
+$$
+\delta_C(\bm{x}) := \begin{cases} 0, & \bm{x} \in C\\ +\infty, & \bm{x} \notin C\end{cases}.
+$$
+- 往往可以将约束优化问题 $\min_{\bm{x} \in C} f(\bm{x})$ 转化为无约束优化问题 $\min_{\bm{x} \in \mathbb{R}^n} f(\bm{x}) + \delta_C(\bm{x})$, 因为若想要取到最优解, 则 $\bm{x}$ 必须在 $C$ 中, 否则目标函数值为 $+\infty$.
+
+故若考虑 $\text{prox}_{\gamma \delta_C}(\bm{y})$，则有
+$$
+\text{prox}_{\gamma \delta_C}(\bm{y}) = \arg\min_{\bm{x} \in \mathbb{R}^n} \left\{ \delta_C(\bm{x}) + \frac{1}{2\gamma}\|\bm{x}-\bm{y}\|_2^2 \right\} = \arg\min_{\bm{x} \in C} \frac{1}{2\gamma}\|\bm{x}-\bm{y}\|_2^2 = \Pi_C(\bm{y}).
+$$
+
+- 这也是符合 proximal operator 的直观理解的: 若想要最小化 $\delta_C(\bm{x})$，则 $\bm{x}$ 必须在 $C$ 中; 与此同时又希望找到的点尽量靠近 $\bm{y}$，因此 $\text{prox}_{\gamma \delta_C}(\bm{y})$ 就是 $\bm{y}$ 在 $C$ 上的投影.
+
+另一个与之相关的重要概念是 Moreau envelope, 其定义为:
+$$
+M_{\gamma f}(\bm{y}) := \min_{\bm{x} \in \mathbb{R}^n} \left\{f(\bm{x}) + \frac{1}{2\gamma}\|\bm{x}-\bm{y}\|_2^2\right\},~ \gamma > 0.
+$$
+- Proximal operator 是寻找 argmin, 而 Moreau envelope 是寻找对应的最小值函数. 
+- 例如, 若考虑 $M_{\gamma \delta_C}(\bm{y})$，则有
+  $$
+  M_{\gamma \delta_C}(\bm{y}) = \min_{\bm{x} \in \mathbb{R}^n} \left\{\delta_C(\bm{x}) + \frac{1}{2\gamma}\|\bm{x}-\bm{y}\|_2^2\right\} = \min_{\bm{x} \in C} \frac{1}{2\gamma}\|\bm{x}-\bm{y}\|_2^2 = \frac{1}{2\gamma} d(\bm{y}, C)^2.
+  $$
+  这也反映了 Moreau envelope 具有光滑化的特性. 对比原始的 $\delta_C(\bm{x})$，其在 $C$ 内部是平的, 在 $C$ 外部是无穷大, 其梯度在 $C$ 内部处处为零, 在 $C$ 外部处处不存在. 而 Moreau envelope 则是一个光滑的函数, 其梯度恰为 $\nabla M_{\gamma \delta_C}(\bm{y}) = \frac{1}{\gamma}(\bm{y}-\Pi_C(\bm{y}))$.
+
+
 <!-- 
 
 ### 2.3 Farkas lemma
