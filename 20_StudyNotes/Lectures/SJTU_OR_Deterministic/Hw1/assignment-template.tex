@@ -1,5 +1,11 @@
-\documentclass[11pt]{article}
+% !TeX program = lualatex
+\documentclass[12pt,a4paper]{article}
 \usepackage{assignment}
+\geometry{a4paper}
+\usepackage{fontspec}
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}}
+\usepackage{setspace}
+\onehalfspacing
 \input{math_commands.tex}
 
 % Metadata ----------------------------------------------------------
@@ -12,12 +18,60 @@
 \makeassignmenttitle
 
 \begin{problem}
+An index-enhanced equity fund seeks to outperform a stock index while keeping its portfolio reasonably close to that index. At each rebalance, the manager must decide the target weight of every eligible stock. A stock may have a high predicted return, but buying more of it can increase the fund's risk and require costly changes to its existing holdings.
+The objective is to choose the portfolio with the highest predicted return relative to the benchmark after applying a penalty for turnover. The decision therefore depends on both the return forecasts and the fund's holdings immediately before rebalancing. A change in a stock's weight represents a buy or sell decision.
+Several requirements restrict the choice. The target weights must use the full equity allocation and remain within permitted limits for each stock. The portfolio's exposure to each industry and investment style must stay within a specified range of the benchmark's exposure. A minimum share of the portfolio must be invested in benchmark constituents. These rules prevent the fund from seeking excess return through a few concentrated positions or large unintended bets.
+The central risk requirement is a limit on predicted tracking error, which measures how much the fund's returns may vary from the benchmark's returns. A factor risk model separates this risk into movements shared by groups of stocks and movements specific to individual stocks. The manager combines these two sources of risk and requires the resulting annualized tracking error to stay below a chosen limit. This risk limit has a second-order cone representation; together with the other constraints and the turnover penalty, it makes the rebalancing decision a second-order cone program.
+% To build the model at a rebalance date, the manager needs current holdings, benchmark weights and membership, stock return forecasts, factor exposures, risk estimates, and the fund's portfolio limits. The solution specifies the target holdings and the trades needed to reach them.
 
+Let \(w,b,\widetilde w,\widehat r\in\mathbb R^n\) be target weights,
+benchmark weights, current weights, and predicted returns.
+Let \(X\in\mathbb R^{n\times k}\) contain factor exposures,
+\(F=M^{\mathsf T}M\) be factor covariance, and
+\(D\) be the diagonal matrix of stock-specific variances.
+The limits \(L,U,\ell,h,\rho,\tau\) specify stock weights, active factor
+exposures, benchmark-constituent weight, and annualized tracking error;
+\(m_i\) indicates index membership and \(\lambda\) penalizes turnover.
+
+\[
+\begin{aligned}
+\max_{w,u}\quad&
+\widehat r^{\mathsf T}(w-b)-\lambda\mathbf1^{\mathsf T}u\\
+\text{s.t.}\quad&
+\mathbf1^{\mathsf T}w=1,\quad L\leq w\leq U,\quad
+\ell\leq X^{\mathsf T}(w-b)\leq h,\\
+&m^{\mathsf T}w\geq\rho,\quad
+-u\leq w-\widetilde w\leq u,\quad u\geq0,\\
+&\left\|
+\begin{bmatrix}
+MX^{\mathsf T}(w-b)\\ D^{1/2}(w-b)
+\end{bmatrix}
+\right\|_2\leq\frac{\tau}{\sqrt{252}}.
+\end{aligned}
+\]
 \end{problem}
+
+\newpage
 
 \begin{problem}
-  
+\textbf{Selected Paper.} Shen, Zuo-Jun Max, Shuo Sun, Yongzhi Qi, et al. ``JD.Com Improves Fulfillment Efficiency with Data-Driven Integrated Assortment Planning and Inventory Allocation.'' INFORMS Journal on Applied Analytics 55, no. 5 (2025): 386–98.
+
+
+\paragraph{Model.}
+The paper studies fulfillment efficiency in JD.com's two-level distribution network, where regional distribution centers (RDCs) replenish front distribution centers (FDCs). It considers two decisions: assortment planning, which selects products to stock at each FDC, and inventory allocation, which determines transfers from RDCs to FDCs. For assortment planning, the authors formulate a binary optimization model that selects at most \(K\) SKUs to maximize the number of orders that can be fully served locally, and develop three scalable heuristics: ML-Top-K, Reverse-Exclude, and Hybrid-Selection. For inventory allocation, they propose a multi-period, two-echelon end-to-end recurrent neural-network model that forecasts sales, determines target inventory and safety-stock levels, and simulates inventory flows. Its training loss combines operational cost, prediction error, and safety-stock violations, directly linking learning to downstream performance.
+
+\paragraph{Data Collection.}
+The empirical study uses large-scale operational data from JD.com. The assortment-planning experiments cover 18 FDCs, using historical orders before May 1, 2024 for training and orders from May 1--14 for out-of-sample testing. The inventory-allocation experiments use two RDCs, each serving six FDCs, with data including historical sales, promotions, replenishment, transfer lead times, inventory states, and transfer information.
+
+\paragraph{Results.}
+The proposed methods outperform JD.com's previous systems. For assortment planning, the historical Top-K baseline achieves a 58.29\% local fulfillment rate, compared with 58.83\% for ML-Top-K, 58.56\% for Reverse-Exclude, and 60.50\% for Hybrid-Selection. The 0.54-percentage-point gain from ML-Top-K alone represents more than 100,000 additional fulfilled orders. For inventory allocation, the end-to-end model achieves a 58.59\% FDC fulfillment rate, versus 57.55\% for simulation-based parameter search and 57.12\% for linear-programming optimization, while maintaining a comparable loss ratio.
+
+\paragraph{Interpretation and Implementation.}
+JD.com deployed the system across all eight RDCs in China, each serving 5--13 FDCs. The reported annual benefits include approximately \$6.13 million in lower inventory-holding and capital-utilization costs and \$22.32 million in lower transfer costs. Stock availability increased by 0.85\%, local fulfillment by 2.19\%, and coverage of JD.com's ``211'' delivery program by 1.44\%, improving service for approximately 18.61 million orders annually. The implementation demonstrates that integrating prediction, optimization, and operational objectives can produce substantial economic and service improvements at large scale.
+
 \end{problem}
+
+\newpage
 
 \begin{problem}
 Let \(P_n\) denote the statement that, for any \(y_1,\ldots,y_n\in S\) and any \(\alpha_1,\ldots,\alpha_n\ge 0\) satisfying \(\sum_{i=1}^n\alpha_i=1\), we have \(\sum_{i=1}^n\alpha_i y_i\in S\).
@@ -25,7 +79,11 @@ The implication \(P_n\Rightarrow P_2\) is immediate by keeping two $\alpha_i \al
 For \(P_2\Rightarrow P_n\), we proceed by induction on \(n\). The base case \(n=2\) is exactly \(P_2\).
 Assume that \(P_{n-1}\) holds. We prove \(P_n\). Let \(y_1,\ldots,y_n\in S\), and let \(\alpha_1,\ldots,\alpha_n\ge 0\) satisfy \(\sum_{i=1}^n\alpha_i=1\). Define \(\gamma=\sum_{i=1}^{n-1}\alpha_i=1-\alpha_n\).
 If \(\gamma=0\), then by nonnegativity, \(\alpha_1=\cdots=\alpha_{n-1}=0\). Hence \(\alpha_n=1\), and therefore \(\sum_{i=1}^n\alpha_i y_i=y_n\in S\).
-Now suppose \(\gamma>0\). Define \(\bar y=\sum_{i=1}^{n-1}\frac{\alpha_i}{\gamma}y_i\). Since \(\frac{\alpha_i}{\gamma}\ge 0\) and \(\sum_{i=1}^{n-1}\frac{\alpha_i}{\gamma}=1\), the induction hypothesis \(P_{n-1}\) gives \(\bar y\in S\).
+Now suppose \(\gamma>0\). Define
+\[
+\bar y=\sum_{i=1}^{n-1}\frac{\alpha_i}{\gamma}y_i.
+\]
+Since \(\frac{\alpha_i}{\gamma}\ge 0\) and \(\sum_{i=1}^{n-1}\frac{\alpha_i}{\gamma}=1\), the induction hypothesis \(P_{n-1}\) gives \(\bar y\in S\).
 Moreover, \(\sum_{i=1}^n\alpha_i y_i=\gamma\bar y+\alpha_n y_n\). Since \(\gamma+\alpha_n=1\), \(\gamma,\alpha_n\ge 0\), and \(\bar y,y_n\in S\), the two-point property \(P_2\) implies \(\gamma\bar y+\alpha_n y_n\in S\). Thus \(P_n\) holds.
 Therefore, by induction, \(P_2\) implies \(P_n\) for every finite \(n\ge 2\), and hence the two conditions are equivalent.
 
@@ -35,7 +93,11 @@ $\square$
 \begin{problem}
 Consider the ambient space \(\mathbb{R}^n\). Let \(C\subseteq\mathbb{R}^n\), and let \(L:=\{x_0+tv:t\in\mathbb{R}\}\) be an arbitrary line, where \(x_0,v\in\mathbb{R}^n\) and \(v\neq0\).
 
-(\(\Rightarrow\)) Suppose \(C\) is convex. For any \(x_1,x_2\in C\) and any \(\theta\in[0,1]\), we have \(\theta x_1+(1-\theta)x_2\in C\). Now take any \(x_1,x_2\in L\). Since both points lie on the same line \(L\), there exist \(t_1,t_2\in\mathbb{R}\) such that \(x_1=x_0+t_1v\) and \(x_2=x_0+t_2v\). Hence \(\theta x_1+(1-\theta)x_2=x_0+(\theta t_1+(1-\theta)t_2)v\in L\). Therefore, for any \(x_1,x_2\in C\cap L\), we have \(\theta x_1+(1-\theta)x_2\in C\cap L\). Thus \(C\cap L\) is convex.
+(\(\Rightarrow\)) Suppose \(C\) is convex. For any \(x_1,x_2\in C\) and any \(\theta\in[0,1]\), we have \(\theta x_1+(1-\theta)x_2\in C\). Now take any \(x_1,x_2\in L\). Since both points lie on the same line \(L\), there exist \(t_1,t_2\in\mathbb{R}\) such that \(x_1=x_0+t_1v\) and \(x_2=x_0+t_2v\). Hence
+\[
+\theta x_1+(1-\theta)x_2=x_0+(\theta t_1+(1-\theta)t_2)v\in L.
+\]
+Therefore, for any \(x_1,x_2\in C\cap L\), we have \(\theta x_1+(1-\theta)x_2\in C\cap L\). Thus \(C\cap L\) is convex.
 
 (\(\Leftarrow\)) Suppose \(C\cap L\) is convex for every line \(L\). To show that \(C\) is convex, take any \(x_1,x_2\in C\) and any \(\alpha\in[0,1]\). If \(x_1=x_2\), then \(\alpha x_1+(1-\alpha)x_2=x_1\in C\). Otherwise, choose the line \(L:=\{x_1+t(x_2-x_1):t\in\mathbb{R}\}\), which contains both \(x_1\) and \(x_2\). Hence \(x_1,x_2\in C\cap L\). Since \(C\cap L\) is convex, \(\alpha x_1+(1-\alpha)x_2\in C\cap L\subseteq C\). Therefore \(C\) is convex.
 
@@ -43,23 +105,100 @@ $\square$
 \end{problem}
 
 \begin{problem}
+    To prove $S_a$ is convex, we need to show that for any $x_1,x_2\in S_a$ and any $\theta\in[0,1]$, the point $\theta x_1+(1-\theta)x_2$ also belongs to $S_a$, i.e., $\inf_{y\in S} \| \theta x_1+(1-\theta)x_2-y\| \le a$. Note that, since $S$ is convex, for the fixed $\theta\in[0,1]$, we have $\{\theta y_1+(1-\theta)y_2:y_1,y_2\in S\}\subseteq S$. Conversely, for any $y\in S$, there exist $y_1,y_2\in S$ such that $y=\theta y_1+(1-\theta)y_2$, at least by choosing $y_1=y_2=y$, so $S \subseteq \{\theta y_1+(1-\theta)y_2:y_1,y_2\in S\}$. Hence,
+    \[
+    S = \{\theta y_1+(1-\theta)y_2:y_1,y_2\in S\}.
+    \]
+    Then we have
+    \begin{align*}
+        \inf_{y\in S} \| \theta x_1+(1-\theta)x_2-y\| &= \inf_{y_1,y_2\in S} \| \theta x_1+(1-\theta)x_2-(\theta y_1+(1-\theta)y_2)\| \\
+        &= \inf_{y_1,y_2\in S} \| \theta (x_1-y_1)+(1-\theta)(x_2-y_2)\| \\
+        &\le \inf_{y_1,y_2\in S} \left\{ \theta \|x_1-y_1\|+(1-\theta)\|x_2-y_2\| \right\} \\
+        &= \theta \inf_{y_1\in S} \|x_1-y_1\|+(1-\theta) \inf_{y_2\in S} \|x_2-y_2\| \\
+        &\le \theta a+(1-\theta)a = a.
+    \end{align*}
+
     
 \end{problem}
 
 \begin{problem}
+    (1) To prove $(a+b)C \subseteq aC+bC$, take any $z\in (a+b)C$, we need to show that $z\in aC+bC$, i.e., there exist $x_2\in C$ and $x_3\in C$ such that $z=ax_2+bx_3$. Since $z\in (a+b)C$, there exists $x_1\in C$ such that $z=(a+b)x_1$. Let $x_2=x_3=x_1$, then we have $z=ax_2+bx_3$. Hence $z\in aC+bC$, and therefore $(a+b)C \subseteq aC+bC$.
+
+    (2) To prove $(a+b)C = aC+bC$ with $C$ being convex, it suffices to show that $aC+bC \subseteq (a+b)C$, i.e., for any $z\in aC+bC$, there exists $x_1\in C$ such that $z=(a+b)x_1$. Since $z\in aC+bC$, there exist $x_2\in C$ and $x_3\in C$ such that $z=ax_2+bx_3$. Let $x_1=\frac{a}{a+b}x_2+\frac{b}{a+b}x_3$. Since $C$ is convex, we have $x_1\in C$. Moreover, we have
+    \[
+    (a+b)x_1=(a+b)\left(\frac{a}{a+b}x_2+\frac{b}{a+b}x_3\right)=ax_2+bx_3=z.
+    \]
+    Hence $z\in (a+b)C$, and therefore $aC+bC \subseteq (a+b)C$. Combining with (1), we have $(a+b)C = aC+bC$.
+
+    (3) If $C$ is convex, then for any $s,t>0$, we have $(s+t)C=sC+tC$ by (2). Conversely, if $(s+t)C=sC+tC$ for any $s,t>0$, then to show that $C$ is convex, we need to show that for any $x_1,x_2\in C$ and any $\theta\in[0,1]$, the point $\theta x_1+(1-\theta)x_2$ also belongs to $C$. For $\theta = 0$ or $\theta = 1$, the conclusion is trivial, as $\theta x_1+(1-\theta)x_2$ is either $x_1$ or $x_2$, and both are in $C$. For $\theta\in(0,1)$, let $s=\theta$ and $t=1-\theta$, then we have $(s+t)C=sC+tC$. Since $x_1\in C$, we have $sx_1\in sC$. Similarly, since $x_2\in C$, we have $tx_2\in tC$. Hence, we have
+    \[
+    sx_1+tx_2\in sC+tC=(s+t)C=C.
+    \]
+    Therefore, $C$ is convex.
     
 \end{problem}
 
 \begin{problem}
+    ($\text{cl}(S)=S \Rightarrow x_k \to x^* \in S$) Consider any sequence \(\{x_k\}\subseteq S\) that converges to \(x^*\). By the definition, for any $\varepsilon > 0$, there exists an integer \(N>0\) such that for all \(k>N\), we have \(\|x_k-x^*\|<\varepsilon\), i.e., $x_k \in B(x^*,\varepsilon)$. Since $\operatorname{cl}(S)=S$, to prove $x^*\in S$, it suffices to prove $x^*\in\operatorname{cl}(S)$. By the definition of closure,
+    \[
+    x^*\in\operatorname{cl}(S)\iff\forall\varepsilon>0,\quad B(x^*,\varepsilon)\cap S\neq\varnothing.
+    \]
+    Since for all $k>N$, we have $x_k \in B(x^*,\varepsilon)$, and $x_k \in S$, we have $B(x^*,\varepsilon)\cap S \neq \varnothing$. Hence, $x^* \in S$.
+
+    ($x_k \to x^* \in S \Rightarrow \text{cl}(S)=S$) To prove $\text{cl}(S)=S$ is equivalent to prove $S \subseteq \text{cl}(S)$ and $\text{cl}(S) \subseteq S$. The first part is directly from the definition of closure. For the second part, we need to show that for any $x^* \in \text{cl}(S)$, $x^* \in S$. By the definition of closure, for any $\varepsilon > 0$, we have $B(x^*,\varepsilon)\cap S \neq \varnothing$. Hence, we can construct a sequence $\{x_k\}\subseteq S$ such that $x_k \in B(x^*,\frac{1}{k})$, which implies that $\|x_k-x^*\|<\frac{1}{k}$. Therefore, we have $x_k \to x^*$. By condition, we have $x^* \in S$. Hence, $\text{cl}(S) \subseteq S$, which implies $\text{cl}(S)=S$.
     
 \end{problem}
 
 \begin{problem}
-     (1) Let \(S=\{x\in\mathbb{R}^3:x_1^2+2x_2^2\le 4x_3\}\). Define \(f(x)=x_1^2+2x_2^2-4x_3\). Since \(f\) is continuous and \(S=\{x:f(x)\le 0\}\), the set \(S\) is closed. Hence \(\operatorname{cl}(S)=S\). A point is an interior point precisely when the inequality is strict, so \(\operatorname{int}(S)=\{x\in\mathbb{R}^3:x_1^2+2x_2^2<4x_3\}\). Therefore, \(\partial S=\operatorname{cl}(S)\setminus\operatorname{int}(S)=\{x\in\mathbb{R}^3:x_1^2+2x_2^2=4x_3\}\).
+     (1) Let \(S=\{x\in\mathbb{R}^3:x_1^2+2x_2^2\le 4x_3\}\). Define \(f(x)=x_1^2+2x_2^2-4x_3\). Since \(f\) is continuous and \(S=\{x:f(x)\le 0\}\), the set \(S\) is closed. Hence \(\operatorname{cl}(S)=S\). A point is an interior point precisely when the inequality is strict, so \(\operatorname{int}(S)=\{x\in\mathbb{R}^3:x_1^2+2x_2^2<4x_3\}\). Therefore,
+     \[
+     \partial S=\operatorname{cl}(S)\setminus\operatorname{int}(S)=\{x\in\mathbb{R}^3:x_1^2+2x_2^2=4x_3\}.
+     \]
 
     (2) Let \(S=\{x\in\mathbb{R}^2:1\le x_1\le 4,\ x_2=2\}\). This is a closed line segment in \(\mathbb{R}^2\), so \(\operatorname{cl}(S)=S\). Since \(S\) lies entirely on the line \(x_2=2\), no open ball in \(\mathbb{R}^2\) can be contained in \(S\). Thus \(\operatorname{int}(S)=\varnothing\). Hence \(\partial S=\operatorname{cl}(S)\setminus\operatorname{int}(S)=S\).
 
     (3) Let \(S=\{x\in\mathbb{R}^3:x_1+x_2=3,\ x_1+2x_2+x_3\le 5\}\). Both \(\{x:x_1+x_2=3\}\) and \(\{x:x_1+2x_2+x_3\le 5\}\) are closed, so their intersection \(S\) is closed. Therefore, \(\operatorname{cl}(S)=S\). Since \(S\) is contained in the plane \(x_1+x_2=3\), it contains no open ball in \(\mathbb{R}^3\), and hence \(\operatorname{int}(S)=\varnothing\). Therefore, \(\partial S=\operatorname{cl}(S)\setminus\operatorname{int}(S)=S\).
+\end{problem}
+
+\begin{problem}
+    ($\text{conv}(S) \subseteq S'$) First prove that for all $x \in \text{conv}(S)$, $x \in S'$. By the definition of convex hull, for any $x \in \text{conv}(S)$, there exist $x_1,\ldots,x_m \in S$ and $\alpha_1,\ldots,\alpha_m \ge 0$ such that $\sum_{i=1}^m \alpha_i = 1$ and $x = \sum_{i=1}^m \alpha_i x_i$ for some integer $m \ge 1$. Since $S = S_1 \cup S_2$, for each $x_i \in S$, we have either $x_i \in S_1$ or $x_i \in S_2$ (if for some $x_i \in S_1 \cap S_2$, we can assign it to either; here w.l.o.g., to $S_1$), and denote the index sets by $I_1 = \{i : x_i \in S_1\}$ and $I_2 = \{i : x_i \in S_2\}$. Then we can write
+    \[
+    x = \sum_{i \in I_1} \alpha_i x_i + \sum_{i \in I_2} \alpha_i x_i.
+    \]
+    Further define $\lambda_1 := \sum_{i \in I_1} \alpha_i$ and $\lambda_2 := \sum_{i \in I_2} \alpha_i$. Then we have $\lambda_1 + \lambda_2 = 1$ and $\lambda_1, \lambda_2 \ge 0$. Further define $y:= \sum_{i \in I_1} \alpha_i x_i$, and $z := \sum_{i \in I_2} \alpha_i x_i$. Then $x = y + z$. Moreover, since for all $i \in I_1$, $A_1 x_i \le b_1$, we have $A_1 y = A_1 \sum_{i \in I_1} \alpha_i x_i = \sum_{i \in I_1} \alpha_i A_1 x_i \le \sum_{i \in I_1} \alpha_i b_1 = \lambda_1 b_1$. Similarly, we have $A_2 z \le \lambda_2 b_2$. 
+    Hence, we have \(x=y+z\), \(A_1y\le \lambda_1b_1\), \(A_2z\le \lambda_2b_2\), \(\lambda_1+\lambda_2=1\), and \(\lambda_1,\lambda_2\ge0\). Therefore, \(x\in S'\).
+    
+    
+
+    ($S' \subseteq \text{conv}(S)$) For all $x \in S'$, there exist $y, z$ and feasible $\lambda_1, \lambda_2$ such that $x = y + z$, with $A_1 y \le \lambda_1 b_1$, $A_2 z \le \lambda_2 b_2$. If $\lambda_1, \lambda_2 > 0$, then we can rewrite $A_1 (y/\lambda_1) \le b_1$ and $A_2 (z/\lambda_2) \le b_2$, which implies that $y/\lambda_1 \in S_1$ and $z/\lambda_2 \in S_2$. Hence, we have
+    \[
+    x = \lambda_1 \frac{y}{\lambda_1} + \lambda_2 \frac{z}{\lambda_2},
+    \]
+    which is a convex combination of points in $S_1$ and $S_2$, and hence $x \in \text{conv}(S)$. 
+    If either \(\lambda_1=0\) or \(\lambda_2=0\), without loss of generality assume \(\lambda_1=0\). Then \(\lambda_2=1\) and \(A_1y\le0\). Since \(S_1\) is nonempty, choose some \(\bar x\in S_1\). If \(y\neq0\), then for every \(t\ge0\),
+    \[
+    A_1(\bar x+ty)=A_1\bar x+tA_1y\le b_1,
+    \]
+    so \(\bar x+ty\in S_1\) for all \(t\ge0\). Since \(y\neq0\), this gives an unbounded ray contained in \(S_1\), contradicting the boundedness of \(S_1\). Hence \(y=0\). Since \(\lambda_2=1\), \(A_2z\le b_2\), so \(z\in S_2\). Therefore \(x=z\in S_2\subseteq\operatorname{conv}(S)\). The case \(\lambda_2=0\) is the same. 
+
+    Combining the two parts, we have $\text{conv}(S) = S'$.
+    
+\end{problem}
+
+\begin{problem}
+    For all $x \in \text{conv}(\{u_1,u_2\}) + \text{conv}(\{w_1,w_2\})$, there exist $\alpha \in [0,1]$ and $\beta \in [0,1]$ such that $x = \alpha u_1 + (1-\alpha) u_2 + \beta w_1 + (1-\beta) w_2$. Notice that
+    \[
+    x \equiv \alpha\beta (u_1 + w_1) + \alpha(1-\beta)(u_1 + w_2) + (1-\alpha)\beta(u_2 + w_1) + (1-\alpha)(1-\beta)(u_2 + w_2),
+    \]
+    which is a convex combination of the points $u_1 + w_1$, $u_1 + w_2$, $u_2 + w_1$, and $u_2 + w_2$. Hence, $x \in \text{conv}(\{u_1+w_1,u_1+w_2,u_2+w_1,u_2+w_2\})$. Therefore, we have $\text{conv}(\{u_1,u_2\}) + \text{conv}(\{w_1,w_2\}) \subseteq \text{conv}(\{u_1+w_1,u_1+w_2,u_2+w_1,u_2+w_2\})$.
+
+    For all $x \in \text{conv}(\{u_1+w_1,u_1+w_2,u_2+w_1,u_2+w_2\})$, there exist $\alpha, \beta, \gamma, \delta \ge 0$ such that $\alpha + \beta + \gamma + \delta = 1$ and \(x = \alpha (u_1 + w_1) + \beta (u_1 + w_2) + \gamma (u_2 + w_1) + \delta (u_2 + w_2)\). Notice that
+    \[
+    x \equiv (\alpha + \beta) u_1 + (\gamma + \delta) u_2 + (\alpha + \gamma) w_1 + (\beta + \delta) w_2.
+    \]
+    Let $\alpha' = \alpha + \beta$ and $\beta' = \alpha + \gamma$. Then we have $\alpha' \in [0,1]$ and $\beta' \in [0,1]$, and hence $x \in \text{conv}(\{u_1,u_2\}) + \text{conv}(\{w_1,w_2\})$. Therefore, we have $\text{conv}(\{u_1+w_1,u_1+w_2,u_2+w_1,u_2+w_2\}) \subseteq \text{conv}(\{u_1,u_2\}) + \text{conv}(\{w_1,w_2\})$.
+
+    Combining the two parts proves the equality.
 \end{problem}
 
 \end{document}
